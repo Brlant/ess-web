@@ -78,12 +78,13 @@
         },
         methods: {
             handleRemove(file) {
+                console.error( file, 8822 ) ;
                 OmsAttachment.delete(file.attachmentId).then((d) => {
                     console.error( d, 30303030 ) ;
                     this.$notify.success({
                         duration: 2000,
                         title: '成功',
-                        message: '已成功删除附件' + file.original + '"'
+                        message: '已成功删除附件' + file.url.slice(file.url.lastIndexOf('=') + 1) + '"'
                         // message: '已成功删除附件' + file.attachmentFileName + '"'
                     });
                 }).catch(() => {
@@ -96,14 +97,19 @@
             clearFilesFn(){
                 this.$refs.icoUpload && this.$refs.icoUpload.clearFiles() ;
             },
-            changePhoto: function (photo) {
+            changePhoto: function (photo, fileList) {
                 this.$emit('change', photo.response);
             },
             handleAvatarSuccess(file) {
                 // this.imageUrl = file.url;
-                console.error( 'CCCCCC: ', file ) ;
+
+                this.$notify.success({
+                    title: '成功',
+                    // message: '更换成功'
+                });
+
                 this.$emit( 'onSuccess', file ) ;
-                this.changPhoto(file);
+                // this.changPhoto(file); // 这个请求接口是修改用户图标接口~ 在修改单组件中的 icon 图标时, 不需要
             },
             beforeAvatarUpload(file, fileList) {
 

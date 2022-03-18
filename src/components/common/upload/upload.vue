@@ -1,5 +1,6 @@
 <template>
     <div>
+        
         <upload-list :files=uploadingFiles :list-type="type" @remove="cancelUpload"
                      style="padding-bottom:10px;" v-if="!showFileList"></upload-list>
         <oms-el-upload
