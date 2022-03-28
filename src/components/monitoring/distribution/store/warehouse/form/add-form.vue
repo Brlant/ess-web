@@ -29,16 +29,19 @@
                     <oms-input v-model="form.imageName"></oms-input>
                 </el-form-item>
                 <el-form-item label="上传分布图">
-<!--                    <oms-upload :limit="1" @change="changeFiles" ref="uploadFile"></oms-upload>-->
-                    <el-upload
-                        ref="uploadRef"
-                         class="upload-demo"
-                        :action="fileUploadUrl"
-                        :headers="headers"
-                        :limit="1"
-                        :on-success="handleSuccess">
-                        <el-button size="small" type="primary">点击上传</el-button>
-                    </el-upload>
+                   <oms-upload :limit="1" @change="changeFiles" ref="uploadFile"></oms-upload>
+                    <!-- 
+                        // 之前逻辑
+                        <el-upload
+                            ref="uploadRef"
+                            class="upload-demo"
+                            :action="fileUploadUrl"
+                            :headers="headers"
+                            :limit="1"
+                            :on-success="handleSuccess">
+                            <el-button size="small" type="primary">点击上传</el-button>
+                        </el-upload> 
+                    -->
                 </el-form-item>
                 <el-form-item label="物流中心">
                     <el-select :remote-method="queryLogisticsCenterList" @change="logsicChange"
@@ -102,7 +105,11 @@
                 this.$refs['form'].resetFields();
                 //默认新增的时候清除上一个图片路径
                 if(val===1){
-                  this.$refs.uploadRef.clearFiles();
+
+                  this.$refs.uploadFile && this.$refs.uploadFile.$refs.upload.clearFiles();
+
+                  // 之前逻辑
+                  // this.$refs.uploadRef.clearFiles();
                 }
 
             }
@@ -135,10 +142,11 @@
                 this.form.warehouseIds = [];
                 this.queryWarehouse();
             },
-            // changeFiles(files) {
-            //     this.form.imageId = files.length ? files[0].attachmentId : '';
-            //     this.form.imageUrl = files.length ? files[0].attachmentStoragePath : '';
-            // },
+            changeFiles(files) {
+                // console.error( files, 88 ) ;
+                this.form.imageId = files.length ? files[0].attachmentId : '';
+                this.form.imageUrl = files.length ? files[0].attachmentStoragePath : '';
+            },
             //处理上传
             handleSuccess(res) {
                 this.form.imageId = res;

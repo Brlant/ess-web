@@ -10,6 +10,7 @@ export default [
         highWarnImageSrc: '',
         lowWarnImageSrc: '',
         offlineWarnImageSrc: '',
+        file : null // 文件上传青云成功后的文件对象
     },
     {
         devType: 1,
@@ -22,6 +23,7 @@ export default [
         highWarnImageSrc: '',
         lowWarnImageSrc: '',
         offlineWarnImageSrc: '',
+        file : null // 文件上传青云成功后的文件对象
     },
     {
         devType: 2,
@@ -34,6 +36,7 @@ export default [
         highWarnImageSrc: '',
         lowWarnImageSrc: '',
         offlineWarnImageSrc: '',
+        file : null // 文件上传青云成功后的文件对象
     },
     {
         devType: 3,
@@ -46,6 +49,7 @@ export default [
         highWarnImageSrc: '',
         lowWarnImageSrc: '',
         offlineWarnImageSrc: '',
+        file : null // 文件上传青云成功后的文件对象
     },
     {
         devType: 4,
@@ -58,5 +62,6 @@ export default [
         highWarnImageSrc: '',
         lowWarnImageSrc: '',
         offlineWarnImageSrc: '',
+        file : null // 文件上传青云成功后的文件对象
     },
 ]

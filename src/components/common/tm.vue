@@ -10,13 +10,20 @@
                 :stroke="color"
                 stroke-linecap="round"
                 stroke-width="0" v-show="item.devType === '3'"></circle>
+        
+        
+        <!--
+            // 之前字段
+             v-if="item.imageId" 
+        -->
         <image
             x="0"
             y="0"
             class="image"
             :xlink:href="getImageURL(item)"
-            v-if="item.imageId"
+            v-if="item.imageUrl"
         ></image>
+
         <image
             x="0"
             y="0"
@@ -107,7 +114,9 @@ export default {
             return `@/assets/img/3-1.png`
         },
         getImageURL(item){
-            return `${Vue.prototype.$http.defaults.baseURL}/open-api/file/download?imageId=${item.imageId}`
+            return `${item.imageUrl}`
+            // 之前逻辑
+            // return `${Vue.prototype.$http.defaults.baseURL}/open-api/file/download?imageId=${item.imageId}`
         },
         getDevIcon(item) {
             // yxh 之前逻辑 DevIcon[item.devType] 可能为 undefined

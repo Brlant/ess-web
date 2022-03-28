@@ -269,8 +269,6 @@
 
             </div>
 
-
-
           </div>
         </el-scrollbar>
       </div>
@@ -420,7 +418,10 @@
                 return {
                     // height,
                     // width,
-                    backgroundImage: `url(${Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + this.currentGraph.imageId})`,
+                    backgroundImage: `url(${this.currentGraph.backgroundUrl})`,
+
+                    // 之前逻辑
+                    // backgroundImage: `url(${Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + this.currentGraph.imageId})`,
                     'background-repeat': 'no-repeat',
                     'background-size': 'contain'
                 };
@@ -793,10 +794,10 @@
             goTo(value){
                 
                 // 重置
-                value.x = 0 ;
-                value.y = 0 ;
-                value.width = 400 ;
-                value.height = 228 ;
+                value.x = value.x || 0 ;
+                value.y = value.y || 0 ;
+                value.width = value.width || 400 ;
+                value.height = value.height || 228 ;
 
                 if( +value.isVideo === 1 ){ // 如果是视频类型 
                   this.drawer = false ;

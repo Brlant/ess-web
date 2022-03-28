@@ -266,7 +266,8 @@
                         />
                     </el-form-item>
 
-                    <el-form-item label="上传分布图" v-if="form.elementType==9999">
+                    <!-- <el-form-item label="上传分布图" v-if="form.elementType==9999">
+                        
                         <el-upload
                             class="avatar-uploader"
                             :action="fileUploadUrl"
@@ -278,8 +279,10 @@
                             <img v-if="form.backgroundUrl" :src="form.backgroundUrl" class="avatar">
                             <i v-else class="el-icon-plus"></i>
                         </el-upload>
-                    </el-form-item>
-                    <el-form-item label="选择图标" v-else>
+                    </el-form-item> -->
+
+                    <!-- <el-form-item label="选择图标" v-else> -->
+                    <el-form-item label="选择图标">
                         <!--图标依次是:正常，告警，离线，停止-->
                         <el-select style="width: 240px;" v-model="backgroundImage" placeholder="请选择预定义图标"
                                    @change="changebackgroundImage">
@@ -293,7 +296,18 @@
                         </el-select>
                         <div class="file-upload">
                             <div class="type-label">正常</div>
-                            <el-upload
+
+
+                            <oms-upload-icon-picture class="avatar-uploader" 
+                                @onSuccess="handleNormalSuccess"
+                            >
+                                <div class="uploadIconInfo">
+                                    <img v-if="form.backgroundUrl" :src="form.backgroundUrl" class="avatar">
+                                    <i v-else class="el-icon-plus"></i>
+                                </div>
+                            </oms-upload-icon-picture>
+
+                            <!-- <el-upload
                                 class="avatar-uploader"
                                 :action="fileUploadUrl"
                                 :headers="headers"
@@ -301,18 +315,45 @@
                                 :show-file-list="false"
                                 :before-upload="beforeAvatarUpload"
                                 :on-success="handleNormalSuccess">
-                                <!--
-                                    之前逻辑
-                                    :on-success="handleSuccess">
-                                -->
 
                                 <img v-if="form.backgroundUrl" :src="form.backgroundUrl" class="avatar">
                                 <i v-else class="el-icon-plus"></i>
-                            </el-upload>
+                            </el-upload> -->
+
+                            <!--
+                                之前逻辑
+                                :on-success="handleSuccess">
+                            -->
+                            <!-- 
+                                之前逻辑
+                                <el-upload
+                                    class="avatar-uploader"
+                                    :action="fileUploadUrl"
+                                    :headers="headers"
+                                    list-type="picture-card"
+                                    :show-file-list="false"
+                                    :before-upload="beforeAvatarUpload"
+                                    :on-success="handleNormalSuccess">
+                                    <img v-if="form.backgroundUrl" :src="form.backgroundUrl" class="avatar">
+                                    <i v-else class="el-icon-plus"></i>
+                                </el-upload> 
+                            -->
                         </div>
                         <div class="file-upload">
                             <div class="type-label">告警</div>
-                            <el-upload
+                            
+                            <oms-upload-icon-picture class="avatar-uploader" 
+                                @onSuccess="handleExSuccess"
+                            >
+                                <div class="uploadIconInfo">
+                                    <img v-if="form.backgroundUrlEx" :src="form.backgroundUrlEx" class="avatar">
+                                    <i v-else class="el-icon-plus"></i>
+                                </div>
+                            </oms-upload-icon-picture>
+                            
+                            <!-- 
+                                // 之前逻辑
+                                <el-upload
                                 class="avatar-uploader"
                                 :action="fileUploadUrl"
                                 :headers="headers"
@@ -322,25 +363,50 @@
                                 :on-success="handleExSuccess">
                                 <img v-if="form.backgroundUrlEx" :src="form.backgroundUrlEx" class="avatar">
                                 <i v-else class="el-icon-plus"></i>
-                            </el-upload>
+                            </el-upload> 
+                            -->
                         </div>
                         <div class="file-upload">
                             <div class="type-label">离线</div>
-                            <el-upload
-                                class="avatar-uploader"
-                                :action="fileUploadUrl"
-                                :headers="headers"
-                                list-type="picture-card"
-                                :show-file-list="false"
-                                :before-upload="beforeAvatarUpload"
-                                :on-success="handleOfflineSuccess">
-                                <img v-if="form.backgroundUrlOffline" :src="form.backgroundUrlOffline" class="avatar">
-                                <i v-else class="el-icon-plus"></i>
-                            </el-upload>
+
+                            <oms-upload-icon-picture class="avatar-uploader" 
+                                @onSuccess="handleOfflineSuccess"
+                            >
+                                <div class="uploadIconInfo">
+                                    <img v-if="form.backgroundUrlOffline" :src="form.backgroundUrlOffline" class="avatar">
+                                    <i v-else class="el-icon-plus"></i>
+                                </div>
+                            </oms-upload-icon-picture>
+
+                            <!--
+                                <el-upload
+                                    class="avatar-uploader"
+                                    :action="fileUploadUrl"
+                                    :headers="headers"
+                                    list-type="picture-card"
+                                    :show-file-list="false"
+                                    :before-upload="beforeAvatarUpload"
+                                    :on-success="handleOfflineSuccess">
+                                    <img v-if="form.backgroundUrlOffline" :src="form.backgroundUrlOffline" class="avatar">
+                                    <i v-else class="el-icon-plus"></i>
+                                </el-upload>
+                            -->
                         </div>
                         <div class="file-upload">
                             <div class="type-label">停止</div>
-                            <el-upload
+
+                            <oms-upload-icon-picture class="avatar-uploader" 
+                                @onSuccess="handleStopSuccess"
+                            >
+                                <div class="uploadIconInfo">
+                                    <img v-if="form.backgroundUrlStop" :src="form.backgroundUrlStop" class="avatar">
+                                <i v-else class="el-icon-plus"></i>
+                                </div>
+                            </oms-upload-icon-picture>
+
+                            <!-- 
+                                之前逻辑
+                                <el-upload
                                 class="avatar-uploader"
                                 :action="fileUploadUrl"
                                 :headers="headers"
@@ -348,9 +414,10 @@
                                 :show-file-list="false"
                                 :before-upload="beforeAvatarUpload"
                                 :on-success="handleStopSuccess">
-                                <img v-if="form.backgroundUrlStop" :src="form.backgroundUrlStop" class="avatar">
-                                <i v-else class="el-icon-plus"></i>
-                            </el-upload>
+                                    <img v-if="form.backgroundUrlStop" :src="form.backgroundUrlStop" class="avatar">
+                                    <i v-else class="el-icon-plus"></i>
+                                </el-upload> 
+                            -->
                         </div>
                     </el-form-item>
 
@@ -395,7 +462,9 @@
                 <!--对象END-->
 
                 <!--点位-->
-                <div v-if="currentNodeType=='point'" class="formContainer">
+                <!-- 
+                    暂时屏蔽点位图标上传
+                    <div v-if="currentNodeType=='point'" class="formContainer">
                     <h2>编辑点位</h2>
                     <el-form-item label="点位名称" prop="ccsPointName">
                         <oms-input placeholder="请输入点位名称" type="text" v-model="form.ccsPointName" :maxlength="100"
@@ -410,7 +479,6 @@
                         </template>
                     </two-column>
                     <el-form-item label="选择图标" prop="backgroundUrl">
-                        <!--图标依次是:正常，告警，离线，停止-->
                         <el-select v-model="backgroundImage" placeholder="请选择预定义图标" @change="changebackgroundImage">
                             <el-option
                                 v-for="(item,index) in backgroundImages"
@@ -489,7 +557,8 @@
                                    v-has="'ccs-point-configuration-edit'">保存
                         </el-button>
                     </el-form-item>
-                </div>
+                </div> 
+                -->
             </el-form>
         </el-col>
 
@@ -517,11 +586,13 @@ import utils from "../../../tools/utils";
 import Vue from "vue";
 import BandingDev from "../point/warehouse/form/banding-dev";
 
+import omsUploadIconPicture from '@/components/common/upload/upload.icon.picture.vue';
+
 let id = 10000;
 
 export default {
     name: "config.vue",
-    components: {BandingDev},
+    components: { BandingDev, omsUploadIconPicture },
     data() {
         return {
             loading: false,
@@ -679,6 +750,8 @@ export default {
             warnImageId : '', // 告警背景图id
             offlineImageId : '', // 离线背景图id
             stopImageId : '', // 停止背景图id
+
+            currentPicNode: null,
         }
     },
     mounted() {
@@ -691,6 +764,7 @@ export default {
     },
     methods: {
         beforeAvatarUpload: function (file) {
+            console.error( file, 88 ) ;
             if (!(file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpg' || file.type === 'image/jpeg')) {
                 this.$notify.error('请上传格式为png/gif/jpg/jpeg格式的图片');
                 return false;
@@ -763,10 +837,19 @@ export default {
                 return item.value == selectedIndex;
             });
             if (image) {
-                this.form.backgroundUrl = image.backgroundUrl;
-                this.form.backgroundUrlEx = image.backgroundUrlEx;
-                this.form.backgroundUrlOffline = image.backgroundUrlOffline;
-                this.form.backgroundUrlStop = image.backgroundUrlStop;
+                this.form.backgroundUrl = image.backgroundUrl || ( this.currentPicNode ? this.currentPicNode.backgroundUrl : '' );
+                this.form.backgroundUrlEx = image.backgroundUrlEx || ( this.currentPicNode ? this.currentPicNode.backgroundUrlEx : '' );
+                this.form.backgroundUrlOffline = image.backgroundUrlOffline || ( this.currentPicNode ? this.currentPicNode.backgroundUrlOffline : '' );
+                this.form.backgroundUrlStop = image.backgroundUrlStop || ( this.currentPicNode ? this.currentPicNode.backgroundUrlStop : '') ;
+                
+                // 赋值类型id 
+                if( this.currentPicNode ){ 
+                    this.normalImageId = this.currentPicNode.normalImageId ; 
+                    this.warnImageId = this.currentPicNode.warnImageId ; 
+                    this.offlineImageId = this.currentPicNode.offlineImageId ; 
+                    this.stopImageId = this.currentPicNode.stopImageId ; 
+                }
+                
             }
         },
         refresh: function () {
@@ -1021,6 +1104,7 @@ export default {
             } else if (node.nodeType == "element") {
                 https.destroy("/ccsScenesElement/" + node.scenesElementId).then(res => {
                     this.$notify.success({message: '对象删除成功'});
+                    this.currentPicNode = null ; // 重置对象数据为 null
                     this.clearEditContainer();
                     this.refresh();
                 });
@@ -1082,6 +1166,8 @@ export default {
             this.currentTreeNode = treeNode;
             this.currentNodeType = dataNode.nodeType;
 
+            this.currentPicNode = dataNode ;
+
             if (this.currentNodeType == "scene") {
                 this.rules = this.sceneRules;
                 this.form = {
@@ -1106,8 +1192,9 @@ export default {
                     dynamicStatic: dataNode.dynamicStatic,
                     elementInfo: dataNode.elementInfo,
                     elementType: dataNode.elementType == 0 ? '' : dataNode.elementType,
+                } ;  
 
-                };
+                this.backgroundImage = dataNode.iconType ? dataNode.iconType + '' : '0' ; 
 
                 // yxh 重新请求设备列表
                 if( dataNode.elementType !== 0 ){
@@ -1168,6 +1255,7 @@ export default {
         //重置页面变量
         clearEditContainer() {
             this.currentTreeNode = null;
+            this.currentPicNode = null;
             this.currentNodeType = "";
             this.backgroundImage = "0";
             this.form = {};
@@ -1207,6 +1295,8 @@ export default {
                         reqObj.bindMonitorDevId = this.form.device ; //
                     }
 
+                    reqObj.iconType = +this.backgroundImage ; // 选择图标 的类型
+
                     // yxh 之前逻辑
                     // https.put("/ccsScenesElement", this.form).then(res => {
                     https.put("/ccsScenesElement", reqObj).then(res => {
@@ -1234,11 +1324,24 @@ export default {
         //处理上传 正常
         handleNormalSuccess(res) {
 
-            this.normalImageId = res ;
+            console.error( res, 11 ) ;
+
 
             if (res) {
-                this.form.backgroundUrl = `${Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + res}`;
+                this.normalImageId = res.attachmentId ? res.attachmentId : '' ;
+                this.form.backgroundUrl = `${ res.url || '' }`;
             }
+
+            /**
+             * 
+             *  // 之前逻辑  - 最近
+             * 
+                this.normalImageId = res ;
+
+                if (res) {
+                    this.form.backgroundUrl = `${Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + res}`;
+                }
+            */
 
 
             // this.reqPictureURLFn( res, 'backgroundUrl' ) ;
@@ -1260,12 +1363,25 @@ export default {
         },
         //处理上传
         handleExSuccess(res) {
-            this.warnImageId = res ;
+
+            console.error( res, 12 ) ;
+
+
+            if (res) {
+                this.warnImageId = res.attachmentId || '' ;
+                this.form.backgroundUrlEx = `${ res.url || '' }`;
+            }
+            
+            /*
+                之前逻辑 - 最近
+                this.warnImageId = res ;
+
+                if (res) {
+                    this.form.backgroundUrlEx = `${Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + res}`;
+                }
+            */
 
             // this.reqPictureURLFn( res, 'backgroundUrlEx' ) ;
-            if (res) {
-                this.form.backgroundUrlEx = `${Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + res}`;
-            }
 
             /*
                 // yxh 之前逻辑
@@ -1277,12 +1393,21 @@ export default {
         //处理上传
         handleOfflineSuccess(res) {
 
-            this.offlineImageId = res ;
+            if (res) {
+                this.offlineImageId = res.attachmentId || '' ;
+                this.form.backgroundUrlOffline = `${ res.url || '' }`;
+            }
+
+            /*
+                之前逻辑 - 最近
+                this.offlineImageId = res ;
+
+                if (res) {
+                    this.form.backgroundUrlOffline = `${Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + res}`;
+                }
+            */
 
             // this.reqPictureURLFn( res, 'backgroundUrlOffline' ) ;
-            if (res) {
-                this.form.backgroundUrlOffline = `${Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + res}`;
-            }
 
              /*
                 // yxh 之前逻辑
@@ -1292,12 +1417,21 @@ export default {
             */
         },
         //处理上传
-        handleStopSuccess(res) {
-            this.stopImageId = res ;
-
+        handleStopSuccess(res) { 
+            
             if (res) {
-                this.form.backgroundUrlStop = `${Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + res}`;
+                this.stopImageId = res.attachmentId || '' ;
+                this.form.backgroundUrlStop = `${ res.url || '' }`;
             }
+            
+            /*
+                // 之前逻辑 - 最近
+                this.stopImageId = res ;
+
+                if (res) {
+                    this.form.backgroundUrlStop = `${Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + res}`;
+                }
+            */
 
             // this.reqPictureURLFn( res, 'backgroundUrlStop' ) ;
 
@@ -1471,6 +1605,7 @@ div.type-label {
     text-align: center;
 }
 
+
 .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;
@@ -1488,6 +1623,8 @@ div.type-label {
     height: 100%;
     display: block;
 }
+
+
 </style>
 <style>
 div.file-upload > div.avatar-uploader > div {
@@ -1495,6 +1632,28 @@ div.file-upload > div.avatar-uploader > div {
     height: 50px;
     line-height: 50px;
 }
+
+.el-upload{
+    width:100%;
+    height:100%;
+    display:block!important;
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    line-height:57px;
+}
+.el-upload:hover {
+    border-color: #409EFF;
+}
+.el-icon-plus{
+    font-size:28px;
+    color:#8c939d;
+}
+
+.uploadIconInfo{ width:100%; height:100%; }
+
 </style>
 
 
@@ -1511,4 +1670,5 @@ div.file-upload > div.avatar-uploader > div {
         margin-right: 10px;
     }
 }
+
 </style>

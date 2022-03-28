@@ -436,7 +436,10 @@
                 return {
                     // height,
                     // width,
-                    backgroundImage: `url(${Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + this.currentGraph.imageId})`,
+                    backgroundImage: `url(${this.currentGraph.backgroundUrl})`,
+
+                    // 之前逻辑
+                    //backgroundImage: `url(${Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + this.currentGraph.imageId})`,
                     'background-repeat': 'no-repeat',
                     'background-size': 'contain'
                 };
