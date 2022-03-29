@@ -554,8 +554,12 @@ export default {
                 // 之前逻辑
                 // this.attachmentList = [{ name : this.form.imageName } ];
 
+                console.error( res.data, 11 ) ;
+
                 this.attachmentList = [{ 
                     name : res.data.imageName, 
+
+                    attachmentId : res.data.imageId,
 
                     // attachmentStoragePath、attachmentFileName 这二个属性用于在 upload.vue 文件中解析 
                     attachmentStoragePath : res.data.imageUrl,
