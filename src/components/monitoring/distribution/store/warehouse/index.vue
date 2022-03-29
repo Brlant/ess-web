@@ -575,7 +575,9 @@
                 */
             },
             setScaling() {
-                let url = Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + this.currentGraph.imageId;
+                // 之前逻辑
+                // let url = Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + this.currentGraph.imageId;
+                let url = this.currentGraph.backgroundUrl;
                 if (!url) {
                     this.scaling = 1;
                     this.currentHeight = 0;
@@ -600,7 +602,9 @@
                 };
             },
             setBigScaling(width, height) {
-                let url = Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + this.currentGraph.imageId;
+                // 之前逻辑
+                // let url = Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + this.currentGraph.imageId;
+                let url = this.currentGraph.backgroundUrl;
                 if (!url) {
                     this.scaling = 1;
                     this.currentHeight = 0;

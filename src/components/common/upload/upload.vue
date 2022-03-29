@@ -104,6 +104,7 @@ export default {
             this.$refs.upload.submit();
         },
         handleRemove(file, fileList) {
+
             // 将附件从列表中移除
             let index = fileList.indexOf(file);
             fileList.splice(index, 0);
@@ -113,10 +114,12 @@ export default {
                     title: '成功',
                     message: '已成功删除附件' + file.attachmentFileName + '"'
                 });
-            }).catch(() => {
+            }).catch((e) => {
+                let data = e.response.data ;
+                
                 this.$notify.error({
                     duration: 2000,
-                    message: '删除失败'
+                    message: data.msg ? data.msg : '删除失败'
                 });
             });
             this.$emit('change', fileList);
