@@ -78,9 +78,7 @@
         },
         methods: {
             handleRemove(file) {
-                console.error( file, 8822 ) ;
                 OmsAttachment.delete(file.attachmentId).then((d) => {
-                    console.error( d, 30303030 ) ;
                     this.$notify.success({
                         duration: 2000,
                         title: '成功',
@@ -107,6 +105,8 @@
                     title: '成功',
                     // message: '更换成功'
                 });
+
+                console.info( 'success: ', file ) ;
 
                 this.$emit( 'onSuccess', file ) ;
                 // this.changPhoto(file); // 这个请求接口是修改用户图标接口~ 在修改单组件中的 icon 图标时, 不需要
@@ -158,6 +158,7 @@
                     id: user.userId,
                     photoId: photo.attachmentId
                 };
+                
                 if (user.userId) {
                     http.put('/oms/user/' + user.userId + '/icon', obj).then(() => {
                         this.$notify.success({

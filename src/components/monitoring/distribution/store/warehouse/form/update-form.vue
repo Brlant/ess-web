@@ -554,17 +554,19 @@ export default {
                 // 之前逻辑
                 // this.attachmentList = [{ name : this.form.imageName } ];
 
-                console.error( res.data, 11 ) ;
+                if( res.data.imageId && res.data.imageUrl ){
+                    this.attachmentList = [{ 
+                        name : res.data.imageName, 
 
-                this.attachmentList = [{ 
-                    name : res.data.imageName, 
+                        attachmentId : res.data.imageId,
 
-                    attachmentId : res.data.imageId,
-
-                    // attachmentStoragePath、attachmentFileName 这二个属性用于在 upload.vue 文件中解析 
-                    attachmentStoragePath : res.data.imageUrl,
-                    attachmentFileName : res.data.imageName
-                } ];
+                        // attachmentStoragePath、attachmentFileName 这二个属性用于在 upload.vue 文件中解析 
+                        attachmentStoragePath : res.data.imageUrl,
+                        attachmentFileName : res.data.imageName
+                    } ];
+                } else {
+                    this.attachmentList = [] ;
+                }
 
                 this.fontColor=res.data.fontColor;
                 if (this.form.devType === undefined) {
