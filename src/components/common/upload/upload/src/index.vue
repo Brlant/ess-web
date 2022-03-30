@@ -5,7 +5,7 @@
                      :handlePreview="onPreview"
                      :listType="listType"
                      @remove="handleRemove" v-if="showFileList&&listType == 'picture-card'"></upload-list>
-
+    
         <upload :accept="accept" :action="action"
                 :autoUpload="autoUpload"
                 :before-upload="beforeUpload"

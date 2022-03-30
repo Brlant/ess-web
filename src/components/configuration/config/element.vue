@@ -299,6 +299,7 @@
 
 
                             <oms-upload-icon-picture class="avatar-uploader" 
+                                ref="iconNormal"
                                 @onSuccess="handleNormalSuccess"
                             >
                                 <div class="uploadIconInfo">
@@ -343,6 +344,7 @@
                             <div class="type-label">告警</div>
                             
                             <oms-upload-icon-picture class="avatar-uploader" 
+                                ref="iconWarn"
                                 @onSuccess="handleExSuccess"
                             >
                                 <div class="uploadIconInfo">
@@ -370,6 +372,7 @@
                             <div class="type-label">离线</div>
 
                             <oms-upload-icon-picture class="avatar-uploader" 
+                                ref="iconOffline"
                                 @onSuccess="handleOfflineSuccess"
                             >
                                 <div class="uploadIconInfo">
@@ -396,6 +399,7 @@
                             <div class="type-label">停止</div>
 
                             <oms-upload-icon-picture class="avatar-uploader" 
+                                ref="iconStop"
                                 @onSuccess="handleStopSuccess"
                             >
                                 <div class="uploadIconInfo">
@@ -764,7 +768,6 @@ export default {
     },
     methods: {
         beforeAvatarUpload: function (file) {
-            console.error( file, 88 ) ;
             if (!(file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpg' || file.type === 'image/jpeg')) {
                 this.$notify.error('请上传格式为png/gif/jpg/jpeg格式的图片');
                 return false;
@@ -833,6 +836,12 @@ export default {
 
 
         changebackgroundImage: function (selectedIndex) {
+            
+            this.$refs.iconNormal.clearFilesFn && this.$refs.iconNormal.clearFilesFn() ;
+            this.$refs.iconWarn.clearFilesFn && this.$refs.iconWarn.clearFilesFn() ;
+            this.$refs.iconOffline.clearFilesFn && this.$refs.iconOffline.clearFilesFn() ;
+            this.$refs.iconStop.clearFilesFn && this.$refs.iconStop.clearFilesFn() ;
+
             let image = this.backgroundImages.find(item => {
                 return item.value == selectedIndex;
             });
@@ -842,13 +851,38 @@ export default {
                 this.form.backgroundUrlOffline = image.backgroundUrlOffline || ( this.currentPicNode ? this.currentPicNode.backgroundUrlOffline : '' );
                 this.form.backgroundUrlStop = image.backgroundUrlStop || ( this.currentPicNode ? this.currentPicNode.backgroundUrlStop : '') ;
                 
-                // 赋值类型id 
-                if( this.currentPicNode ){ 
+
+
+                // 赋值 正常 类型id , 
+                if( !this.form.backgroundUrl.startsWith('data') && this.currentPicNode ){ // 如果不是以base64开始的数据且当前赋值节点有数据
                     this.normalImageId = this.currentPicNode.normalImageId ; 
-                    this.warnImageId = this.currentPicNode.warnImageId ; 
-                    this.offlineImageId = this.currentPicNode.offlineImageId ; 
-                    this.stopImageId = this.currentPicNode.stopImageId ; 
+                } else {
+                    this.normalImageId = '' ;
                 }
+
+                // 赋值 告警 类型id , 
+                if( !this.form.backgroundUrlEx.startsWith('data') && this.currentPicNode ){ // 如果不是以base64开始的数据且当前赋值节点有数据
+                    this.warnImageId = this.currentPicNode.warnImageId ; 
+                } else {
+                    this.warnImageId = '' ;
+                }
+
+
+                // 赋值 离线 类型id , 
+                if( !this.form.backgroundUrlOffline.startsWith('data') && this.currentPicNode ){ // 如果不是以base64开始的数据且当前赋值节点有数据
+                    this.offlineImageId = this.currentPicNode.offlineImageId ; 
+                } else {
+                    this.offlineImageId = '' ;
+                }
+
+
+                // 赋值 停止 类型id , 
+                if( !this.form.backgroundUrlStop.startsWith('data') && this.currentPicNode ){ // 如果不是以base64开始的数据且当前赋值节点有数据
+                    this.stopImageId = this.currentPicNode.stopImageId ; 
+                } else {
+                    this.stopImageId = '' ;
+                }
+
                 
             }
         },
@@ -1194,7 +1228,52 @@ export default {
                     elementType: dataNode.elementType == 0 ? '' : dataNode.elementType,
                 } ;  
 
-                this.backgroundImage = dataNode.iconType ? dataNode.iconType + '' : '0' ; 
+
+                // 赋值 正常 类型id , 
+                if( !this.form.backgroundUrl.startsWith('data') && dataNode.normalImageId ){ // 如果不是以base64开始的数据且当前赋值节点有数据
+                    this.normalImageId = dataNode.normalImageId ; 
+                } else {
+                    this.normalImageId = '' ;
+                }
+
+                // 赋值 告警 类型id , 
+                if( !this.form.backgroundUrlEx.startsWith('data') && dataNode.warnImageId ){ // 如果不是以base64开始的数据且当前赋值节点有数据
+                    this.warnImageId = dataNode.warnImageId ; 
+                } else {
+                    this.warnImageId = '' ;
+                }
+
+                // 赋值 离线 类型id , 
+                if( !this.form.backgroundUrlOffline.startsWith('data') && dataNode.offlineImageId ){ // 如果不是以base64开始的数据且当前赋值节点有数据
+                    this.offlineImageId = dataNode.offlineImageId ; 
+                } else {
+                    this.offlineImageId = '' ;
+                }
+
+                // 赋值 停止 类型id , 
+                if( !this.form.backgroundUrlStop.startsWith('data') && dataNode.stopImageId ){ // 如果不是以base64开始的数据且当前赋值节点有数据
+                    this.stopImageId = dataNode.stopImageId ; 
+                } else {
+                    this.stopImageId = '' ;
+                }
+
+                // if( dataNode && dataNode.normalImageId ){
+                //    this.normalImageId = dataNode.normalImageId ;
+                // }
+
+                // if( dataNode && dataNode.warnImageId ){
+                //    this.warnImageId = dataNode.warnImageId ;
+                // }
+
+                // if( dataNode && dataNode.offlineImageId ){
+                //    this.offlineImageId = dataNode.offlineImageId ;
+                // }
+                
+                // if( dataNode && dataNode.stopImageId ){
+                //    this.stopImageId = dataNode.stopImageId ;
+                // }
+
+                // this.backgroundImage = dataNode.iconType ? dataNode.iconType + '' : '0' ; 
 
                 // yxh 重新请求设备列表
                 if( dataNode.elementType !== 0 ){
@@ -1324,9 +1403,6 @@ export default {
         //处理上传 正常
         handleNormalSuccess(res) {
 
-            console.error( res, 11 ) ;
-
-
             if (res) {
                 this.normalImageId = res.attachmentId ? res.attachmentId : '' ;
                 this.form.backgroundUrl = `${ res.url || '' }`;
@@ -1363,9 +1439,6 @@ export default {
         },
         //处理上传
         handleExSuccess(res) {
-
-            console.error( res, 12 ) ;
-
 
             if (res) {
                 this.warnImageId = res.attachmentId || '' ;

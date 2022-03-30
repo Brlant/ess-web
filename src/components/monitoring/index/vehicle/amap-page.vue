@@ -321,6 +321,7 @@ export default {
 
 
                         }
+
                         humidityTemperatureVoltageStr+=`</div>`
                         html.push('<img src="' + showImgSrc + '" style="width: 30px ;height:30px ;transform:rotate(' + angle + 'deg);"/>')
                         if (marker.item.label) {
