@@ -146,7 +146,6 @@ export function put(url, params) {
     return new Promise((resolve, reject) => {
         http.put(url, params)
             .then(response => {
-                console.log("PUT", url, response, response.data)
                 resolve(params.isResponse ? response : response.data)
             }, err => {
                 reject(err);
