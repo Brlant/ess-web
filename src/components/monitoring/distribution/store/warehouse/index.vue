@@ -436,7 +436,10 @@
                 return {
                     // height,
                     // width,
-                    backgroundImage: `url(${Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + this.currentGraph.imageId})`,
+                    backgroundImage: `url(${this.currentGraph.backgroundUrl})`,
+
+                    // 之前逻辑
+                    //backgroundImage: `url(${Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + this.currentGraph.imageId})`,
                     'background-repeat': 'no-repeat',
                     'background-size': 'contain'
                 };
@@ -572,7 +575,9 @@
                 */
             },
             setScaling() {
-                let url = Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + this.currentGraph.imageId;
+                // 之前逻辑
+                // let url = Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + this.currentGraph.imageId;
+                let url = this.currentGraph.backgroundUrl;
                 if (!url) {
                     this.scaling = 1;
                     this.currentHeight = 0;
@@ -597,7 +602,9 @@
                 };
             },
             setBigScaling(width, height) {
-                let url = Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + this.currentGraph.imageId;
+                // 之前逻辑
+                // let url = Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + this.currentGraph.imageId;
+                let url = this.currentGraph.backgroundUrl;
                 if (!url) {
                     this.scaling = 1;
                     this.currentHeight = 0;
