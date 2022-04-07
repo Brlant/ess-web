@@ -23,10 +23,11 @@
       .title {
         display: inline-block;
         width: 240px;
+        line-height:normal;
         -o-text-overflow: ellipsis; /*兼容opera*/
         text-overflow: ellipsis; /*这就是省略号喽*/
-        overflow: hidden; /*设置超过的隐藏*/
-        white-space: nowrap; /*设置不折行*/
+       /* overflow: hidden; 设置超过的隐藏*/
+       /* white-space: nowrap; 设置不折行*/
       }
     }
   }
