@@ -7,6 +7,7 @@
 </style>
 <template>
   <div>
+    {{ loadingData }}
     <!--<div v-if="!dataList || !dataList.length" class="empty-info">暂无信息</div>-->
     <oms-loading :loading="loadingData" v-if="loadingData"/>
     <div class="empty-info" v-else-if="!isHasData">暂无信息</div>
@@ -38,13 +39,12 @@
         },
         watch: {
             filters: {
-                handler: function (n, o) {
+                handler: function () {
+                    console.error( this.detail, 111 ) ;
                     this.queryList();
                 },
-
-                // 以下参数导致数据查询多次的情况~ 异步查询数据返回时间不一致, 导致数据展示问题
-                // deep: true,
-                // immediate: true
+                deep: true,
+                immediate: true
             }
         },
         methods: {
@@ -234,6 +234,7 @@
                             if (!chartDom) return;
                             let chartLine = Echarts.init(chartDom, 'light');
                             if (!chartLine) return;
+                            chartLine.setOption({}) ; // 清除
                             let {isRecord, detail} = this;
                             if (isRecord && option.series.length) {
                                 // 时间标线， 起始时间，终止时间
@@ -243,8 +244,10 @@
                                     data.push(getAlarmLine(detail.createTime));
                                     detail.restoreTime && data.push(getAlarmLine(detail.restoreTime));
                                 });
+                                console.error( 'good' ) ;
                                 chartLine.setOption(option);
                             } else {
+                                console.error( 'noooooo' ) ;
                                 chartLine.setOption(option);
                             }
                         });
