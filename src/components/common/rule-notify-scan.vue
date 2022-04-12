@@ -2,7 +2,8 @@
   .el-form__btn {
     position: absolute;
     left: 95px;
-    top: 8px;
+    top: -1px;
+    /*top: 8px; */
   }
 </style>
 <template>
@@ -44,33 +45,35 @@
         <el-button @click="cancel" plain size="small">取消</el-button>
       </el-form-item>
     </div>
-    <el-form-item label-width="0">
-      <el-table :data="ruleList" @expand-change="expandChange"
-                class="el-table--expand" header-row-class-name="table-header-color" style="width: 100%;"
-                v-loading="loading">
-        <el-table-column type="expand">
-          <template slot-scope="props1">
-            <rule-util :props1="props1"></rule-util>
-          </template>
-        </el-table-column>
-        <el-table-column label="设备名称" min-width="150" prop="devName">
-          <template slot-scope="scope">
-            <span>{{scope.row.devName}}</span>
-            <div>
-              <span>编码:{{scope.row.devCode}}</span> / <span>编号:{{scope.row.devNo}}</span>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column label="告警规则组" prop="warnRuleGroupName"/>
-        <el-table-column label="通知列表" prop="notifyListName"/>
-        <el-table-column label="操作" width="90">
-          <template slot-scope="scope">
-            <des-btn @click="deleteRule(scope.row)" icon="delete" v-has="perm">删除</des-btn>
-          </template>
-        </el-table-column>
-      </el-table>
+
+
+    <el-form-item label-width="0" style="padding:7px 0 0;">
+        <el-table :data="ruleList" @expand-change="expandChange"
+                    class="el-table--expand" header-row-class-name="table-header-color" style="width: 100%;"
+                    v-loading="loading">
+            <el-table-column type="expand">
+            <template slot-scope="props1">
+                <rule-util :props1="props1"></rule-util>
+            </template>
+            </el-table-column>
+            <el-table-column label="设备名称" min-width="150" prop="devName">
+            <template slot-scope="scope">
+                <span>{{scope.row.devName}}</span>
+                <div>
+                <span>编码:{{scope.row.devCode}}</span> / <span>编号:{{scope.row.devNo}}</span>
+                </div>
+            </template>
+            </el-table-column>
+            <el-table-column label="告警规则组" prop="warnRuleGroupName"/>
+            <el-table-column label="通知列表" prop="notifyListName"/>
+            <el-table-column label="操作" width="90">
+            <template slot-scope="scope">
+                <des-btn @click="deleteRule(scope.row)" icon="delete" v-has="perm">删除</des-btn>
+            </template>
+            </el-table-column>
+        </el-table>
     </el-form-item>
-  </el-form>
+    </el-form>
 </template>
 <script>
     import {AlarmRuleGroup, BindRule, DevMonitoring, NotifyRule} from '@/resources';
