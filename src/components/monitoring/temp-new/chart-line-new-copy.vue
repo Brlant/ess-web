@@ -7,7 +7,6 @@
 </style>
 <template>
   <div>
-    {{ loadingData }}
     <!--<div v-if="!dataList || !dataList.length" class="empty-info">暂无信息</div>-->
     <oms-loading :loading="loadingData" v-if="loadingData"/>
     <div class="empty-info" v-else-if="!isHasData">暂无信息</div>
