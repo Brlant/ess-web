@@ -661,14 +661,16 @@ export default {
     background: rgba(0, 0, 0, 0.6)
 }
 .content .left {
-    width: 100px;
+    /* width:100px; */
+    width:13em;
     height: 190px;
 }
 
 .content .left .title {
     height: 30px;
     box-sizing: border-box;
-    font-size: 20px;
+    font-size: 14px;
+    /* font-size: 20px; */
     color: #f0b100;
     overflow: hidden;
     line-height: 30px;

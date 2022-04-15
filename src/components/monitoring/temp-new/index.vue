@@ -14,7 +14,7 @@
 </template>
 <script>
     import SearchPart from './search';
-    import ChartLine from './chart-line-new';
+    import ChartLine from './chart-line-new-copy';
     import ChartLineMultiple from './chart-line-new-multiple-dev';
 
     export default {

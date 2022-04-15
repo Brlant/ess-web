@@ -76,3 +76,10 @@
         }
     };
 </script>
+
+<style scoped>
+  .opera-icon{ display:flex; }
+  .opera-icon .el-col{ flex-grow:1; width:auto;}
+  .text-right{ display:flex; justify-content: flex-end; align-items:center; }
+  .el-button-group{ display:flex; }
+</style>

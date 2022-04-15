@@ -52,6 +52,19 @@
         
     }
 
+    .warehouse-tree{
+        .el-collapse-item__header{ display:flex; align-items:center; flex-direction:row; 
+            > span{ line-height:normal; }
+            .list-opera-icon{ display:flex; }
+            .titleTxt{ 
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                -webkit-line-clamp: 2; 
+            }
+        }
+    }
+
 }
 </style>
 <template>
@@ -80,7 +93,7 @@
                                             <des-btn @click="editWarehouse(item)" icon="edit" v-has="'ccs-point-warehouse-edit'"></des-btn>
                                             <des-btn @click="addArea" icon="plus" v-has="'ccs-point-warehouse-area-add'"></des-btn>
                                         </span>
-                                        {{ item.warehouseCode }}
+                                        <span class="titleTxt" :title="item.warehouseCode">{{ item.warehouseCode }}</span> 
                                         <!--<el-tag type="success" v-show="item.warnStatus === '0'">正常</el-tag>-->
                                         <!--<el-tag type="danger" v-show="item.warnStatus === '1'">告警</el-tag>-->
                                         <el-tag type="success" v-show="item.activeFlag === '1'">启用</el-tag>
