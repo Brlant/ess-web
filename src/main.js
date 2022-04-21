@@ -26,8 +26,8 @@ import ECharts from 'vue-echarts/components/ECharts.vue';
 import VueAMap, {lazyAMapApiLoaderInstance} from 'vue-amap';
 
 /* yxh 之前引入*/
-    import * as Sentry from '@sentry/browser';
-    import * as Integrations from '@sentry/integrations';
+    // import * as Sentry from '@sentry/browser';
+    // import * as Integrations from '@sentry/integrations';
 
 
 import Layout from 'ant-design-vue'
@@ -54,18 +54,18 @@ Vue.use(ElementUI);
 
 if (process.env.NODE_ENV === 'production') {
     /* yxh 之前引入*/
-    Sentry.init({
-        dsn: 'https://eb94ae86f9104780be615d09d50416f2@f-log.sinopharm-bio.com/3',
-        environment: 'vss',
-        integrations: [new Integrations.Vue({Vue, attachProps: true})],
-        shouldSendCallback: (date) => {// 过滤错误日志
-            let filterArray = ['Request failed with status code 401', 'Request failed with status code 502'];
-            if (date && date.hasOwnProperty('exception') && date.exception.hasOwnProperty('values') && filterArray.indexOf(date.exception.values[0].value) > -1 || date && date.transaction && date.transaction.indexOf('http://requirejs.org/docs/errors.html') > -1) {
-                return false;
-            }
-            return date;
-        }
-    });
+    // Sentry.init({
+    //     dsn: 'https://eb94ae86f9104780be615d09d50416f2@f-log.sinopharm-bio.com/3',
+    //     environment: 'vss',
+    //     integrations: [new Integrations.Vue({Vue, attachProps: true})],
+    //     shouldSendCallback: (date) => {// 过滤错误日志
+    //         let filterArray = ['Request failed with status code 401', 'Request failed with status code 502'];
+    //         if (date && date.hasOwnProperty('exception') && date.exception.hasOwnProperty('values') && filterArray.indexOf(date.exception.values[0].value) > -1 || date && date.transaction && date.transaction.indexOf('http://requirejs.org/docs/errors.html') > -1) {
+    //             return false;
+    //         }
+    //         return date;
+    //     }
+    // });
 
 }
 
