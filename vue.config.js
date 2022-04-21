@@ -16,7 +16,7 @@ module.exports = {
         proxy: {
             '/api': {
                 // target: 'https://test1-mcc.cdcerp.cn/',
-                target: 'https://mcc2.sinopharm-bio.com/', 
+                target: 'https://mcc2.sinopharm-bio.com/',
                 changOrigin: true
             }
         }
