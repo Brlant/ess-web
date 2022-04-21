@@ -2,7 +2,7 @@ import Notification from 'element-ui/lib/notification';
 import axios from 'axios';
 import Vue from 'vue';
 import qs from 'qs';
-import * as Sentry from '@sentry/browser';
+// import * as Sentry from '@sentry/browser';
 
 export const http = axios.create({
   baseURL: process.env.VUE_APP_API,
@@ -24,7 +24,7 @@ http.interceptors.request.use(function (config) {
             'username': data.userName,
             'id': data.userId
         }
-        Sentry.setUser(u);
+        // Sentry.setUser(u);
     } catch (e) {
     }
     if (config.method === 'get') {
