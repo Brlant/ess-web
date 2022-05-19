@@ -37,6 +37,30 @@ $leftWidth: 0px;
                     <el-form-item label="点位名称">
                         {{ form.pointName }}
                     </el-form-item>
+                    <el-form-item label="室内定位" prop="position">{{form.position}}
+                        <el-switch
+                            v-model="form.position"
+                            active-color="rgba(64, 158, 255, 1)"
+                            inactive-color="rgba(220, 223, 230, 1)"
+                        >
+                        </el-switch>
+                    </el-form-item>
+                    <el-form-item label="设备类别" prop="type">
+                        <el-radio-group v-model="form.type" @change="typeChangeFn">
+                            <el-radio :label="1">温湿度计</el-radio>
+                            <el-radio :label="2">环控设备</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="设备类型" prop="devType">
+                         <el-select v-model="form.devType" filterable  @change="devTypeChangeFn" placeholder="请选择设备类型">
+                            <el-option
+                            v-for="(v, i) in devTypeList"
+                            :key="v.productId"
+                            :label="v.productName"
+                            :value="v.productId">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
                     <el-form-item label="设备" prop="devId">
                         <el-select :remote-method="reqDevFn" @click.once.native="reqDevFn('')"
                                    filterable
@@ -95,6 +119,8 @@ $leftWidth: 0px;
 import methodsMixin from '@/mixins/methodsMixin';
 import {PointRelation, TempDev} from '@/resources';
 
+import https from "@/https";
+
 export default {
     components: {},
     props: ['formItem', 'index', 'currentArea'],
@@ -140,8 +166,12 @@ export default {
                 endTime: '',
                 oldPointRelationId: '',
                 currentDevFlag: '',
-                pointName: ''
+                pointName: '',
+                position : true,
+                devType : '',
+                type : 1
             },
+            devTypeList : [],
             doing: false,
             rules: {
                 devId: [
@@ -159,7 +189,30 @@ export default {
                 ],
                 endTime: [{validator: checkEndTime, trigger: 'blur'}]
             },
-            pointRelationList: []
+            pointRelationList: [],
+            tempTypeList: [
+                {  
+                    productName : '有线温度计',
+                    productId : 0
+                }, 
+                {  
+                    productName : '无线温度计',
+                    productId : 1
+                }, 
+                {  
+                    productName : '冷柜温度计',
+                    productId : 2
+                }, 
+                {  
+                    productName : '车载温度计',
+                    productId : 3
+                }, 
+                {  
+                    productName : '湿度计',
+                    productId : 4
+                }
+                
+            ],
         };
     },
     computed: {},
@@ -175,7 +228,10 @@ export default {
                 endTime: '',
                 oldPointRelationId: '',
                 currentDevFlag: '',
-                pointName: ''
+                pointName: '',
+                position : true,
+                devType : '',
+                type : 1
             };
             this.form.devCode = '';
             this.form.pointName = this.formItem.pointName;
@@ -190,8 +246,30 @@ export default {
         }
     },
     mounted(){
+        this.initFn() ;
     },
     methods: {
+        initFn(){
+            this.reqDevTypeFn() ;
+        },
+
+        reqDevTypeFn(){
+            this.form.devType = '' ;
+            this.devTypeList = [] ;
+            if( this.form.type === 1 ){
+                this.devTypeList = this.tempTypeList ;
+            } else {
+                this.devTypeListFn() ; // 请求 环控设备
+            }
+        },
+
+        devTypeListFn(){ // 请求 环控设备
+            https.get('/ccsProduct/list/all').then(res => {
+                this.devTypeList = res ; 
+                console.log('环控设备: ', this.devTypeList) ;
+                
+            })
+        },
 
         reqDevFn(query){
             TempDev.queryALLTempByLike({searchVal: query}).then(res => {
@@ -264,7 +342,17 @@ export default {
                 }
             });
 
-        }
+        },
+
+        typeChangeFn( val ){
+            this.reqDevTypeFn() ;
+            console.error( val ) ;
+        },
+
+        devTypeChangeFn( val ){
+            console.error( 'devTypeChangeFn: ', val ) ;
+        },
+
     }
 };
 </script>

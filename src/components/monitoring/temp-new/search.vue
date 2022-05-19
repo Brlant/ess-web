@@ -63,9 +63,9 @@
                             </el-input>
                         </oms-form-row>
                     </el-col>
-                    <el-col :span="6">
+                    <el-col :span="6" class="dataTypeInfo">
                         <oms-form-row :span="6" label="数据类型">
-                            <el-checkbox-group :max="searchCondition.devId.length > 1 ? 1: 3" @change="search"
+                            <el-checkbox-group :max="searchCondition.devId.length > 1 ? 1: 3" @change="search"  
                                                size="small"
                                                v-if="searchCondition.devId.length <= 1"
                                                v-model="searchCondition.valType">
@@ -78,6 +78,13 @@
                                 <el-radio-button label="2">湿度</el-radio-button>
                                 <el-radio-button label="3">电压</el-radio-button>
                             </el-radio-group>
+
+                            <el-checkbox-group v-model="coordsVal" size="small" @change="coordsValChangeFn">
+                                <el-checkbox-button label="coords">坐标</el-checkbox-button>
+                            </el-checkbox-group>
+                            <!-- <el-radio-group v-model="coordsVal" size="small">
+                                <el-radio-button label="坐标">坐标</el-radio-button>
+                            </el-radio-group> -->
                         </oms-form-row>
                     </el-col>
                     <!-- <el-col :span="2">
@@ -132,6 +139,7 @@
                     2: '湿度',
                     3: '电压'
                 },
+                coordsVal : [],
                 selectTempList: [] // 用来存储已经丢失的 选中过的设备的列表数据
             };
         },
@@ -166,6 +174,9 @@
         },
         methods: {
             search() {
+                console.error(88, this.searchCondition.valType, this.coordsVal ) ;
+                if( this.searchCondition.valType.length ){ this.coordsVal = [] ;  this.$emit( 'changeEcharts', true ) ;  }
+
                 this.searchCondition.startTime = this.formatTimeAry(this.times1, 0);
                 this.searchCondition.endTime = this.formatTimeAry(this.times1, 1);
                 if (!this.searchCondition.devId.length || !this.searchCondition.valType.length) return;
@@ -187,6 +198,7 @@
                     }
                     return item;
                 });
+                
                 this.$emit('search', ary);
 
             },
@@ -283,10 +295,22 @@
                 this.search()
             },
 
+            coordsValChangeFn( v ){
+                this.searchCondition.valType = [] ;
+                this.$emit( 'changeEcharts', false ) ;
+                console.error( 'coordsValChangeFn: ', v, this.coordsVal ) ;
+            },
+
         }
     };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
     .switchBtnInfo{ margin:0 1.5em 0 0; }
+    .dataTypeInfo{
+        
+        .el-checkbox-group{ display:inline-block; vertical-align: middle;
+            &:last-of-type{  margin-left:10px; }
+        }
+    }
 </style>
