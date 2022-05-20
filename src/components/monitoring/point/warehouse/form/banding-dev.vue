@@ -37,38 +37,39 @@ $leftWidth: 0px;
                     <el-form-item label="点位名称">
                         {{ form.pointName }}
                     </el-form-item>
-                    <el-form-item label="室内定位" prop="position">{{form.position}}
+                    <el-form-item label="室内定位" prop="isLocation">
                         <el-switch
-                            v-model="form.position"
+                            v-model="form.isLocation"
                             active-color="rgba(64, 158, 255, 1)"
                             inactive-color="rgba(220, 223, 230, 1)"
                         >
                         </el-switch>
                     </el-form-item>
-                    <el-form-item label="设备类别" prop="type">
-                        <el-radio-group v-model="form.type" @change="typeChangeFn">
+                    <el-form-item label="设备类别" prop="devClass">
+                        <el-radio-group v-model="form.devClass" @change="devClassChangeFn">
                             <el-radio :label="1">温湿度计</el-radio>
                             <el-radio :label="2">环控设备</el-radio>
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item label="设备类型" prop="devType">
-                         <el-select v-model="form.devType" filterable  @change="devTypeChangeFn" placeholder="请选择设备类型">
+                         <el-select v-model="form.devType" value-key="productId" filterable  @change="devTypeChangeFn" placeholder="请选择设备类型">
                             <el-option
                             v-for="(v, i) in devTypeList"
                             :key="v.productId"
                             :label="v.productName"
-                            :value="v.productId">
+                            :value="v">
                             </el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="设备" prop="devId">
-                        <el-select :remote-method="reqDevFn" @click.once.native="reqDevFn('')"
+                        <!-- 之前逻辑 <el-select :remote-method="reqDevFn" @click.once.native="reqDevFn('')" -->
+                        <el-select 
                                    filterable
                                    placeholder="请输入名称搜索设备" popper-class="selects--custom" remote reserve-keyword
                                    v-model="form.devId" @change="setDevInfo">
                             <el-option :key="item.id" :label="item.devName" :value="item.id"
                                        v-for="(item, index) in allTempList">
-                                <dev-option-info :item="item"/>
+                                <dev-option-info :item="item" :dev='form.devType'/>
                                 <!-- {{ item.pointName }} -->
                             </el-option>
                         </el-select>
@@ -167,9 +168,9 @@ export default {
                 oldPointRelationId: '',
                 currentDevFlag: '',
                 pointName: '',
-                position : true,
+                isLocation : true,
                 devType : '',
-                type : 1
+                devClass : 1
             },
             devTypeList : [],
             doing: false,
@@ -219,6 +220,7 @@ export default {
     watch: {
         index: function (val) {
             this.allTempList = [];
+            this.devTypeList = [] ;
             if (val !== 3) return;
             this.$refs['tempForm'].resetFields();
             this.form = {
@@ -229,14 +231,18 @@ export default {
                 oldPointRelationId: '',
                 currentDevFlag: '',
                 pointName: '',
-                position : true,
+                isLocation : true,
                 devType : '',
-                type : 1
+                devClass : 1
             };
             this.form.devCode = '';
             this.form.pointName = this.formItem.pointName;
+            
             // 查询设备
-            this.reqDevFn(); // 
+            // this.reqDevFn(); // 
+
+
+            this.reqDevTypeFn() ;
 
 
             // 查询旧设备绑定记录
@@ -245,18 +251,15 @@ export default {
         currentArea(){
         }
     },
-    mounted(){
-        this.initFn() ;
-    },
+    mounted(){},
     methods: {
-        initFn(){
-            this.reqDevTypeFn() ;
-        },
-
         reqDevTypeFn(){
-            this.form.devType = '' ;
+            this.form.devType = {} ;
             this.devTypeList = [] ;
-            if( this.form.type === 1 ){
+            this.form.devId = '' ;
+            this.form.devCode = '' ;
+
+            if( this.form.devClass === 1 ){
                 this.devTypeList = this.tempTypeList ;
             } else {
                 this.devTypeListFn() ; // 请求 环控设备
@@ -266,8 +269,6 @@ export default {
         devTypeListFn(){ // 请求 环控设备
             https.get('/ccsProduct/list/all').then(res => {
                 this.devTypeList = res ; 
-                console.log('环控设备: ', this.devTypeList) ;
-                
             })
         },
 
@@ -284,8 +285,6 @@ export default {
             }
         },
         setDevInfo(devId) {
-
-            console.error( devId, 88 ) ;
             if (devId) {
                 this.allTempList.forEach(i => {
                     if (i.ccsDevId === devId) {
@@ -327,6 +326,9 @@ export default {
                     this.setPointRelation();
                     let form = JSON.parse(JSON.stringify(this.form));
                     this.doing = true;
+                    form.devType = form.devType.productId;
+                    form.isLocation = form.isLocation ? 1 : 0;
+                    console.error( 'save: ', form, form.isLocation ) ;
                     this.$httpRequestOpera(PointRelation.save(form), {
                         successTitle: '添加成功',
                         errorTitle: '添加失败',
@@ -344,13 +346,37 @@ export default {
 
         },
 
-        typeChangeFn( val ){
+        devClassChangeFn( val ){
             this.reqDevTypeFn() ;
             console.error( val ) ;
         },
 
+
+        reqAllDevListByDevTypeFn( devType ){ // 请求设备
+            let params = { devType } ;
+
+
+            TempDev.reqAllDevListByDevType( params ).then(res => {
+                let { data } = res ;
+
+                if( data ){
+                    data.forEach(v => (v.disabled = false));
+                    this.allTempList = data ;
+                    this.setTempListWhenEdit && this.setTempListWhenEdit();
+                }
+
+                // res.data.currentList.forEach(i => (i.disabled = false));
+                // this.allTempList = res.data.currentList;
+                // this.setTempListWhenEdit && this.setTempListWhenEdit();
+            }) ;
+
+        },
+
         devTypeChangeFn( val ){
-            console.error( 'devTypeChangeFn: ', val ) ;
+            this.form.devId = '' ; // 重置设备
+            this.form.devCode = '' ; // 重置设备编码
+
+            this.reqAllDevListByDevTypeFn( val.productId ) ;
         },
 
     }

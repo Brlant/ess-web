@@ -268,6 +268,10 @@ export const TempDev = resource('/ccsDevice', http, {
     },
     exportDevInfo(params) {
         return http.get('/ccsDevice/export-dev', {params});
+    },
+
+    reqAllDevListByDevType(params) {
+        return http.get('/ccsDevice/type/list', {params});
     }
 });
 

@@ -227,6 +227,7 @@
                 let perms = this.resData.permissionList;
                 if (!checkedMenuList || !perms) return [];
                 this.getMenus(checkedMenuList, perms);
+                console.error( 11, this.resData, checkedMenuList ) ;
                 return checkedMenuList;
             }
         },
@@ -259,6 +260,7 @@
             },
             getMenuList: function (cache = true) {
                 this.getRoleMenus(cache).then(res => {
+                  console.error( '333: ', res.data ) ;
                     this.menuList = res.data;
                 });
             },
@@ -277,6 +279,7 @@
                 permissionList.forEach(val => {
                     permissionIdList.push(val.name);
                 });
+                console.error('----: ', checkedMenuList, permissionIdList);
                 this.getCheckedMenu(checkedMenuList, permissionIdList);
             },
             getPageList: function () {// 查询角色列表
