@@ -16,8 +16,11 @@ module.exports = {
         proxy: {
             '/api': {
                 // target: 'https://test1-mcc.cdcerp.cn/',
-                target: 'https://dev-ess.cdcerp.cn/',
-                changOrigin: true
+                target: 'https://dev-ess-inner.cdcerp.cn/api',
+                changOrigin: true, 
+                pathRewrite : {
+                    '/api' : ''
+                }
             }
         }
     },

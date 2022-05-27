@@ -6,9 +6,14 @@
         <div class="select-other-info clearfix">
             <span class="pull-left mr-15">编码:{{ item.devCode }}</span>
             <span
-                :class="{'pull-right': item.devCode, 'pull-left': !item.devCode}">类型:{{
-                    tempTypeList[item.devType]
-                }}</span>
+                :class="{'pull-right': item.devCode, 'pull-left': !item.devCode}">
+                <!-- 
+                    之前逻辑
+                    类型:{{ tempTypeList[item.devType]}} 
+                -->
+                <!-- 类型:{{dev.productName}} -->
+                类型:{{item.devTypeName ? item.devTypeName : dev.productName }}
+            </span>
             <span class="pull-left mr-15" v-show="item.devNo">编号:{{ item.devNo }}</span>
         </div>
     </div>
@@ -23,7 +28,11 @@ export default {
         item: {
             type: Object,
             required: true
-        }
+        },
+        dev :{
+            type: Object,
+            default : () => ({})
+        },
     }
 };
 </script>

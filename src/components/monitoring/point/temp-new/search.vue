@@ -58,7 +58,7 @@
                             </el-input>
                         </oms-form-row>
                     </el-col>
-                    <el-col :span="4">
+                    <el-col :span="6"  class="dataTypeInfo">
                         <oms-form-row :span="6" label="数据类型">
 <!--                                                        <el-checkbox-group :max="3"-->
 <!--                                                                           @change="search"-->
@@ -73,6 +73,10 @@
                                 <el-radio-button label="2">湿度</el-radio-button>
                                 <el-radio-button label="3">电压</el-radio-button>
                             </el-radio-group>
+
+                            <el-checkbox-group v-model="coordsVal" size="small" @change="coordsValChangeFn">
+                                <el-checkbox-button label="coords">坐标</el-checkbox-button>
+                            </el-checkbox-group>
                         </oms-form-row>
                     </el-col>
                     <!-- 新增-精简/明细 -->
@@ -127,6 +131,7 @@ export default {
                 2: '湿度',
                 3: '电压'
             },
+            coordsVal : [],
             selectPointList: [] // 用来存储已经丢失的 选中过的点位列表数据
         };
     },
@@ -177,6 +182,9 @@ export default {
             this.searchCondition.endTime = this.searchCondition.endTime + 24 * 60 * 60 * 1000;
         },
         search() {
+            console.error(88, this.searchCondition.valType, this.coordsVal ) ;
+            if( this.searchCondition.valType.length ){ this.coordsVal = [] ;  this.$emit( 'changeEcharts', true ) ;  }
+
             this.searchCondition.startTime = this.formatTimeAry(this.times1, 0);
             this.searchCondition.endTime = this.formatTimeAry(this.times1, 1);
             if (!this.searchCondition.pointIdList.length || !this.searchCondition.valType) return;
@@ -282,12 +290,26 @@ export default {
                 });
                 this.doing = false;
             });
-        }
+        },
+
+        coordsValChangeFn( v ){
+            this.searchCondition.valType = [] ;
+            this.$emit( 'changeEcharts', false ) ;
+            console.error( 'coordsValChangeFn: ', v, this.coordsVal ) ;
+        },
+        
     }
 };
 </script>
 
-<style scoped>
+<style lang='scss' scoped>
     .switchBtnInfo{ margin:0 1.5em 0 0; }
+
+    .dataTypeInfo{
+        
+        .el-checkbox-group{ display:inline-block; vertical-align: middle;
+            &:last-of-type{  margin-left:10px; }
+        }
+    }
 </style>
 

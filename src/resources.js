@@ -7,6 +7,7 @@ import qs from 'qs';
 export const http = axios.create({
   baseURL: process.env.VUE_APP_API,
   timeout: 30000,
+  // withCredentials: true
   withCredentials: true
 });
 
@@ -36,6 +37,7 @@ http.interceptors.request.use(function (config) {
 });
 
 http.interceptors.response.use(response => {
+    
     if (isNewReturnType(response.data)) {
         switch (response.data.code) {
             case 200 :
@@ -59,6 +61,8 @@ http.interceptors.response.use(response => {
     } else {
         return response;
     }
+
+    
 }, error => {
   let noticeTipKey = 'noticeError';
   let notice = window.localStorage.getItem(noticeTipKey);
@@ -264,6 +268,10 @@ export const TempDev = resource('/ccsDevice', http, {
     },
     exportDevInfo(params) {
         return http.get('/ccsDevice/export-dev', {params});
+    },
+
+    reqAllDevListByDevType(params) {
+        return http.get('/ccsDevice/type/list', {params});
     }
 });
 
