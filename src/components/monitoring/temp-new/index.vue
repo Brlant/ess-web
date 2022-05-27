@@ -83,9 +83,11 @@
         methods: {
             searchResult: function (search) {
                 this.filters = JSON.parse(JSON.stringify(search));
+                console.error( 'isEcharts: ', this.isEcharts, search ) ;
             }, 
             changeEchartsFn( v ){
                 this.isEcharts = v ;
+                console.error( 'changeEchartsFn :', v ) ;
             }
         }
     };

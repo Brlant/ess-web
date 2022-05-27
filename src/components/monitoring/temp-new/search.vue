@@ -199,6 +199,7 @@
                     return item;
                 });
                 
+                console.error( 'ary: ', ary ) ;
                 this.$emit('search', ary);
 
             },
