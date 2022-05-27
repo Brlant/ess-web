@@ -68,7 +68,7 @@
 <!--                                                            <el-checkbox-button label="2">湿度</el-checkbox-button>-->
 <!--                                                            <el-checkbox-button label="3">电压</el-checkbox-button>-->
 <!--                                                        </el-checkbox-group>-->
-                            <el-radio-group @change="search" size="small" v-model="searchCondition.valType">
+                            <el-radio-group @change="valTypeChangeFn" size="small" v-model="searchCondition.valType">
                                 <el-radio-button label="1">温度</el-radio-button>
                                 <el-radio-button label="2">湿度</el-radio-button>
                                 <el-radio-button label="3">电压</el-radio-button>
@@ -172,7 +172,7 @@ export default {
             });
         })
         .catch(e => {
-            console.error( 18 ) ;
+            console.error( e ) ;
         });
     },
     methods: {
@@ -182,12 +182,15 @@ export default {
             this.searchCondition.endTime = this.searchCondition.endTime + 24 * 60 * 60 * 1000;
         },
         search() {
-            console.error(88, this.searchCondition.valType, this.coordsVal ) ;
-            if( this.searchCondition.valType.length ){ this.coordsVal = [] ;  this.$emit( 'changeEcharts', true ) ;  }
 
             this.searchCondition.startTime = this.formatTimeAry(this.times1, 0);
             this.searchCondition.endTime = this.formatTimeAry(this.times1, 1);
-            if (!this.searchCondition.pointIdList.length || !this.searchCondition.valType) return;
+
+            // if (!this.searchCondition.pointIdList.length || !this.searchCondition.valType) return;
+            if (!this.searchCondition.pointIdList.length && !this.searchCondition.valType && !this.coordsVal.length ) return;
+
+            // if( this.searchCondition.pointIdList.length && !this.searchCondition.valType.length &&  !this.coordsVal.length ) return ;
+
             if (this.searchCondition.startPrice || this.searchCondition.startPrice === 0) {
                 if (this.searchCondition.startPrice <= 0) {
                     return this.$notify.info({
@@ -202,7 +205,7 @@ export default {
                 item.pointName = point && point.pointName;
                 return item;
             });
-            this.$emit('search', ary);
+            this.$emit('search', ary, this.coordsVal.length === 0);
         },
         reset() {
             this.searchCondition = {
@@ -293,9 +296,13 @@ export default {
         },
 
         coordsValChangeFn( v ){
-            this.searchCondition.valType = [] ;
-            this.$emit( 'changeEcharts', false ) ;
-            console.error( 'coordsValChangeFn: ', v, this.coordsVal ) ;
+            this.searchCondition.valType = '' ;
+            this.search() ;
+        },
+
+         valTypeChangeFn( v ){
+            this.coordsVal = [] ;
+            this.search() ;
         },
         
     }

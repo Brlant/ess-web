@@ -747,7 +747,9 @@
             queryGraphList: function () {
                 this.loadingDataWare = true;
 
-                warehouseDevImage.query().then(res => {
+                warehouseDevImage.query({ 
+                  sceneType : 2  // 1 : 静态场景     2 : 室内定位场景
+                }).then(res => {
                   this.currentGraph = {};
                     this.graphList = res.data.ccsWarehouseImageDTOS;
                     let id = this.$route.params.id;
