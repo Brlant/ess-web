@@ -4,7 +4,7 @@
     <svg :style="`left:${currentPos.x}%;top:${currentPos.y}%;height: ${iconScale !== 1 ? '30px' : '20px'};`"
          @click="goTo"
          @mousedown="dragPosition"
-         @mouseenter="showDetail" @mouseleave="hideDetail" @mouseup="isDraging = false" class="tm-container">
+         @mouseenter="showDetail" @mouseleave="hideDetail" @mouseup="isDraging = false" class="tm-container ani">
         <circle :cx="r" :cy="r" :fill="color"
                 :r="r"
                 :stroke="color"
@@ -329,4 +329,10 @@ export default {
 .text {
     transform: translateX(5%);
 }
+@keyframes aniFade{
+    0%, 100%{ opacity:0; }
+    50%{ opacity:1; }
+}
+
+.ani{ animation:aniFade 200ms linear infinite; }
 </style>

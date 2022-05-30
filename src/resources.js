@@ -115,6 +115,10 @@ Vue.prototype.$http = http;
 export const warehouseDevImage = resource('/warehousePointImage', http, {
     updateImage: (id, params) => {
         return http.put('/warehousePointImage/'+id, params);
+    },
+
+    positionById: (id, params) => {
+        return http.get('/warehousePointImage/indoor/position/'+id, params);
     }
 });
 /*

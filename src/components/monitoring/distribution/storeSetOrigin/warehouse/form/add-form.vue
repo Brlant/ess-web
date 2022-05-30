@@ -160,7 +160,8 @@
                                 imageName: this.form.imageName,
                                 imageUrl: this.form.imageUrl,
                                 imageId: this.form.imageId,
-                                warehouseIds: this.form.warehouseIds
+                                warehouseIds: this.form.warehouseIds,
+                                sceneType : 2  // 1 : 静态场景     2 : 室内定位场景
                             };
                             this.doing = true;
                             this.$httpRequestOpera(warehouseDevImage.save(form), {

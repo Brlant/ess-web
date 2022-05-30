@@ -1,5 +1,7 @@
 <template>
-        <div :style="svgFrameStyle" class='boxContainerItem'>
+        <!-- <div :style="svgFrameStyle" class='boxContainerItem'> -->
+        <div class='boxContainerItem'>
+            <img :src='imgUrl' :style="{ width : imgWidth + 'px', height : imgHeight + 'px' }" />
             <VueDraggableResizable
                 :x="v.x"
                 :y="v.y"
@@ -74,6 +76,9 @@ export default {
 
             idVal : '',
 
+            imgWidth : 0, 
+            imgHeight : 0,
+
             step : 500, // 间隔
             videoTimer : null // 定时器引用
 
@@ -140,6 +145,10 @@ export default {
             }) || [];
         },
 
+        imgUrl(){
+            return this.$route.query.imgUrl ;
+        },
+
         isPlay(){
             return this.tempList.some( v => this.getColor(v) === '#f00' ) ;
         }
@@ -152,6 +161,8 @@ export default {
 
             this.svgFrameStyle = { background : this.$route.query.background } ;
             this.activeId =  this.$route.query.activeId ;
+            this.imgWidth = this.$route.query.imgWidth ;
+            this.imgHeight = this.$route.query.imgHeight ;
 
         }
 
@@ -377,5 +388,5 @@ export default {
     .dragContainer h3 span{ text-align:center; transition:right 200ms ease; cursor:pointer; font-weight:normal; font-size:1.2em; width:20px; height:20px; overflow:hidden; position:absolute; right:-20px; top:0; background:rgba(0,0,0,.7); line-height:17px; padding:0; margin:0; }
     .dragContainer h3 span:hover{ background:rgba(245, 108, 108, 1); color:white; }
     .myiframe{ width:100%; height:100%; position:absolute; left:0; top:0; z-index:0; }
-    .boxContainerItem{ width:100vw!important; height:100vh!important; background-size:100% 100%!important; background-repeat:no-repeat; position:absolute; z-index:10; margin:0;}
+    .boxContainerItem{ width:100vw!important; height:100vh!important; background-size:100% 100%!important; overflow-x:auto; overflow-y:auto; background-repeat:no-repeat; position:absolute; z-index:10; margin:0;}
 </style>
