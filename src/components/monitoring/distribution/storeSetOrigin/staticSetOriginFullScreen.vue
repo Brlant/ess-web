@@ -1,6 +1,6 @@
 <template>
         <!-- <div :style="svgFrameStyle" class='boxContainerItem'> -->
-        <div class='boxContainerItem'>
+        <div class='boxContainerItem' ref="svgPart">
             <img :src='imgUrl' :style="{ width : imgWidth + 'px', height : imgHeight + 'px' }" />
             <VueDraggableResizable
                 :x="v.x"
@@ -42,6 +42,13 @@
                 :read-only="true" :size="12" :tmData="tmData" ref="tm-big-part" v-for="(item, index) in tmData">
             {{item.text}}
             </tm>
+
+            <tm :color="item.color" :fontColor="item.fontcolor" :item="item.devDetail" :key="item.ccsDevId" :position="item.position" @showBigMap="showBigMap"
+                :read-only="true"
+                :size="12" :tmData="ccsWarehouseImagePointRelationDTOListData" ref="tm-part" v-for="(item, index) in ccsWarehouseImagePointRelationDTOListData">
+            {{item.text}}
+            </tm>
+            
         </div>
 </template>
 
@@ -78,6 +85,9 @@ export default {
 
             imgWidth : 0, 
             imgHeight : 0,
+            ccsWarehouseImagePointRelationDTOList : [],
+            positionTimer : null,
+            positionTimerStep : 0,
 
             step : 500, // 间隔
             videoTimer : null // 定时器引用
@@ -85,6 +95,47 @@ export default {
         } ;
     },
     computed : {
+        ccsWarehouseImagePointRelationDTOListData() {
+            let width = this.imgWidth;
+            let height = this.imgHeight;
+            
+            if( this.$refs.svgPart ){
+            this.ccsWarehouseImagePointRelationDTOList.filter(f => !f.positionX || !f.positionY).map((m, index) => {
+                m.initPositionX = width / this.$refs.svgPart.offsetWidth / 2 * 100 ; 
+                m.initPositionY = height / this.$refs.svgPart.offsetHeight / 2 * 100 ; 
+
+                m.isNotAlloat = true;
+
+            });
+                
+            return this.ccsWarehouseImagePointRelationDTOList.map((m) => {
+                if (m.warnFlag) {
+                    this.isAlarm = true;
+                } 
+
+                let obj = {
+                    color: this.getColor(m),
+                    fontcolor:m.fontColor,
+                    position: {
+                        // yxh 去除缩放比例设置
+                        x: m.isNotAlloat ? m.initPositionX : m.positionX,
+                        y: m.isNotAlloat ? m.initPositionY : m.positionY
+                        // x: m.isNotAlloat ? m.initPositionX : (m.positionX * this.scaling),
+                        // y: m.isNotAlloat ? m.initPositionY : (m.positionY * this.scaling)
+                    },
+                    text: m.devType === 4 ? 
+                            m.humidity + '%' : 
+                            +m.isVideo === 1 ? // 如果是视频类型
+                            m.pointName :
+                            m.temperature + '℃',
+                    devDetail: m
+                } ;
+                // console.error( 88, obj ) ;
+                return obj;
+            }) || [];
+            }
+        },
+
         tmData() {
             let height = this.currentHeight ? this.currentHeight : (this.bodyHeight);
             let width = this.currentWidth ? this.currentWidth : 866;
@@ -163,6 +214,7 @@ export default {
             this.activeId =  this.$route.query.activeId ;
             this.imgWidth = this.$route.query.imgWidth ;
             this.imgHeight = this.$route.query.imgHeight ;
+            this.positionTimerStep = this.$route.query.positionTimerStep ;
 
         }
 
@@ -190,6 +242,7 @@ export default {
             
             this.queryDevs() ; // 默认初始化
             this.reqListFn() ; // 定时请求渲染数据
+            this.reqPositionById() ;
         },
         getPlayObj( obj ){
             return obj[ this.idVal ] || {}  ;
@@ -236,6 +289,30 @@ export default {
             // this.startDate = startDate
             // this.endDate = endDate
         },
+
+        reqPositionById() {
+            this.positionByIdFn();
+            if( this.positionTimer ){ clearTimeout( this.positionTimer ) ; this.positionTimer = null ; }
+            this.positionTimer = setTimeout( () => {
+                this.reqPositionById() ;
+            }, this.positionTimerStep);
+        },
+
+        positionByIdFn(){
+            if (!this.activeId) return;
+            warehouseDevImage.positionById(this.activeId).then(res => {
+                let { data } = res ;
+
+                data.ccsWarehouseImagePointRelationDTOList.forEach( v => {
+                v.positionX = null ;
+                v.positionY = null ;
+                } ) ;
+
+                this.ccsWarehouseImagePointRelationDTOList = data.ccsWarehouseImagePointRelationDTOList ;
+               
+            });
+        },
+
         showBigMap( item ){
             // 重置
             item.x = item.x || 0 ;

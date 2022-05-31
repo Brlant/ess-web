@@ -562,11 +562,11 @@ export default {
 
         // 修改定位图标 - 离线
         handelSetOriginOffLine(res, file) {
-            // console.error(this.formItems, res, this.flag, 222222) ; // 之前返回 res 就是一个数字, 来做为 highWarnImageId 使用
+            // console.error( res, this.flag, 222222) ; // 之前返回 res 就是一个数字, 来做为 highWarnImageId 使用
             this.formItemsSetOrigin[this.flag].offlineWarnFile = res ;
             this.formItemsSetOrigin[this.flag].offlineWarnImageId = res.attachmentId
             this.formItemsSetOrigin[this.flag].offlineWarnImageSrc = res.url ? res.url : ''
-            this.$refs['offlineWarn'+this.flag][0].clearFilesFn && this.$refs['offlineWarn'+this.flag][0].clearFilesFn() ;
+            this.$refs['offlineWarnSetOrigin'+this.flag][0].clearFilesFn && this.$refs['offlineWarnSetOrigin'+this.flag][0].clearFilesFn() ;
            
         },
         
@@ -576,7 +576,7 @@ export default {
             this.formItemsSetOrigin[this.flag].normalImageId = ''
             this.formItemsSetOrigin[this.flag].normalFile = { attachmentId : '', url : '' } ;
 
-            console.error(this.formItems[this.flag], this.formItems[this.flag].normalFile, 7) ;
+            // console.error(this.formItems[this.flag], this.formItems[this.flag].normalFile, 7) ;
 
             // if(
             //     this.$refs['normal'+this.flag][0] &&
@@ -671,7 +671,7 @@ export default {
             this.currentTab = this.pageSets[0] ;
 
             this.resetFormFn() ;
-            console.error( 'reset...' ) ; 
+            // console.error( 'reset...' ) ; 
 
             this.formItems.forEach(v => {
                 v.normalImageSrc = ''
@@ -700,7 +700,7 @@ export default {
             this.formItems[this.flag].normalImageId = ''
             this.formItems[this.flag].normalFile = { attachmentId : '', url : '' } ;
 
-            console.error(this.formItems[this.flag], this.formItems[this.flag].normalFile, 7) ;
+            // console.error(this.formItems[this.flag], this.formItems[this.flag].normalFile, 7) ;
 
             // if(
             //     this.$refs['normal'+this.flag][0] &&
@@ -810,7 +810,7 @@ export default {
             // this.$http.get(`warehouseDevImage/info/${id}`).then(res => {
             this.$http.get(`warehousePointImage/info/${id}`).then(res => {
                 this.form = res.data;
-                console.error( 68,  res.data ) ;
+                // console.error( 68,  res.data ) ;
                 this.logisticsCenterList.push({id: this.form.logsicId, warehouseCode: this.form.logsicName});
                 this.warehouseList = this.form.warehouseList;
 
@@ -1054,7 +1054,7 @@ export default {
 
                     this.doing = true;
                     
-                    console.error( 88, form, this.form.id ) ;
+                    // console.error( 88, form, this.form.id ) ;
 
                     this.$httpRequestOpera(warehouseDevImage.updateImage(this.form.id, form), {
                         successTitle: '编辑成功',
@@ -1080,10 +1080,10 @@ export default {
         },
 
         refreshStepBlurFn(){
-            console.error( 'refreshStepBlurFn: ', this.form.refreshStep ) ;
-            if( !/^([0-9]\.[0-9]+|[0-9]|10)$/.test( this.form.refreshStep ) ){
+            // console.error( 'refreshStepBlurFn: ', this.form.refreshStep ) ;
+            if( !/^([0-9]\.[0-9]+|[1-9]|10)$/.test( this.form.refreshStep ) ){
                 this.$message({
-                  message : '0 ~ 10, 可以为小数, 最大为10',
+                  message : '1 ~ 10, 可以为小数, 最大为10',
                   type : 'warning'
                 }) ;
                 this.form.refreshStep = '' ;
@@ -1100,7 +1100,7 @@ export default {
                 this.form.picProportion = '' ;
             }
 
-            console.error( 'picProportion: ', this.form.picProportion ) ;
+            // console.error( 'picProportion: ', this.form.picProportion ) ;
         },
         coordsProportionBlurFn(){
             if( !/^([0-9]\.[0-9]+|[1-9]|10)$/.test( this.form.coordsProportion ) ){
@@ -1110,7 +1110,7 @@ export default {
                 }) ;
                 this.form.coordsProportion = '' ;
             }
-            console.error( 'coordsProportion: ', this.form.coordsProportion ) ;
+            // console.error( 'coordsProportion: ', this.form.coordsProportion ) ;
         },
 
 

@@ -281,6 +281,12 @@
                       :size="12" :tmData="tmData" ref="tm-part" v-for="(item, index) in tmData">
                     {{item.text}}
                   </tm>
+
+                  <tm :color="item.color" :fontColor="item.fontcolor" :item="item.devDetail" :key="item.ccsDevId" :position="item.position" @goTo="goTo"
+                      :read-only="!editPosition"
+                      :size="12" :tmData="ccsWarehouseImagePointRelationDTOListData" ref="tm-part" v-for="(item, index) in ccsWarehouseImagePointRelationDTOListData">
+                    {{item.text}}
+                  </tm>
                 </div>
               </div>
 
@@ -388,7 +394,8 @@
                 flashIcon : false,
 
                 imgWidth : 0,
-                imgHeight : 0
+                imgHeight : 0,
+                ccsWarehouseImagePointRelationDTOList : [] // 定位数据列表
 
                 // count : 0
             };
@@ -397,9 +404,49 @@
             bodyHeight: function () {
                 return parseInt(this.$store.state.bodyHeight, 10) - 20;
             },
+            ccsWarehouseImagePointRelationDTOListData() {
+              let width = this.imgWidth;
+              let height = this.imgHeight;
+                
+              if( this.$refs.svgPart ){
+                this.ccsWarehouseImagePointRelationDTOList.filter(f => !f.positionX || !f.positionY).map((m, index) => {
+                    m.initPositionX = width / this.$refs.svgPart.offsetWidth / 2 * 100 ; 
+                    m.initPositionY = height / this.$refs.svgPart.offsetHeight / 2 * 100 ; 
+
+                    m.isNotAlloat = true;
+
+                });
+                  
+                return this.ccsWarehouseImagePointRelationDTOList.map((m) => {
+                    if (m.warnFlag) {
+                      this.isAlarm = true;
+                    } 
+
+                    let obj = {
+                      color: this.getColor(m),
+                        fontcolor:m.fontColor,
+                        position: {
+                            // yxh 去除缩放比例设置
+                            x: m.isNotAlloat ? m.initPositionX : m.positionX,
+                            y: m.isNotAlloat ? m.initPositionY : m.positionY
+                            // x: m.isNotAlloat ? m.initPositionX : (m.positionX * this.scaling),
+                            // y: m.isNotAlloat ? m.initPositionY : (m.positionY * this.scaling)
+                        },
+                        text: m.devType === 4 ? 
+                              m.humidity + '%' : 
+                              +m.isVideo === 1 ? // 如果是视频类型
+                              m.pointName :
+                              m.temperature + '℃',
+                        devDetail: m
+                    } ;
+                    return obj;
+                }) || [];
+              }
+            },
             tmData() {
               let height = this.currentHeight ? this.currentHeight : (this.bodyHeight);
               let width = this.currentWidth ? this.currentWidth : 866;
+
 
               // 70 为绘制一个 svg 的宽度
               let perW = ( 70 / width ) * 100 ; // 这里算出一个 svg 占容器的百分比
@@ -408,7 +455,7 @@
               let xN = 0 ;
 
                 this.tempList.filter(f => !f.positionX || !f.positionY).map((m, index) => {
-                    m.initPositionX = (xN * perW) % 100 ; // 对 x 轴求模, 保证不会超过 100
+                    m.initPositionX = ( xN * perW ) % 100 ; // 对 x 轴求模, 保证不会超过 100
                     m.initPositionY = ( yN * perH ) ;
 
                     if( ( m.initPositionX + perW ) > ( 100 - perW ) ){ // x 轴坐标和一个 svg 窗口的占比 大于100 减去一个窗口的占比
@@ -426,6 +473,7 @@
                       m.isNotAlloat = true;
                     */
                 });
+                
                 return this.tempList.map((m) => {
                     if (m.warnFlag) {
                       this.isAlarm = true;
@@ -451,7 +499,6 @@
                     // 这里的绝对坐标转变为相对百分比坐标, 用于大图展示
                     // obj.position.x = (obj.position.x / width) * 100
                     // obj.position.y = (obj.position.y / height) * 100
-                    // console.error( obj.position, obj.text ) ;
                     return obj;
                 }) || [];
             },
@@ -645,8 +692,6 @@
                       this.imgHeight = image.height;
                     }
 
-                    console.error( 22, 'width: ', image.width, this.currentGraph) ;
-                    console.error( 22, 'height: ', image.height ) ;
                 };
             },
             setBigScaling(width, height) {
@@ -738,7 +783,6 @@
                 this.currentGraph = item;
             },
             showWarehouseDetail(item) {
-              console.error( 100000, item ) ;
 
                 this.idVal = item.backgroundId ; //更新 idVal
 
@@ -809,7 +853,6 @@
                 warehouseDevImage.query({ 
                   sceneType : 2  // 1 : 静态场景     2 : 室内定位场景
                 }).then(res => {
-                  console.error( res, 88 ) ;
                   this.currentGraph = {};
                     this.graphList = res.data.ccsWarehouseImageDTOS;
                     let id = this.$route.params.id;
@@ -833,23 +876,32 @@
                 if (!this.activeId) return;
                 // this.tempList = [];
                 warehouseDevImage.positionById(this.activeId).then(res => {
+                  let { data } = res ;
 
-                  console.error( '定位数据: ', res ) ;
 
-                    // yxh 之前取的 ccsWarehouseImageDevRelationDTOList 字段信息
+                  data.ccsWarehouseImagePointRelationDTOList.forEach( v => {
+                    v.positionX = null ;
+                    v.positionY = null ;
+                  } ) ;
+
+                  this.ccsWarehouseImagePointRelationDTOList = data.ccsWarehouseImagePointRelationDTOList ;
+                  // this.tempList = [ ...this.tempList, ...data.ccsWarehouseImagePointRelationDTOList ]
+                 
+
+                  //   // yxh 之前取的 ccsWarehouseImageDevRelationDTOList 字段信息
                     // let list = res.data.ccsWarehouseImageDevRelationDTOList;
 
                     
-                    let list = res.data.ccsWarehouseImagePointRelationDTOList;  // 现在取 ccsWarehouseImagePointRelationDTOList 字段信息
-                    if (list.length && list[0].backgroundId !== this.activeId) return; 
-                    // console.error( this.$refs.svgPart.offsetWidth, this.currentWidth, 77 ) ; 
-                    this.currentWidth = this.$refs.svgPart.offsetWidth ; 
-                    this.currentHeight = this.$refs.svgPart.offsetHeight ; 
+                  //   let list = res.data.ccsWarehouseImagePointRelationDTOList;  // 现在取 ccsWarehouseImagePointRelationDTOList 字段信息
+                  //   // if (list.length && list[0].backgroundId !== this.activeId) return; 
+                  //   // console.error( this.$refs.svgPart.offsetWidth, this.currentWidth, 77 ) ; 
+                  //   this.currentWidth = this.$refs.svgPart.offsetWidth ; 
+                  //   this.currentHeight = this.$refs.svgPart.offsetHeight ; 
 
-                    this.tempList = [ ...this.tempList, ...list ]; 
-                    if( this.$refs.alarmMusic ){
-                        this.isPlay ? this.$refs.alarmMusic.play() : this.$refs.alarmMusic.pause();
-                    }
+                  //   this.tempList = [ ...this.tempList, ...list ]; 
+                  //   if( this.$refs.alarmMusic ){
+                  //       this.isPlay ? this.$refs.alarmMusic.play() : this.$refs.alarmMusic.pause();
+                  //   }
                     /**/
                     
                     // debugger
@@ -948,7 +1000,6 @@
                 this.setTimes(setTimeout(this.loopQueryDevs, 10000));
             },
             reqPositionById() {
-              console.error( 'reqPositionById...' ) ;
                 this.positionByIdFn();
                 if( this.positionTimer ){ clearTimeout( this.positionTimer ) ; this.positionTimer = null ; }
                 this.positionTimer = setTimeout( () => {
