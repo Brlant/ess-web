@@ -3,6 +3,7 @@
 
 #myTablesInfo{
   .d-table > div.d-table-right {
+    width:calc( 100% - 222px ) ;
     padding: 0;
   }
 
@@ -114,10 +115,19 @@
   .flexWAuto{ flex-shrink:1; }
 
   #d-table-left_scroll .el-scrollbar__view, .content-right{ width:100%; height:100%; position:relative; }
-  .svgPart{ width:100%; height:100%!important; position:relative; background-size:100% 100%!important; overflow:hidden; }
+  .svgPart{ width:100%!important; height:calc(100% - 28px)!important; position:relative; background-size:100% 100%!important; overflow:hidden; box-sizing:border-box; }
+  .imgUrlInfo{ overflow-x:auto; overflow-y:auto; 
+    /*
+    &::-webkit-scrollbar{ width:.4em; height:.5em; background:rgba(0,0,0,0); border-radius:1em; overflow:hidden; }
+    &::-webkit-scrollbar:hover{ background:rgba(0,0,0,0); }
+    &::-webkit-scrollbar-thumb{ background:rgba(24, 144, 255, 1); border:solid 1px rgba(0,0,0,.1); border-radius:1em; }
+    &::-webkit-scrollbar-thumb:hover{  }
+    */
+  }
+
  }
 
- .content{ width:100%!important; height:100%!important; position:relative; overflow:hidden; }
+ .content{ width:100%!important; height:100%!important; position:relative; overflow:hidden; box-sizing:border-box; }
 
  .titleTxt{ display:flex; justify-content:space-between; padding:.1em .7em .3em; }
     .dragContainer{ width:400px; height:auto; z-index:2!important; position:absolute; color:white; }
@@ -166,7 +176,9 @@
           </div>
         </el-scrollbar>
       </div>
-      <div class="d-table-right applyFlex flexWStatic">
+      
+      <!-- <div class="d-table-right applyFlex flexWStatic"> -->
+      <div class="d-table-right">
         <!-- 
           之前标签
           <el-scrollbar :style="'height:'+ (bodyHeight+20) + 'px'" class="d-table-left_scroll" id="d-table-left_scroll" tag="div"> 
@@ -193,7 +205,10 @@
             <!--<oms-row label="仓库编码" :span="3" style="font-size: 14px">{{warehouseList.join('，')}}</oms-row>-->
             <!--</div>-->
             <!--</div>-->
-            <div class="form-header-part is-mini part-bg flexDis flexDirV"  ref="topRow">
+
+
+            <!--<div class="form-header-part is-mini part-bg flexDis flexDirV flexWStatic"  ref="topRow"> -->
+            <div class="form-header-part is-mini part-bg"  ref="topRow">
               <el-row class="top">
                 <el-col :span="17">
                   <div class="header" >
@@ -226,8 +241,9 @@
                   </el-button-group>
                 </el-col>
               </el-row>
-              <!-- <div class="content clearfix applyFlex flexDis flexDirV" :style="{ 'width': currentWidth + 'px', 'height' : currentHeight + 'px' }"> -->
-              <div class="content clearfix applyFlex flexDis flexDirV">
+              <!-- <div class="content clearfix applyFlex flexDis flexDirV flexWStatic" :style="{ 'width': currentWidth + 'px', 'height' : currentHeight + 'px' }"> -->
+              <!-- <div class="content clearfix applyFlex flexDis flexDirV flexWStatic"> -->
+              <div class="content clearfix">
                 
                 <VueDraggableResizable
                   :x="v.x"
@@ -252,14 +268,23 @@
                   <iframe data-v-5a9dd0f5="" class="myiframe" ref="myiframe" :src="v.src" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen"></iframe>
                 </VueDraggableResizable>
 
-                <div :style="svgFrameStyle" id="svgPart" ref="svgPart" class="svgPart applyFlex" >
+                <!-- 之前逻辑 <div :style="svgFrameStyle" id="svgPart" ref="svgPart" class="svgPart applyFlex" > -->
+
+                <div id="svgPart" ref="svgPart" class="svgPart applyFlex imgUrlInfo flexWStatic" >
                   <!--
                     暂时屏蔽跳转大图功能
                     @showBigMap="showBigMap"
                   -->
+                  <img :src="imgUrl" style="user-select:none;" :style="{ width : imgWidth + 'px', height : imgHeight + 'px' }" />
                   <tm :color="item.color" :fontColor="item.fontcolor" :item="item.devDetail" :key="index" :position="item.position" @goTo="goTo"
                       :read-only="!editPosition"
                       :size="12" :tmData="tmData" ref="tm-part" v-for="(item, index) in tmData">
+                    {{item.text}}
+                  </tm>
+
+                  <tm :color="item.color" :fontColor="item.fontcolor" :item="item.devDetail" :key="item.ccsDevId" :position="item.position" @goTo="goTo"
+                      :read-only="!editPosition"
+                      :size="12" :tmData="ccsWarehouseImagePointRelationDTOListData" ref="tm-part" v-for="(item, index) in ccsWarehouseImagePointRelationDTOListData">
                     {{item.text}}
                   </tm>
                 </div>
@@ -363,6 +388,14 @@
                 idVal : '', // 场景 id 
                 step : 1000, // 间隔
                 timer : null, // 定时器引用
+                positionTimer : null,
+                positionTimerStep : 1000,
+
+                flashIcon : false,
+
+                imgWidth : 0,
+                imgHeight : 0,
+                ccsWarehouseImagePointRelationDTOList : [] // 定位数据列表
 
                 // count : 0
             };
@@ -371,9 +404,49 @@
             bodyHeight: function () {
                 return parseInt(this.$store.state.bodyHeight, 10) - 20;
             },
+            ccsWarehouseImagePointRelationDTOListData() {
+              let width = this.imgWidth;
+              let height = this.imgHeight;
+                
+              if( this.$refs.svgPart ){
+                this.ccsWarehouseImagePointRelationDTOList.filter(f => !f.positionX || !f.positionY).map((m, index) => {
+                    m.initPositionX = width / this.$refs.svgPart.offsetWidth / 2 * 100 ; 
+                    m.initPositionY = height / this.$refs.svgPart.offsetHeight / 2 * 100 ; 
+
+                    m.isNotAlloat = true;
+
+                });
+                  
+                return this.ccsWarehouseImagePointRelationDTOList.map((m) => {
+                    if (m.warnFlag) {
+                      this.isAlarm = true;
+                    } 
+
+                    let obj = {
+                      color: this.getColor(m),
+                        fontcolor:m.fontColor,
+                        position: {
+                            // yxh 去除缩放比例设置
+                            x: m.isNotAlloat ? m.initPositionX : m.positionX,
+                            y: m.isNotAlloat ? m.initPositionY : m.positionY
+                            // x: m.isNotAlloat ? m.initPositionX : (m.positionX * this.scaling),
+                            // y: m.isNotAlloat ? m.initPositionY : (m.positionY * this.scaling)
+                        },
+                        text: m.devType === 4 ? 
+                              m.humidity + '%' : 
+                              +m.isVideo === 1 ? // 如果是视频类型
+                              m.pointName :
+                              m.temperature + '℃',
+                        devDetail: m
+                    } ;
+                    return obj;
+                }) || [];
+              }
+            },
             tmData() {
               let height = this.currentHeight ? this.currentHeight : (this.bodyHeight);
               let width = this.currentWidth ? this.currentWidth : 866;
+
 
               // 70 为绘制一个 svg 的宽度
               let perW = ( 70 / width ) * 100 ; // 这里算出一个 svg 占容器的百分比
@@ -382,7 +455,7 @@
               let xN = 0 ;
 
                 this.tempList.filter(f => !f.positionX || !f.positionY).map((m, index) => {
-                    m.initPositionX = (xN * perW) % 100 ; // 对 x 轴求模, 保证不会超过 100
+                    m.initPositionX = ( xN * perW ) % 100 ; // 对 x 轴求模, 保证不会超过 100
                     m.initPositionY = ( yN * perH ) ;
 
                     if( ( m.initPositionX + perW ) > ( 100 - perW ) ){ // x 轴坐标和一个 svg 窗口的占比 大于100 减去一个窗口的占比
@@ -400,6 +473,7 @@
                       m.isNotAlloat = true;
                     */
                 });
+                
                 return this.tempList.map((m) => {
                     if (m.warnFlag) {
                       this.isAlarm = true;
@@ -425,14 +499,22 @@
                     // 这里的绝对坐标转变为相对百分比坐标, 用于大图展示
                     // obj.position.x = (obj.position.x / width) * 100
                     // obj.position.y = (obj.position.y / height) * 100
-                    // console.error( obj.position, obj.text ) ;
                     return obj;
                 }) || [];
             },
+            imgUrl() {
+                // let height = this.currentHeight ? this.currentHeight + 'px' : (this.bodyHeight) + 'px';
+                // let width = this.currentWidth ? this.currentWidth + 'px' : '866px';
+                // console.error( this.currentGraph ) ;
+
+                return `${this.currentGraph.backgroundUrl}`;
+            },
+
             svgFrameStyle() {
                 // let height = this.currentHeight ? this.currentHeight + 'px' : (this.bodyHeight) + 'px';
                 // let width = this.currentWidth ? this.currentWidth + 'px' : '866px';
 
+                
                 return {
                     // height,
                     // width,
@@ -443,6 +525,7 @@
                     'background-repeat': 'no-repeat',
                     'background-size': 'contain'
                 };
+                
             },
             warehouseList() {
                 let wSet = new Set();
@@ -479,6 +562,7 @@
             this.switchAlarm();
             this.alarmAudio();
             this.setTimes(setTimeout(this.loopQueryDevs, 10000));
+            this.reqPositionById() ;
             let id = this.$route.params.id;
             if (id === ':id') this.$router.push(this.$route.path.replace(':', ''));
 
@@ -599,6 +683,15 @@
                     // console.error( this.currentWidth,this.$refs.svgPart.offsetHeight, 88 ) ;
                     // 设置完缩放值后，在查询
                     this.queryDevs();
+                    
+                    if( this.currentGraph.indoorPositionSceneDTO ){ // 如果有配置对象定位属性
+                      this.imgWidth = image.width * +this.currentGraph.indoorPositionSceneDTO.backgroundRatio ; 
+                      this.imgHeight = image.height * +this.currentGraph.indoorPositionSceneDTO.backgroundRatio ; 
+                    } else {  // 针对新增的时候没有 indoorPositionSceneDTO 属性参数时默认显示宽高比
+                      this.imgWidth = image.width;
+                      this.imgHeight = image.height;
+                    }
+
                 };
             },
             setBigScaling(width, height) {
@@ -702,13 +795,20 @@
                   }
                 }
 
+                if( item.indoorPositionSceneDTO ){
+                  this.positionTimerStep = 1000 * +item.indoorPositionSceneDTO.refreshInterval ;
+                  this.flashIcon = +item.indoorPositionSceneDTO.flashIcon ? true : false ;
+                }
+
                 this.currentGraph = item;
                 this.activeId = item.backgroundId;
                 this.tempList = [];
                 this.isAlarm = false;
                 this.drawer=false;
                 this.setScaling();
-                this.$router.push(`/monitoring/distribution/${item.backgroundId ? item.backgroundId : 'id'}`);
+
+                // 之前逻辑 this.$router.push(`/monitoring/distribution/${item.backgroundId ? item.backgroundId : 'id'}`);
+                this.$router.push(`/monitoring/distributionsetorigin/${item.backgroundId ? item.backgroundId : 'id'}`);
             },
             showBigMap() { // 显示大图
                 this.tempList = [];
@@ -724,12 +824,17 @@
 
 
                 let routeData = this.$router.resolve({
-                    path: `/monitoring/distribution/staticFullScreen/${this.currentGraph.backgroundId ? this.currentGraph.backgroundId : 'id'}`,
+                    path: `/monitoring/distribution/staticSetOriginFullScreen/${this.currentGraph.backgroundId ? this.currentGraph.backgroundId : 'id'}`,
                     query : {
                       // svgFrameStyle : JSON.stringify(this.svgFrameStyle), // 之前逻辑
                       // currentGraph : JSON.stringify(this.currentGraph), // 之前逻辑
                       // tmData : JSON.stringify(this.tmData), // 之前逻辑
                       background : this.svgFrameStyle.backgroundImage,
+                      imgUrl : this.imgUrl,
+                      imgWidth : this.imgWidth,
+                      imgHeight : this.imgHeight,
+                      positionTimerStep : this.positionTimerStep,
+                      flashIcon : this.flashIcon,
                       activeId : this.activeId
                     }
                 });
@@ -746,7 +851,7 @@
                 this.loadingDataWare = true;
 
                 warehouseDevImage.query({ 
-                  sceneType : 1  // 1 : 静态场景     2 : 室内定位场景
+                  sceneType : 2  // 1 : 静态场景     2 : 室内定位场景
                 }).then(res => {
                   this.currentGraph = {};
                     this.graphList = res.data.ccsWarehouseImageDTOS;
@@ -763,8 +868,74 @@
                         this.graphList.length && this.showWarehouseDetail(this.graphList[0]);
                     }
                     this.loadingDataWare = false;
+
+                    this.positionByIdFn() ;
                 });
             },
+            positionByIdFn(){
+                if (!this.activeId) return;
+                // this.tempList = [];
+                warehouseDevImage.positionById(this.activeId).then(res => {
+                  let { data } = res ;
+
+                  this.ccsWarehouseImagePointRelationDTOList = data.ccsWarehouseImagePointRelationDTOList ;
+                  // this.tempList = [ ...this.tempList, ...data.ccsWarehouseImagePointRelationDTOList ]
+                 
+
+                  //   // yxh 之前取的 ccsWarehouseImageDevRelationDTOList 字段信息
+                    // let list = res.data.ccsWarehouseImageDevRelationDTOList;
+
+                    
+                  //   let list = res.data.ccsWarehouseImagePointRelationDTOList;  // 现在取 ccsWarehouseImagePointRelationDTOList 字段信息
+                  //   // if (list.length && list[0].backgroundId !== this.activeId) return; 
+                  //   // console.error( this.$refs.svgPart.offsetWidth, this.currentWidth, 77 ) ; 
+                  //   this.currentWidth = this.$refs.svgPart.offsetWidth ; 
+                  //   this.currentHeight = this.$refs.svgPart.offsetHeight ; 
+
+                  //   this.tempList = [ ...this.tempList, ...list ]; 
+                  //   if( this.$refs.alarmMusic ){
+                  //       this.isPlay ? this.$refs.alarmMusic.play() : this.$refs.alarmMusic.pause();
+                  //   }
+                    /**/
+                    
+                    // debugger
+                      // if( this.count % 2 === 0 ){
+                      //   list.forEach( v => {
+                      //     v.warnFlag = false ;
+                      //   } ) ;
+                      // } else {
+                      //     list.forEach( v => {
+                      //     v.warnFlag = true ;
+                      //   } ) ;
+                      // }
+                    
+                    
+                    
+                    // this.count ++ ;
+
+                   
+
+                    /*
+                      // 暂时屏蔽掉大图跳转逻辑
+                      if( isStaticFullScreen ){
+
+                          let routeData = this.$router.resolve({
+                              path: `/monitoring/distribution/staticFullScreen/${this.currentGraph.backgroundId ? this.currentGraph.backgroundId : 'id'}`,
+                              query : {
+                                // svgFrameStyle : JSON.stringify(this.svgFrameStyle), // 之前逻辑
+                                // currentGraph : JSON.stringify(this.currentGraph), // 之前逻辑
+                                // tmData : JSON.stringify(this.tmData), // 之前逻辑
+                                background : this.svgFrameStyle.backgroundImage,
+                                activeId : this.activeId
+                              }
+                          });
+                          window.open(routeData.href, '_blank') ;
+
+                      }
+                    */
+                });
+            },
+
             queryDevs: function ( isStaticFullScreen ) {
                 if (!this.activeId) return;
                 // this.tempList = [];
@@ -821,6 +992,13 @@
             loopQueryDevs() {
                 this.queryDevs();
                 this.setTimes(setTimeout(this.loopQueryDevs, 10000));
+            },
+            reqPositionById() {
+                this.positionByIdFn();
+                if( this.positionTimer ){ clearTimeout( this.positionTimer ) ; this.positionTimer = null ; }
+                this.positionTimer = setTimeout( () => {
+                  this.reqPositionById() ;
+                }, this.positionTimerStep);
             },
             doEditPos() {
                 this.editPosition = true;

@@ -92,11 +92,15 @@
         },
         watch: {
             showIndex(val) {
-                if (val === -1 && this.pageSets) {
+              this.$nextTick( () => {
+                // if (val === -1 && this.pageSets) {
+                if (this.pageSets) {
                     this.selectTab(this.pageSets[0], 0);
                 }
                 this.titleAry = null;
                 this.dialogWarp = null;
+
+              } ) ;
             }
         },
         methods: {

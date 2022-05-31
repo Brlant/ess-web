@@ -127,6 +127,15 @@ export const routes = [
             // meta: { moduleId: 'monitoring', title: '静态场景', perm: 'ccs-devmap-scan', subMenuId: 'distribution' },
             meta: { moduleId: 'monitoring', title: '静态场景', perm: 'ccs-devmap-manager', subMenuId: 'distribution' },
           },
+          {
+            path: '/monitoring/distributionsetorigin/:id',
+            component: () => import('./components/monitoring/distribution/storeSetOrigin/index.vue'),
+
+            // yxh 修改
+            // meta: {moduleId: 'monitoring', title: '设备分布', perm: 'ccs-devmap-scan', subMenuId: 'distribution'}
+            // meta: { moduleId: 'monitoring', title: '静态场景', perm: 'ccs-devmap-scan', subMenuId: 'distribution' },
+            meta: { moduleId: 'monitoring1', title: '静态场景-原点设置', perm: 'ccs-devmap-manager-set-origin', subMenuId: 'distributionsetorigin' },
+          },
 
 
 
@@ -377,6 +386,11 @@ export const routes = [
     path: '/monitoring/distribution/staticFullScreen/:id',
     component: () => import('./components/monitoring/distribution/store/staticFullScreen.vue'),
     meta: { moduleId: 'monitoring', title: '静态场景全屏', perm: '', subMenuId: 'distribution' },
+  },
+  {
+    path: '/monitoring/distribution/staticSetOriginFullScreen/:id',
+    component: () => import('./components/monitoring/distribution/storeSetOrigin/staticSetOriginFullScreen.vue'),
+    meta: { moduleId: 'monitoring', title: '静态场景原点设置全屏', perm: '', subMenuId: 'distribution' },
   },
   {
     path: '/monitoring/org-distribution/orgStaticFullScreen/:id',

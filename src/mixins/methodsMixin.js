@@ -94,6 +94,23 @@ export default {
             //         this.setTempListWhenEdit && this.setTempListWhenEdit();
             //     }
             // });
+        },
+        findAllDevListFuzzy(query) {
+            TempDev.findAllDevListFuzzy({searchVal: query}).then(res => {
+                res.data.currentList.forEach(i => (i.disabled = false));
+                this.allTempList = res.data.currentList;
+                this.setTempListWhenEdit && this.setTempListWhenEdit();
+            }) ;
+
+            //  Point.queryPager({keyWord: query}).then(res => {
+            //     let { data } = res ; 
+
+            //     if( data && data.list ){
+            //         data.list.forEach(i => (i.disabled = false));
+            //         this.allTempList = data.list;
+            //         this.setTempListWhenEdit && this.setTempListWhenEdit();
+            //     }
+            // });
         }
     }
 };

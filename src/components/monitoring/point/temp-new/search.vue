@@ -58,7 +58,7 @@
                             </el-input>
                         </oms-form-row>
                     </el-col>
-                    <el-col :span="4">
+                    <el-col :span="6"  class="dataTypeInfo">
                         <oms-form-row :span="6" label="数据类型">
 <!--                                                        <el-checkbox-group :max="3"-->
 <!--                                                                           @change="search"-->
@@ -68,11 +68,15 @@
 <!--                                                            <el-checkbox-button label="2">湿度</el-checkbox-button>-->
 <!--                                                            <el-checkbox-button label="3">电压</el-checkbox-button>-->
 <!--                                                        </el-checkbox-group>-->
-                            <el-radio-group @change="search" size="small" v-model="searchCondition.valType">
+                            <el-radio-group @change="valTypeChangeFn" size="small" v-model="searchCondition.valType">
                                 <el-radio-button label="1">温度</el-radio-button>
                                 <el-radio-button label="2">湿度</el-radio-button>
                                 <el-radio-button label="3">电压</el-radio-button>
                             </el-radio-group>
+
+                            <el-checkbox-group v-model="coordsVal" size="small" @change="coordsValChangeFn">
+                                <el-checkbox-button label="coords">坐标</el-checkbox-button>
+                            </el-checkbox-group>
                         </oms-form-row>
                     </el-col>
                     <!-- 新增-精简/明细 -->
@@ -127,6 +131,7 @@ export default {
                 2: '湿度',
                 3: '电压'
             },
+            coordsVal : [],
             selectPointList: [] // 用来存储已经丢失的 选中过的点位列表数据
         };
     },
@@ -167,7 +172,7 @@ export default {
             });
         })
         .catch(e => {
-            console.error( 18 ) ;
+            console.error( e ) ;
         });
     },
     methods: {
@@ -177,9 +182,15 @@ export default {
             this.searchCondition.endTime = this.searchCondition.endTime + 24 * 60 * 60 * 1000;
         },
         search() {
+
             this.searchCondition.startTime = this.formatTimeAry(this.times1, 0);
             this.searchCondition.endTime = this.formatTimeAry(this.times1, 1);
-            if (!this.searchCondition.pointIdList.length || !this.searchCondition.valType) return;
+
+            // if (!this.searchCondition.pointIdList.length || !this.searchCondition.valType) return;
+            if (!this.searchCondition.pointIdList.length && !this.searchCondition.valType && !this.coordsVal.length ) return;
+
+            // if( this.searchCondition.pointIdList.length && !this.searchCondition.valType.length &&  !this.coordsVal.length ) return ;
+
             if (this.searchCondition.startPrice || this.searchCondition.startPrice === 0) {
                 if (this.searchCondition.startPrice <= 0) {
                     return this.$notify.info({
@@ -194,7 +205,7 @@ export default {
                 item.pointName = point && point.pointName;
                 return item;
             });
-            this.$emit('search', ary);
+            this.$emit('search', ary, this.coordsVal.length === 0);
         },
         reset() {
             this.searchCondition = {
@@ -282,12 +293,30 @@ export default {
                 });
                 this.doing = false;
             });
-        }
+        },
+
+        coordsValChangeFn( v ){
+            this.searchCondition.valType = '' ;
+            this.search() ;
+        },
+
+         valTypeChangeFn( v ){
+            this.coordsVal = [] ;
+            this.search() ;
+        },
+        
     }
 };
 </script>
 
-<style scoped>
+<style lang='scss' scoped>
     .switchBtnInfo{ margin:0 1.5em 0 0; }
+
+    .dataTypeInfo{
+        
+        .el-checkbox-group{ display:inline-block; vertical-align: middle;
+            &:last-of-type{  margin-left:10px; }
+        }
+    }
 </style>
 
