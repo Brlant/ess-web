@@ -303,11 +303,6 @@ export default {
             warehouseDevImage.positionById(this.activeId).then(res => {
                 let { data } = res ;
 
-                data.ccsWarehouseImagePointRelationDTOList.forEach( v => {
-                v.positionX = null ;
-                v.positionY = null ;
-                } ) ;
-
                 this.ccsWarehouseImagePointRelationDTOList = data.ccsWarehouseImagePointRelationDTOList ;
                
             });
