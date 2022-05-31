@@ -1,6 +1,6 @@
 <template>
   <div class="order-page">
-    <search-part @search="searchResult" @changeEcharts='changeEchartsFn'/>
+    <search-part @search="searchResult"/>
     <!--
         之前逻辑 
         <chart-line :filters="filters" chartWidth="1200px" v-if="filters.length === 1"/>
@@ -14,22 +14,33 @@
     </div>
     <div v-else>
         <el-table
-        :data="dataList"
+            :data="dataList"
+            v-loading="dataListLoading"    
         >
-        <el-table-column
-            prop="date"
-            label="时间"
-            width="180">
-        </el-table-column>
-        <el-table-column
-            prop="x"
-            label="x"
-            width="180">
-        </el-table-column>
-        <el-table-column
-            prop="y"
-            label="y">
-        </el-table-column>
+            <el-table-column
+                prop="collectionTime"
+                label="时间"
+                width="180"
+            >
+                <template slot-scope="{ row }">
+                    {{ row.collectionTime }}
+                </template>
+            </el-table-column>
+            <el-table-column
+                label="x"
+                width="180"
+            >
+                <template slot-scope="{ row }">
+                    {{ row.propValueMap.pointX }}
+                </template>
+            </el-table-column>
+            <el-table-column
+                label="y"
+            >
+                <template slot-scope="{ row }">
+                    {{ row.propValueMap.pointY }}
+                </template>
+            </el-table-column>
         </el-table>
     </div>
     <!-- <div class="order-list" v-else>
@@ -56,6 +67,8 @@
     import ChartLine from './chart-line-new-copy';
     import ChartLineMultiple from './chart-line-new-multiple-dev';
 
+     import {TempDev} from '@/resources';
+
     export default {
         components: {
             SearchPart, ChartLine, ChartLineMultiple
@@ -66,6 +79,7 @@
                 isEcharts : true, // 是否是 echarts     true : echarts图表      false : 表格数据
                 filters: [],
                 tempInfo: {},
+                dataListLoading : false,
                 dataList : [
                     // {
                     //     date : '2022.05.15',
@@ -81,14 +95,39 @@
             };
         },
         methods: {
-            searchResult: function (search) {
-                this.filters = JSON.parse(JSON.stringify(search));
-                console.error( 'isEcharts: ', this.isEcharts, search ) ;
-            }, 
-            changeEchartsFn( v ){
-                this.isEcharts = v ;
-                console.error( 'changeEchartsFn :', v ) ;
+            searchResult: function (search, isEcharts) {
+                this.filters = JSON.parse(JSON.stringify(search)) ;
+
+                this.isEcharts = isEcharts ;
+                
+                if( !this.isEcharts ){ // 如果为坐标
+                    
+                    if( this.filters.length ){
+                        const {startTime, endTime, devId, devCode,  startPrice} = this.filters[0];
+                        this.dataListLoading = true ;
+
+                        TempDev.gainDeviceThingDataList(  { ...this.filters[0] } )
+                        .then( d => {
+                            let { data } = d ;
+
+                            this.dataListLoading = false ;
+
+                            if( data ){
+                                this.dataList = data.thingDataList || [] ;
+                            }
+                            // console.error( '坐标数据: ', d ) ;
+                        } )
+                        .catch( err => {
+                            this.dataListLoading = false ;
+                            console.error( err ) ;
+                        } ) ;
+                    }
+                } else {
+                    this.dataList  = [] ;
+                }
+
             }
+           
         }
     };
 </script>

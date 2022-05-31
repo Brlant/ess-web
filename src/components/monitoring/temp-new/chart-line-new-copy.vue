@@ -39,7 +39,6 @@
         watch: {
             filters: {
                 handler: function () {
-                    console.error( this.detail, 111 ) ;
                     this.queryList();
                 },
                 deep: true,

@@ -11,7 +11,7 @@
                 <joinData v-if="activeName === 'third'"/>
             </el-tab-pane>
             <el-tab-pane label="导出历史数据" name="four">
-                <outputHistoryData />
+                <outputHistoryData v-if="activeName === 'four'" />
             </el-tab-pane>
         </el-tabs>
     </div>
@@ -34,7 +34,7 @@
         },
         methods : {
             handleClick(tab, event) {
-                // console.error(tab, event);
+                // console.error(tab, tab.name, event);
             }
         },
         mounted(){

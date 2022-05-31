@@ -1,16 +1,18 @@
 <template>
     <!-- <svg :style="`left:${currentPos.x}px;top:${currentPos.y}px;height: ${iconScale !== 1 ? '30px' : '20px'}`" -->
     <!-- <svg  :style="`left:${currentPos.x}px;top:${currentPos.y}px;height: ${iconScale !== 1 ? '30px' : '20px'}`" -->
-    <svg :style="`left:${currentPos.x}%;top:${currentPos.y}%;height: ${iconScale !== 1 ? '30px' : '20px'};`"
+        
+    <svg :style="
+        `left:${currentPos.x}%;top:${currentPos.y}%;height: ${iconScale !== 1 ? '30px' : '20px'};`  
+    "
          @click="goTo"
          @mousedown="dragPosition"
-         @mouseenter="showDetail" @mouseleave="hideDetail" @mouseup="isDraging = false" class="tm-container">
+         @mouseenter="showDetail" @mouseleave="hideDetail" @mouseup="isDraging = false" class="tm-container" :class="{ ani : item.indoorPositionSceneDTO && +item.indoorPositionSceneDTO.flashIcon  }">
         <circle :cx="r" :cy="r" :fill="color"
                 :r="r"
                 :stroke="color"
                 stroke-linecap="round"
                 stroke-width="0" v-show="item.devType === '3'"></circle>
-        
         
         <!--
             // 之前字段
@@ -251,8 +253,6 @@ export default {
             };
             this.isDraging = true;
 
-            // console.error(  'old: ', rootNode.getBoundingClientRect(), oEvent.clientX, oEvent.offsetX, oEvent.offsetY) ;
-
             rootNode.onmousemove = function (e) {
                 let oEvent = e || event;
                 // let dpos = self.getPos(oEvent);
@@ -286,6 +286,7 @@ export default {
         // 去除减的半径
         let x = this.position.x * this.scale;
         let y = this.position.y * this.scale;
+
         this.currentPos = {
             x,
             y
@@ -329,4 +330,10 @@ export default {
 .text {
     transform: translateX(5%);
 }
+@keyframes aniFade{
+    0%, 100%{ opacity:0; }
+    50%{ opacity:1; }
+}
+
+.ani{ animation:aniFade 200ms linear infinite; }
 </style>

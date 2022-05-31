@@ -115,6 +115,10 @@ Vue.prototype.$http = http;
 export const warehouseDevImage = resource('/warehousePointImage', http, {
     updateImage: (id, params) => {
         return http.put('/warehousePointImage/'+id, params);
+    },
+
+    positionById: (id, params) => {
+        return http.get('/warehousePointImage/indoor/position/'+id, params);
     }
 });
 /*
@@ -223,6 +227,12 @@ export const Point = resource('/ccs-point', http, {
     queryPager(params) {
         return http.get(`/ccs-point/pager`, {params});
     },
+
+    gainPointThingDataList(params) {
+        return http.get(`mcc-data/ccsDevice/gainPointThingDataList`, {params});
+    },
+
+
 });
 
 // 点位设备关系
@@ -267,12 +277,21 @@ export const TempDev = resource('/ccsDevice', http, {
         return http.get('/ccsDevice/queryDevListFuzzy', {params});
     },
     exportDevInfo(params) {
-        return http.get('/ccsDevice/export-dev', {params});
+      return http.get('/ccsDevice/export-dev', {params});
+    },
+    
+    reqAllDevListByDevType(params) {
+      return http.get('/ccsDevice/type/list', {params});
+    },
+    
+    gainDeviceThingDataList(params) {
+      return http.get('mcc-data/ccsDevice/gainDeviceThingDataList', {params});
+    },
+    
+    findAllDevListFuzzy(params) {
+        return http.get('/ccsDevice/findAllDevListFuzzy', {params});
     },
 
-    reqAllDevListByDevType(params) {
-        return http.get('/ccsDevice/type/list', {params});
-    }
 });
 
 export const HandoverData = resource('/handover-data', http, {

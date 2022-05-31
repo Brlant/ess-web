@@ -45,7 +45,7 @@
                     </el-col>
                     <el-col :span="9" v-show="$route.meta.showDev">
                         <oms-form-row :span="4" label="设备">
-                            <el-select :remote-method="queryAllTemp" @change="devChange"
+                            <el-select :remote-method="findAllDevListFuzzy" @change="devChange"
                                        clearable filterable multiple
                                        placeholder="请输入名称搜索设备" popper-class="selects--custom" remote
                                        v-model="searchCondition.devId">
@@ -65,7 +65,7 @@
                     </el-col>
                     <el-col :span="6" class="dataTypeInfo">
                         <oms-form-row :span="6" label="数据类型">
-                            <el-checkbox-group :max="searchCondition.devId.length > 1 ? 1: 3" @change="search"  
+                            <el-checkbox-group :max="searchCondition.devId.length > 1 ? 1: 3" @change="valTypeChangeFn"  
                                                size="small"
                                                v-if="searchCondition.devId.length <= 1"
                                                v-model="searchCondition.valType">
@@ -73,7 +73,8 @@
                                 <el-checkbox-button label="2">湿度</el-checkbox-button>
                                 <el-checkbox-button label="3">电压</el-checkbox-button>
                             </el-checkbox-group>
-                            <el-radio-group @change="search" size="small" v-else v-model="searchCondition.valType">
+                            <!-- <el-radio-group @change="search" size="small" v-else v-model="searchCondition.valType"> -->
+                            <el-radio-group @change="valTypeChangeFn" size="small" v-else v-model="searchCondition.valType">
                                 <el-radio-button label="1">温度</el-radio-button>
                                 <el-radio-button label="2">湿度</el-radio-button>
                                 <el-radio-button label="3">电压</el-radio-button>
@@ -125,7 +126,7 @@
                 searchCondition: {
                     startTime: '',
                     endTime: '',
-                    devId: '',
+                    devId: [],
                     devCode: '',
                     valType: ['1'],
                     startPrice: '',
@@ -174,12 +175,23 @@
         },
         methods: {
             search() {
-                console.error(88, this.searchCondition.valType, this.coordsVal ) ;
-                if( this.searchCondition.valType.length ){ this.coordsVal = [] ;  this.$emit( 'changeEcharts', true ) ;  }
 
                 this.searchCondition.startTime = this.formatTimeAry(this.times1, 0);
                 this.searchCondition.endTime = this.formatTimeAry(this.times1, 1);
-                if (!this.searchCondition.devId.length || !this.searchCondition.valType.length) return;
+
+                // if (!this.searchCondition.devId.length || !this.searchCondition.valType.length) return;
+                
+                // if ( this.searchCondition.valType.length && !this.searchCondition.devId.length) {
+                //     this.$message({
+                //         message : '请先选择设备',
+                //         type : 'warning'
+                //     }) ;
+                //     return ;
+                // }
+
+                if (!this.searchCondition.devId.length) return;
+                if( this.searchCondition.devId.length && !this.searchCondition.valType.length &&  !this.coordsVal.length ) return ;
+
                 if (this.searchCondition.startPrice || this.searchCondition.startPrice === 0) {
                     if (this.searchCondition.startPrice <= 0) {
                         return this.$notify.info({
@@ -187,6 +199,7 @@
                         });
                     }
                 }
+
                 let ary = this.searchCondition.devId.map(i => {
                     let item = JSON.parse(JSON.stringify(this.searchCondition));
                     item.devId = i;
@@ -198,9 +211,9 @@
                     }
                     return item;
                 });
+
                 
-                console.error( 'ary: ', ary ) ;
-                this.$emit('search', ary);
+                this.$emit('search', ary, this.coordsVal.length === 0);
 
             },
             reset() {
@@ -231,11 +244,15 @@
                     let item = this.allTempList.find(f => f.id === i);
                     item && this.selectTempList.push(item);
                 });
-                if (this.searchCondition.devId.length > 1) {
-                    this.searchCondition.valType = '1';
-                } else {
-                    this.searchCondition.valType = ['1'];
+
+                if( !this.coordsVal.length ){ // 如果坐标没有选中
+                    if (this.searchCondition.devId.length > 1) {
+                        this.searchCondition.valType = '1';
+                    } else {
+                        this.searchCondition.valType = ['1'];
+                    }
                 }
+                
                 this.search();
             },
             timeChange(val) {
@@ -298,8 +315,12 @@
 
             coordsValChangeFn( v ){
                 this.searchCondition.valType = [] ;
-                this.$emit( 'changeEcharts', false ) ;
-                console.error( 'coordsValChangeFn: ', v, this.coordsVal ) ;
+                this.search() ;
+                
+            },
+            valTypeChangeFn( v ){
+                this.coordsVal = [] ;
+                this.search() ;
             },
 
         }

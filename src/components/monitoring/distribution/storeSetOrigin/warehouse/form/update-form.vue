@@ -74,7 +74,7 @@
 </style>
 <template>
     <dialog-template :btnSavePosition="100" :pageSets="pageSets"  @selectTab="selectTab">
-        <template slot="title">编辑分布图1234123</template>
+        <template slot="title">编辑分布图</template>
         <template slot="btn">
             <el-button :disabled="doing" @click="onSubmit('form')" plain type="primary">保存</el-button>
         </template>
@@ -469,7 +469,6 @@ export default {
             fontColor:'#000000',
             setOriginfontColor:'#000000',
             isFlash : false,
-            refreshStep : 1,
             form: {
                 imageName: '',
                 logsicId: '',
@@ -524,6 +523,7 @@ export default {
     props: ['index', 'formItem'],
     watch: {
         index: function (newVal, oldVal) {
+
             this.$refs['form'].resetFields();
             // this.$refs.uploadFile.$refs.upload.clearFiles();
             this.logisticsCenterList=[];
@@ -562,11 +562,11 @@ export default {
 
         // 修改定位图标 - 离线
         handelSetOriginOffLine(res, file) {
-            // console.error(this.formItems, res, this.flag, 222222) ; // 之前返回 res 就是一个数字, 来做为 highWarnImageId 使用
+            // console.error( res, this.flag, 222222) ; // 之前返回 res 就是一个数字, 来做为 highWarnImageId 使用
             this.formItemsSetOrigin[this.flag].offlineWarnFile = res ;
             this.formItemsSetOrigin[this.flag].offlineWarnImageId = res.attachmentId
             this.formItemsSetOrigin[this.flag].offlineWarnImageSrc = res.url ? res.url : ''
-            this.$refs['offlineWarn'+this.flag][0].clearFilesFn && this.$refs['offlineWarn'+this.flag][0].clearFilesFn() ;
+            this.$refs['offlineWarnSetOrigin'+this.flag][0].clearFilesFn && this.$refs['offlineWarnSetOrigin'+this.flag][0].clearFilesFn() ;
            
         },
         
@@ -576,7 +576,7 @@ export default {
             this.formItemsSetOrigin[this.flag].normalImageId = ''
             this.formItemsSetOrigin[this.flag].normalFile = { attachmentId : '', url : '' } ;
 
-            console.error(this.formItems[this.flag], this.formItems[this.flag].normalFile, 7) ;
+            // console.error(this.formItems[this.flag], this.formItems[this.flag].normalFile, 7) ;
 
             // if(
             //     this.$refs['normal'+this.flag][0] &&
@@ -668,7 +668,23 @@ export default {
         },
         reset() {
             this.flag = 0
+            this.currentTab = this.pageSets[0] ;
+
+            this.resetFormFn() ;
+            // console.error( 'reset...' ) ; 
+
             this.formItems.forEach(v => {
+                v.normalImageSrc = ''
+                v.highWarnImageSrc = ''
+                v.lowWarnImageSrc = ''
+                v.offlineWarnImageSrc = ''
+                v.normalImageId = ''
+                v.highWarnImageId = ''
+                v.lowWarnImageId=''
+                v.offlineWarnImageId=''
+            })
+
+            this.formItemsSetOrigin.forEach(v => {
                 v.normalImageSrc = ''
                 v.highWarnImageSrc = ''
                 v.lowWarnImageSrc = ''
@@ -684,7 +700,7 @@ export default {
             this.formItems[this.flag].normalImageId = ''
             this.formItems[this.flag].normalFile = { attachmentId : '', url : '' } ;
 
-            console.error(this.formItems[this.flag], this.formItems[this.flag].normalFile, 7) ;
+            // console.error(this.formItems[this.flag], this.formItems[this.flag].normalFile, 7) ;
 
             // if(
             //     this.$refs['normal'+this.flag][0] &&
@@ -768,6 +784,23 @@ export default {
         setDoing(val) {
             this.doing = val;
         },
+        resetFormFn(){
+            this.form = {
+                imageName: '',
+                logsicId: '',
+                warehouseIds: [],
+                imageId: '',
+                imageUrl: '',
+                devType: 0,
+
+                // 视频设备
+                videoDevIds : [],
+
+                picProportion : 1,
+                coordsProportion : 1,
+                refreshStep : ''
+            } ;
+        },
         queryImageInfo(id, valFlag) {
             if (!id) {
                 return;
@@ -777,6 +810,7 @@ export default {
             // this.$http.get(`warehouseDevImage/info/${id}`).then(res => {
             this.$http.get(`warehousePointImage/info/${id}`).then(res => {
                 this.form = res.data;
+                // console.error( 68,  res.data ) ;
                 this.logisticsCenterList.push({id: this.form.logsicId, warehouseCode: this.form.logsicName});
                 this.warehouseList = this.form.warehouseList;
 
@@ -808,7 +842,7 @@ export default {
             });
         },
         init(res) {
-            const { warehouseImageIconList } = res.data
+            const { warehouseImageIconList, indoorPositionSceneDTO } = res.data
                 if (warehouseImageIconList) {
                     this.formItems.forEach(v1 => {
                         warehouseImageIconList.forEach(v2 => {
@@ -872,6 +906,34 @@ export default {
                             }
                         })
                     })
+                }
+
+                // 解析 定位对象信息
+                if( indoorPositionSceneDTO ){
+                    this.formItemsSetOrigin.forEach( v => {
+                        if (v.devType == res.data.devType) {
+                            v.normalImageId = indoorPositionSceneDTO.normalIconId ;
+                            v.normalImageSrc = indoorPositionSceneDTO.normalIconUrl ; 
+                            
+
+                            v.offlineWarnImageId = indoorPositionSceneDTO.offlineIconId ;
+                            v.offlineWarnImageSrc = indoorPositionSceneDTO.offlineIconUrl ; 
+                        }
+                    } ) ;
+
+                    // this.form.picProportion = indoorPositionSceneDTO.backgroundRatio ;
+                    // this.form.coordsProportion = indoorPositionSceneDTO.pointRatio ;
+                    // this.form.refreshStep = indoorPositionSceneDTO.refreshInterval ;
+
+                    this.$set( this.form, 'picProportion', indoorPositionSceneDTO.backgroundRatio ) ;
+                    this.$set( this.form, 'coordsProportion', indoorPositionSceneDTO.pointRatio ) ;
+                    this.$set( this.form, 'refreshStep', indoorPositionSceneDTO.refreshInterval ) ;
+
+
+                    this.setOriginfontColor = indoorPositionSceneDTO.fontColor ;
+                    this.isFlash = +indoorPositionSceneDTO.flashIcon ? true : false ;
+
+
                 }
         },
         doClose() {
@@ -942,16 +1004,65 @@ export default {
                         warehouseIds: this.form.warehouseIds,
                         fontColor:this.fontColor,
                         warehouseImageIconList,
-                        videoDevIds : this.form.videoDevIds
+                        videoDevIds : this.form.videoDevIds,
+
+                        // 关联室内定位场景信息
+                        // indoorPositionSceneDTO : {
+                        //     backgroundRatio : this.form.picProportion,
+                        //     pointRatio : this.form.coordsProportion,
+                        //     fontColor : this.setOriginfontColor,
+                        //     flashIcon : this.isFlash ? 1 : 0, // 0 : 不闪烁     1 : 闪烁
+                        //     refreshInterval : this.form.refreshStep,
+                        //     normalIconId : '',
+                        //     normalIconUrl : '',
+                        //     offlineIconId : '',
+                        //     offlineIconUrl : ''                    
+                        // }
                     };
+
+                    // normalFile
+                    // offlineWarnFile
+
+                    form.indoorPositionSceneDTO = {
+                        backgroundRatio : this.form.picProportion,
+                        pointRatio : this.form.coordsProportion,
+                        fontColor : this.setOriginfontColor,
+                        flashIcon : this.isFlash ? 1 : 0, // 0 : 不闪烁     1 : 闪烁
+                        refreshInterval : this.form.refreshStep,
+                        normalIconId : '',
+                        normalIconUrl : '',
+                        offlineIconId : '',
+                        offlineIconUrl : ''                    
+                    } ;
+
+                    this.formItemsSetOrigin.map( v => {
+                        if( v.normalFile ){
+                            form.indoorPositionSceneDTO.normalIconId = v.normalFile.attachmentId ;
+                            form.indoorPositionSceneDTO.normalIconUrl = v.normalFile.url ;
+                        }
+                        if( v.offlineWarnFile ){
+                            form.indoorPositionSceneDTO.offlineIconId = v.offlineWarnFile.attachmentId ;
+                            form.indoorPositionSceneDTO.offlineIconUrl = v.offlineWarnFile.url ;
+                        }
+                        
+                    } ) ;
+
+                    // this.formItemsSetOrigin[this.flag].normalImageId = res.attachmentId
+                    // this.formItemsSetOrigin[this.flag].normalImageSrc = res.url ? res.url : ''
+                    // this.formItemsSetOrigin[this.flag].offlineWarnImageId = res.attachmentId
+                    // this.formItemsSetOrigin[this.flag].offlineWarnImageSrc = res.url ? res.url : ''
+
                     this.doing = true;
+                    
+                    // console.error( 88, form, this.form.id ) ;
+
                     this.$httpRequestOpera(warehouseDevImage.updateImage(this.form.id, form), {
                         successTitle: '编辑成功',
                         errorTitle: '编辑失败',
                         success: res => {
                             this.doing = false;
                             this.$emit('refresh');
-                            this.$refs['form'].resetFields();
+                            // this.$refs['form'].resetFields();
                             this.fontColor='';
                             // this.$refs.uploadFile.$refs.upload.clearFiles();
                         },
@@ -964,21 +1075,42 @@ export default {
         },
 
         selectTab(item){
+            // console.error( 22, item ) ;
             this.currentTab = item;
         },
 
         refreshStepBlurFn(){
-            console.error( 'refreshStepBlurFn: ', this.refreshStep ) ;
-            if( /^\d(\.?\d)?$/.test( this.refreshStep ) ){
-                
+            // console.error( 'refreshStepBlurFn: ', this.form.refreshStep ) ;
+            if( !/^([0-9]\.[0-9]+|[1-9]|10)$/.test( this.form.refreshStep ) ){
+                this.$message({
+                  message : '1 ~ 10, 可以为小数, 最大为10',
+                  type : 'warning'
+                }) ;
+                this.form.refreshStep = '' ;
             }
         },
 
-        picProportionBlurFn(){
-            console.error( 'picProportion: ', this.form.picProportion ) ;
+        picProportionBlurFn( v ){
+
+            if( !/^([0-9]\.[0-9]+|[1-9]|10)$/.test( this.form.picProportion ) ){
+                this.$message({
+                  message : '不能小于等于0, 可以为小数, 最大为10',
+                  type : 'warning'
+                }) ;
+                this.form.picProportion = '' ;
+            }
+
+            // console.error( 'picProportion: ', this.form.picProportion ) ;
         },
         coordsProportionBlurFn(){
-            console.error( 'coordsProportion: ', this.form.coordsProportion ) ;
+            if( !/^([0-9]\.[0-9]+|[1-9]|10)$/.test( this.form.coordsProportion ) ){
+                this.$message({
+                  message : '不能小于等于0, 可以为小数, 最大为10',
+                  type : 'warning'
+                }) ;
+                this.form.coordsProportion = '' ;
+            }
+            // console.error( 'coordsProportion: ', this.form.coordsProportion ) ;
         },
 
 

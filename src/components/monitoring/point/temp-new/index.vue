@@ -1,6 +1,6 @@
 <template>
     <div class="order-page">
-        <search-part @search="searchResult" @changeEcharts='changeEchartsFn'/>
+        <search-part @search="searchResult"/>
 
         <div v-if="isEcharts">
     <!--        <chart-line :filters="filters" chartWidth="1200px" v-if="filters&&filters.length === 1"/>-->
@@ -9,21 +9,32 @@
 
         <div v-else>
             <el-table
-            :data="dataList"
+                :data="dataList"
+                v-loading="dataListLoading"
             >
-            <el-table-column
-                prop="date"
+                <el-table-column
+                prop="collectionTime"
                 label="时间"
-                width="180">
+                width="180"
+            >
+                <template slot-scope="{ row }">
+                    {{ row.collectionTime }}
+                </template>
             </el-table-column>
             <el-table-column
-                prop="x"
                 label="x"
-                width="180">
+                width="180"
+            >
+                <template slot-scope="{ row }">
+                    {{ row.propValueMap.pointX }}
+                </template>
             </el-table-column>
             <el-table-column
-                prop="y"
-                label="y">
+                label="y"
+            >
+                <template slot-scope="{ row }">
+                    {{ row.propValueMap.pointY }}
+                </template>
             </el-table-column>
             </el-table>
         </div>
@@ -33,6 +44,7 @@
 import SearchPart from './search';
 import ChartLine from './chart-line-new';
 import ChartLineMultiple from './chart-line-new-multiple-dev';
+import {Point} from '@/resources';
 
 export default {
     components: {
@@ -42,23 +54,40 @@ export default {
         return {
             filters: [],
             isEcharts : true,
-            dataList : [
-                // {
-                //     date : '2022.05.15',
-                //     x : 10,
-                //     y : 20
-                // },
-                // {
-                //     date : '2022.05.15',
-                //     x : 3,
-                //     y : 12
-                // },
-            ]
+            dataListLoading : false,
+            dataList : []
         };
     },
     methods: {
-        searchResult: function (search) {
+        searchResult: function (search, isEcharts) {
             this.filters = JSON.parse(JSON.stringify(search));
+
+            this.isEcharts = isEcharts ;
+                
+            if( !this.isEcharts ){ // 如果为坐标
+                
+                if( this.filters.length ){
+                    const {startTime, endTime, devId, devCode,  startPrice} = this.filters[0];
+                    this.dataListLoading = true ;
+
+                    Point.gainPointThingDataList(  { ...this.filters[0] } )
+                    .then( d => {
+                        let { data } = d ;
+
+                        this.dataListLoading = false ;
+
+                        if( data ){
+                            this.dataList = data || [] ;
+                        }
+                    } )
+                    .catch( err => {
+                        this.dataListLoading = false ;
+                        console.error( err ) ;
+                    } ) ;
+                }
+            } else {
+                this.dataList  = [] ;
+            }
         },
         changeEchartsFn( v ){
             this.isEcharts = v ;
