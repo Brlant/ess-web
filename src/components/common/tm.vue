@@ -108,9 +108,11 @@ export default {
         },
         tmData: Array
     },
-    // watch : {
-    //     item( v ){}
-    // },
+    watch : {
+        position( v ){
+            this.currentPos = v ;
+        }
+    },
     methods: {
         getVideoImageURL(item){
             return `@/assets/img/3-1.png`
@@ -286,6 +288,7 @@ export default {
         // 去除减的半径
         let x = this.position.x * this.scale;
         let y = this.position.y * this.scale;
+
 
         this.currentPos = {
             x,
