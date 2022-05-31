@@ -110,7 +110,6 @@ export default {
     },
     watch : {
         position( v ){
-            console.error( 'position change : ', v ) ;
             this.currentPos = v ;
         }
     },
