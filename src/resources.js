@@ -119,7 +119,12 @@ export const warehouseDevImage = resource('/warehousePointImage', http, {
 
     positionById: (id, params) => {
         return http.get('/warehousePointImage/indoor/position/'+id, params);
+    },
+
+    saveConfigPoint: (params) => {
+      return http.put('/warehousePointImage/base/point', params);
     }
+
 });
 /*
     // yxh 修改所有带请求路径 /warehouseDevImage 的地址修改为 /warehousePointImage
