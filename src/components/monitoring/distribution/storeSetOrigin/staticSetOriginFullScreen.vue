@@ -32,6 +32,7 @@
                 v-if="drawer"
                 :element="currentClickElement"
                 :refreshEcharts="refreshEcharts"
+                :isBigScreen="true"
                 @close-drawer="handleCloseDrawer"
             ></static-details>
             
@@ -53,7 +54,8 @@
 </template>
 
 <script>
-import Tm from '@/components/common/tm';
+import Tm from '@/components/common/tmPx';
+
 import VueDraggableResizable from 'vue-draggable-resizable';
 
 import {warehouseDevImage} from '@/resources';
@@ -89,6 +91,10 @@ export default {
             positionTimer : null,
             positionTimerStep : 0,
 
+            pointRatio : 1,
+            pointX : 0, 
+            pointY : 0, 
+
             step : 500, // 间隔
             videoTimer : null // 定时器引用
 
@@ -101,8 +107,12 @@ export default {
             
             if( this.$refs.svgPart ){
             this.ccsWarehouseImagePointRelationDTOList.filter(f => !f.positionX || !f.positionY).map((m, index) => {
-                m.initPositionX = width / this.$refs.svgPart.offsetWidth / 2 * 100 ; 
-                m.initPositionY = height / this.$refs.svgPart.offsetHeight / 2 * 100 ; 
+                m.initPositionX = this.pointX ; 
+                m.initPositionY = this.pointY ; 
+
+                //之前逻辑以图片宽高比进行定位
+                // m.initPositionX = width / 2 ; 
+                // m.initPositionY = height / 2 ; 
 
                 m.isNotAlloat = true;
 
@@ -117,20 +127,16 @@ export default {
                     color: this.getColor(m),
                     fontcolor:m.fontColor,
                     position: {
-                        // yxh 去除缩放比例设置
-                        x: m.isNotAlloat ? m.initPositionX : m.positionX,
-                        y: m.isNotAlloat ? m.initPositionY : m.positionY
+                        // 原点坐标设置 ： ( 实际坐标 + 偏移量 ) * 坐标缩放比例
+                        x: m.isNotAlloat ? m.initPositionX : ( m.positionX + this.pointX ) * +this.pointRatio,
+                        y: m.isNotAlloat ? m.initPositionY : ( m.positionY + this.pointY ) * +this.pointRatio
                         // x: m.isNotAlloat ? m.initPositionX : (m.positionX * this.scaling),
                         // y: m.isNotAlloat ? m.initPositionY : (m.positionY * this.scaling)
                     },
-                    text: m.devType === 4 ? 
-                            m.humidity + '%' : 
-                            +m.isVideo === 1 ? // 如果是视频类型
-                            m.pointName :
-                            m.temperature + '℃',
+                    text: `${ m.pointName}(室内定位)`,
                     devDetail: m
                 } ;
-                // console.error( 88, obj ) ;
+                // console.error( '--------: ', m.positionX, m.positionY, this.pointX, this.pointY, +this.pointRatio ) ;
                 return obj;
             }) || [];
             }
@@ -215,6 +221,9 @@ export default {
             this.imgWidth = this.$route.query.imgWidth ;
             this.imgHeight = this.$route.query.imgHeight ;
             this.positionTimerStep = this.$route.query.positionTimerStep ;
+            this.pointRatio = this.$route.query.pointRatio ;
+            this.pointX = +this.$route.query.pointX ;
+            this.pointY = +this.$route.query.pointY ;
 
         }
 
@@ -309,6 +318,7 @@ export default {
         },
 
         showBigMap( item ){
+            
             // 重置
             item.x = item.x || 0 ;
             item.y = item.y || 0 ;
@@ -349,7 +359,8 @@ export default {
                     scenesElementName:item.pointName,
                     scenesElementId:item.pointId,
                     devCode:item.devCode,
-                    devlist:[item]
+                    devlist:[item],
+                    itemValue : item
                 };
                 if(this.drawer){
                     this.refreshEcharts=this.currentClickElement.scenesElementId;
