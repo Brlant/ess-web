@@ -1,5 +1,5 @@
 <template>
-    <div class="drawer-box ani-bottom">
+    <div class="drawer-box ani-bottom" :class="{ bigScreen : isBigScreen }">
         <div class="container-box">
             <div class="header">
                 <el-row style="width: 100%;">
@@ -23,6 +23,8 @@
                         <div class="title">{{ element.scenesElementName }}</div>
                     </el-tooltip>
                  <p class="device-name" >{{"设备Code："+selectDevice.devCode }}</p>
+                 <p class="device-name" v-if="+element.itemValue.isLocation">{{`坐标: ${element.itemValue.positionX}, ${element.itemValue.positionY}` }}</p>
+                 <p class="device-name" v-if="+element.itemValue.isLocation">{{`转换坐标: ${element.itemValue.positionX * element.itemValue.indoorPositionSceneDTO.pointRatio}, ${element.itemValue.positionY * element.itemValue.indoorPositionSceneDTO.pointRatio}` }}</p>
                 </div>
                 <div class="right">
                     <e-charts
@@ -82,6 +84,10 @@ export default {
             type: Object,
             default: {}
         },
+        isBigScreen : {
+            type : Boolean,
+            default : false
+        },
         refreshEcharts: {
             type: String,
             default: ''
@@ -138,6 +144,7 @@ export default {
     },
     watch: {
         element(newValue, oldValue) {
+           
             if (oldValue && oldValue.scenesElementId === newValue.scenesElementId ) {
                 return;
             }
@@ -599,7 +606,6 @@ export default {
         this.getPonitHistory(this.ponitId)
 
 
-
     },
     destroyed() {
         if (this.firstEvent) {
@@ -807,8 +813,12 @@ export default {
 }
 
 .ani-bottom {
-    animation: ani 0.7s ease forwards;
+    /**/animation: ani 0.7s ease forwards;
     -webkit-animation: ani 0.7s ease forwards;
+}
+
+.bigScreen{
+    position:fixed; bottom:0;
 }
 
 @-webkit-keyframes ani {
