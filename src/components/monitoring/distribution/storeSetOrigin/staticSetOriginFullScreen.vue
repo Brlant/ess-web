@@ -37,12 +37,12 @@
             ></static-details>
             
 
-            <tm :color="item.color" :fontColor="item.fontcolor" :iconScale="1.2" :item="item.devDetail" :key="index" :position="item.position"
+            <tmPer :color="item.color" :fontColor="item.fontcolor" :iconScale="1.2" :item="item.devDetail" :key="index" :position="item.position"
                 @showBigMap="showBigMap"
                 style="z-index:1;"
                 :read-only="true" :size="12" :tmData="tmData" ref="tm-big-part" v-for="(item, index) in tmData">
             {{item.text}}
-            </tm>
+            </tmPer>
 
             <tm :color="item.color" :fontColor="item.fontcolor" :item="item.devDetail" :key="item.ccsDevId" :position="item.position" @showBigMap="showBigMap"
                 :read-only="true"
@@ -55,6 +55,7 @@
 
 <script>
 import Tm from '@/components/common/tmPx';
+import tmPer from '@/components/common/tm';
 
 import VueDraggableResizable from 'vue-draggable-resizable';
 
@@ -63,7 +64,7 @@ import {warehouseDevImage} from '@/resources';
 import staticDetails from './warehouse/static-details';
 
 export default {
-    components: {Tm, VueDraggableResizable, staticDetails},
+    components: {Tm, tmPer, VueDraggableResizable, staticDetails},
     data(){
         return {
             svgFrameStyle : {},
