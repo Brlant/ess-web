@@ -115,7 +115,7 @@
   .flexWAuto{ flex-shrink:1; }
 
   #d-table-left_scroll .el-scrollbar__view, .content-right{ width:100%; height:100%; position:relative; }
-  .svgPart{ width:100%!important; height:calc(100% - 28px)!important; position:relative; background-size:100% 100%!important; overflow:hidden; box-sizing:border-box; }
+  #svgPart{ width:100%!important; height:calc(100% - 28px)!important; position:relative; background-size:100% 100%!important; overflow:auto; box-sizing:border-box; }
   .imgUrlInfo{ overflow-x:auto; overflow-y:auto; 
     /*
     &::-webkit-scrollbar{ width:.4em; height:.5em; background:rgba(0,0,0,0); border-radius:1em; overflow:hidden; }
@@ -127,7 +127,7 @@
 
  }
 
- .content{ width:100%!important; height:100%!important; position:relative; overflow:hidden; box-sizing:border-box; }
+ .content{ width:100%!important; height:100%!important; position:relative; /*overflow:hidden;*/ box-sizing:border-box; }
 
  .titleTxt{ display:flex; justify-content:space-between; padding:.1em .7em .3em; }
     .dragContainer{ width:400px; height:auto; z-index:2!important; position:absolute; color:white; }
@@ -141,8 +141,8 @@
 </style>
 <template>
   <div id="myTablesInfo">
-    <div class="container d-table f-w flexDis">
-      <div class="d-table-left flexWStatic">
+    <div class="container d-table f-w">
+      <div class="d-table-left ">
         <h2 class="header">
             <span class="pull-right" v-has="'ccs-warehouse-dev-edit'">
               <a @click.stop.prevent="addGraph" class="btn-circle" href="#" v-has="'show'">
@@ -271,9 +271,12 @@
                   <iframe data-v-5a9dd0f5="" class="myiframe" ref="myiframe" :src="v.src" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen"></iframe>
                 </VueDraggableResizable>
 
-                <!-- 之前逻辑 <div :style="svgFrameStyle" id="svgPart" ref="svgPart" class="svgPart applyFlex" > -->
-
-                <div id="svgPart" ref="svgPart" class="svgPart applyFlex imgUrlInfo flexWStatic" @mousemove='e => e.preventDefault()' >
+                <!-- 之前逻辑 
+                  <div :style="svgFrameStyle" id="svgPart" ref="svgPart" class="svgPart applyFlex" > 
+                  <div id="svgPart" ref="svgPart" class="svgPart applyFlex imgUrlInfo flexWStatic" @mousemove='e => e.preventDefault()' >
+                -->
+                
+                <div id="svgPart" ref="svgPart" class="svgPart imgUrlInfo" @mousemove='e => e.preventDefault()' >
                   <!--
                     暂时屏蔽跳转大图功能
                     @showBigMap="showBigMap"
@@ -599,6 +602,10 @@
 
             }
 
+        },
+        beforeDestroy(){
+          // 清除定时器
+          if( this.positionTimer ){ clearTimeout( this.positionTimer ) ; this.positionTimer = null ; }
         },
         methods: {
             getPlayObj( obj ){
