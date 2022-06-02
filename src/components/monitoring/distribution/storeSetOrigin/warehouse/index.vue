@@ -418,6 +418,8 @@
                 isPointConfig : false, // 是否原点设置
                 pointConfigObj : {}, // 原点配置对象
 
+                currentObj : {}, // 初始化当前分布图列表对象
+
                 
 
                 // count : 0
@@ -821,9 +823,8 @@
                   this.flashIcon = +item.indoorPositionSceneDTO.flashIcon ? true : false ;
                 }
 
-                // console.error( 18, item ) ;
-
-                this.currentGraph = {...item};
+                this.currentObj = { ...item } ; // 用于恢复原点设置的分布图列表对象
+                this.currentGraph = {...item} ;
                 this.activeId = item.backgroundId;
                 this.tempList = [];
                 this.isAlarm = false;
@@ -874,6 +875,9 @@
             cancelPointConfigFn(){
               this.isPointConfig = false ;
               this.reqPositionById() ; // 恢复定位接口逻辑
+
+              // 重置分布图列表对象, 以恢复原点设置坐标
+              this.currentGraph = { ...this.currentObj } ; 
 
 
               // this.$refs['tm-point-config'] && this.$refs['tm-point-config'].resetInfo() ;
