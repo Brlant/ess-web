@@ -127,7 +127,7 @@
 
  }
 
- .content{ width:100%!important; height:100%!important; position:relative; /*overflow:hidden;*/ box-sizing:border-box; }
+ .content{ width:100%!important; height:100%!important; position:relative; overflow:hidden; box-sizing:border-box; }
 
  .titleTxt{ display:flex; justify-content:space-between; padding:.1em .7em .3em; }
     .dragContainer{ width:400px; height:auto; z-index:2!important; position:absolute; color:white; }
@@ -141,7 +141,7 @@
 </style>
 <template>
   <div id="myTablesInfo">
-    <div class="container d-table f-w">
+    <div class="container d-table f-w flexDis">
       <div class="d-table-left ">
         <h2 class="header">
             <span class="pull-right" v-has="'ccs-warehouse-dev-edit'">
@@ -273,20 +273,20 @@
 
                 <!-- 之前逻辑 
                   <div :style="svgFrameStyle" id="svgPart" ref="svgPart" class="svgPart applyFlex" > 
-                  <div id="svgPart" ref="svgPart" class="svgPart applyFlex imgUrlInfo flexWStatic" @mousemove='e => e.preventDefault()' >
+                <div id="svgPart" ref="svgPart" class="svgPart imgUrlInfo" @mousemove='e => e.preventDefault()' >
                 -->
                 
-                <div id="svgPart" ref="svgPart" class="svgPart imgUrlInfo" @mousemove='e => e.preventDefault()' >
+                  <div id="svgPart" ref="svgPart" class="svgPart applyFlex imgUrlInfo flexWStatic" @mousemove='e => e.preventDefault()' >
                   <!--
                     暂时屏蔽跳转大图功能
                     @showBigMap="showBigMap"
                   -->
                   
-                  <tm :color="item.color" :fontColor="item.fontcolor" :item="item.devDetail" :key="index" :position="item.position" @goTo="goTo"
+                  <tmPer :color="item.color" :fontColor="item.fontcolor" :item="item.devDetail" :key="index" :position="item.position" @goTo="goTo"
                       :read-only="!editPosition"
                       :size="12" :tmData="tmData" ref="tm-part" v-for="(item, index) in tmData">
                     {{item.text}}
-                  </tm>
+                  </tmPer>
 
                   
 
@@ -353,6 +353,7 @@
 <script>
     import {warehouseDevImage} from '@/resources';
     import Tm from '@/components/common/tmPx';
+    import tmPer from '@/components/common/tm';
     import tmconfig from '@/components/common/tmPointConfig';
     import Bg from '@/assets/img/empty-type.png';
     import Bg1 from '@/assets/img/empty.png';
@@ -366,7 +367,7 @@
     import VueDraggableResizable from 'vue-draggable-resizable';
 
     export default {
-        components: {Tm, FormPart, RightPart,editFormPart,staticDetails, VueDraggableResizable, tmconfig},
+        components: {Tm, tmPer, FormPart, RightPart,editFormPart,staticDetails, VueDraggableResizable, tmconfig},
         mixins: [TimeMixins],
         data: function () {
             return {
