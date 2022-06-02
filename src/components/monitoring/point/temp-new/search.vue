@@ -232,11 +232,18 @@ export default {
         devChange(val) {
             if (!val) return;
             if (!this.times1) return;
-            this.searchCondition.valType = '1';
+            // this.searchCondition.valType = '1';
             val.forEach(i => {
                 let item = this.allTempList.find(f => f.id === i);
                 item && this.selectPointList.push(item);
             });
+
+            if( !this.coordsVal.length ){ // 如果坐标没有选中
+                if (this.searchCondition.pointIdList.length > 1) {
+                    this.searchCondition.valType = '1';
+                }
+            }
+            
             this.search();
         },
         timeChange(val) {
@@ -273,7 +280,9 @@ export default {
             httpAxios.defaults.timeout = 120000;
             httpAxios({
                 methods: 'get',
-                url: `${process.env.VUE_APP_API}/mcc-data/point/export/dev-report`,
+                url: !this.coordsVal.length ? // 如果坐标数据没有, 默认导出温度、湿度、电压数据, 否则导出坐标数据
+                    `${process.env.VUE_APP_API}/mcc-data/point/export/dev-report` :
+                    `${process.env.VUE_APP_API}/mcc-data/point/export/dev-thing-data`, 
                 params,
                 paramsSerializer(params) {
                     return qs.stringify(params, {indices: false});

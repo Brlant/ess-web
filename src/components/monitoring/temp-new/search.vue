@@ -79,7 +79,6 @@
                                 <el-radio-button label="2">湿度</el-radio-button>
                                 <el-radio-button label="3">电压</el-radio-button>
                             </el-radio-group>
-
                             <el-checkbox-group v-model="coordsVal" size="small" @change="coordsValChangeFn">
                                 <el-checkbox-button label="coords">坐标</el-checkbox-button>
                             </el-checkbox-group>
@@ -285,7 +284,9 @@
                 httpAxios.defaults.timeout = 120000;
                 httpAxios({
                     methods: 'get',
-                    url: `${process.env.VUE_APP_API}/mcc-data/ccsWarehouse/export/dev-report`,
+                    url: !this.coordsVal.length ?  // 如果坐标数据没有, 默认导出温度、湿度、电压数据, 否则导出坐标数据
+                        `${process.env.VUE_APP_API}/mcc-data/ccsWarehouse/export/dev-report` :
+                        `${process.env.VUE_APP_API}/mcc-data/ccsWarehouse/export/dev-thing-data`,
                     params,
                     paramsSerializer(params) {
                         return qs.stringify(params, {indices: false});
