@@ -125,7 +125,7 @@ export const routes = [
             // yxh 修改
             // meta: {moduleId: 'monitoring', title: '设备分布', perm: 'ccs-devmap-scan', subMenuId: 'distribution'}
             // meta: { moduleId: 'monitoring', title: '静态场景', perm: 'ccs-devmap-scan', subMenuId: 'distribution' },
-            meta: { moduleId: 'monitoring', title: '静态场景', perm: 'ccs-devmap-manager', subMenuId: 'distribution' },
+            meta: { moduleId: 'monitoring', title: '静态场景（室内定位）', perm: 'ccs-devmap-manager', subMenuId: 'distribution' },
           },
           {
             path: '/monitoring/distributionsetorigin/:id',
