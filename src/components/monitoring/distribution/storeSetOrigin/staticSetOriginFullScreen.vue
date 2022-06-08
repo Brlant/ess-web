@@ -139,6 +139,17 @@ export default {
                     text: `${ m.pointName}`,
                     devDetail: m
                 } ;
+
+                if( m.pointName === this.currentClickElement.scenesElementName ){ 
+                    this.currentClickElement = {
+                        scenesElementName:m.pointName,
+                        scenesElementId:m.pointId,
+                        devCode:m.devCode,
+                        devlist:[m],
+                        itemValue : m
+                    }
+                      
+                }
                 // console.error( '--------: ', m.positionX, m.positionY, this.pointX, this.pointY, +this.pointRatio ) ;
                 return obj;
             }) || [];

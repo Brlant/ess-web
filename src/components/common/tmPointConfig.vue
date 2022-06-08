@@ -41,7 +41,6 @@ export default {
     watch : {
         currentGraph : {
             handler(v){
-                console.error( 'change: ', v ) ;
                 this.currentPos = {
                     x : v.pointX,
                     y : v.pointY,
