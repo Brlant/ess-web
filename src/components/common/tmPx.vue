@@ -169,7 +169,8 @@ export default {
                 return;
             }
             let time = item.recordDate ? this.$moment(item.recordDate).format('YYYY-MM-DD HH:mm:ss') : '';
-            el.innerHTML = `<div>名称:${ +item.isLocation ? item.pointName + '(室内定位)' : item.pointName }</div><div>编码:${item.devCode}</div><div>最新时间:${time}</div>`;
+            // el.innerHTML = `<div>名称:${ +item.isLocation ? item.pointName + '(室内定位)' : item.pointName }</div><div>编码:${item.devCode}</div><div>最新时间:${time}</div>`;
+            el.innerHTML = `<div>名称:${ +item.isLocation ? item.pointName  : item.pointName }</div><div>编码:${item.devCode}</div><div>最新时间:${time}</div>`;
             el.style.display = 'block';
             let w = el.clientWidth;
             let cx = 0;
