@@ -125,8 +125,8 @@ export default {
                 } 
 
                 let obj = {
-                    color: this.getColor(m),
-                    fontcolor:m.fontColor,
+                    color: this.getColorPx(m),
+                    fontcolor:m.indoorPositionSceneDTO.fontColor,
                     position: {
                         // 原点坐标设置 x 轴： ( 实际坐标 + 偏移量 ) * 坐标缩放比例
                         // 原点坐标设置 y 轴： ( 实际坐标 - 偏移量 ) * 坐标缩放比例 [ 注意: 这里的 y 轴向上为正方向, 往下为负方向 ]
@@ -271,6 +271,9 @@ export default {
             // if (m.warnTypes && m.warnTypes.includes(4)) return '#26d6dd'; // 底温
             // return '#f00'; // 高温
             */
+        },
+        getColorPx(m) {
+            return m.warnFlag ? '#666' : '#0f0';
         },
         setStepVideoInfo(){
             let staticVideo = JSON.parse( localStorage.getItem( 'staticVideo' ) ) || {} ;

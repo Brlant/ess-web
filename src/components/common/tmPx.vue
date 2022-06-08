@@ -34,7 +34,10 @@
             xlink:href="@/assets/img/video_icon.gif"
             v-else-if="+item.isVideo"
         ></image>
-        <use :height="getDevIconWH(item, 3)" :style="'fill:'+ color" :width="getDevIconWH(item, 2)"
+        <use 
+        height="20" 
+        width="20"
+        :style="'fill:'+ color" 
              :xlink:href="getDevIcon(item)" v-show="item.devType !== '3'" v-else></use>
         <text :font-size="12" :x="getDevIconOffset(item).x" :y="getDevIconOffset(item).y"
               :fill="fontColor" text-anchor="start" class="text" style="user-select:none;">
@@ -127,7 +130,14 @@ export default {
         getDevIcon(item) {
             // yxh 之前逻辑 DevIcon[item.devType] 可能为 undefined
             // return '#el-icon-t-' + DevIcon[item.devType][item.warnFlag ? 1 : 0];
-            return '#el-icon-t-' + ( DevIcon[item.devType] ? DevIcon[item.devType][item.warnFlag ? 1 : 0] : '' );
+            return '#el-icon-t-' + ( 
+                item.warnFlag ? // warnFlag : true 表示离线, false : 表示正常, 【 离线和正常的图标是一样的 】
+                'temp-wire'
+                : 'temp-wire' );
+            /*
+                之前逻辑
+                return '#el-icon-t-' + ( DevIcon[item.devType] ? DevIcon[item.devType][item.warnFlag ? 1 : 0] : '' );
+            */
         },
         getDevIconWH(item, index) {
             // yxh 之前逻辑 DevIcon[item.devType] 可能为 undefined
