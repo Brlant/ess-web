@@ -144,7 +144,6 @@ export default {
     },
     watch: {
         element(newValue, oldValue) {
-           
             if (oldValue && oldValue.scenesElementId === newValue.scenesElementId ) {
                 return;
             }
@@ -604,7 +603,6 @@ export default {
             this.endDate = this.$moment().format('YYYY-MM-DD HH:mm:ss');
         }
         this.getPonitHistory(this.ponitId)
-
 
     },
     destroyed() {

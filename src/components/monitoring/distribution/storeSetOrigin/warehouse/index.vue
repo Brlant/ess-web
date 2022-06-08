@@ -470,6 +470,15 @@
                         text: `${ m.pointName}(室内定位)`,
                         devDetail: m
                     } ;
+                    if( m.pointName === this.currentClickElement.scenesElementName ){ 
+                     this.currentClickElement = {
+                        scenesElementName:m.pointName,
+                        scenesElementId:m.pointId,
+                        devCode:m.devCode,
+                        devlist:[m],
+                        itemValue : m
+                      }
+                    }
                     return obj;
                 }) || [];
               }
@@ -860,8 +869,6 @@
             pointConfigFn(){
               this.isPointConfig = true ;
 
-              console.error( 88, this.currentGraph ) ;
-
               // 在原点编辑状态, 暂时屏蔽更新数据
               if( this.positionTimer ){ clearTimeout( this.positionTimer ) ; this.positionTimer = null ; }
             },
@@ -884,7 +891,6 @@
                   this.$set( this.currentGraph, 'pointY', this.pointConfigObj.y ) ;
 
                   this.currentObj = this.currentGraph ; // 赋值当前对象待下次更新数据
-                  console.error(6, this.currentGraph) ;
                 }
 
                 this.$message({
@@ -1254,7 +1260,6 @@
 
             setPointConfig( obj ){
               this.pointConfigObj = obj ;
-              console.error(11, this.pointConfigObj) ;
             }
 
         }
