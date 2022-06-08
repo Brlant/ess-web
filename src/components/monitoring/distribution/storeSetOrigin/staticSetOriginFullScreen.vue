@@ -135,7 +135,8 @@ export default {
                         // x: m.isNotAlloat ? m.initPositionX : (m.positionX * this.scaling),
                         // y: m.isNotAlloat ? m.initPositionY : (m.positionY * this.scaling)
                     },
-                    text: `${ m.pointName}(室内定位)`,
+                    // text: `${ m.pointName}(室内定位)`,
+                    text: `${ m.pointName}`,
                     devDetail: m
                 } ;
                 // console.error( '--------: ', m.positionX, m.positionY, this.pointX, this.pointY, +this.pointRatio ) ;

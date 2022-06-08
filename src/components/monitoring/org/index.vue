@@ -108,7 +108,7 @@
                     {label: '有线温度计', key: 1},
                     {label: '无线温度计', key: 2},
                     {label: '冷柜温度计', key: 3},
-                    {label: '车头温度计', key: 4},
+                    {label: '车载温度计', key: 4},
                     {label: '湿度计', key: 5}
                 ]
             };
