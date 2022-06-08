@@ -42,7 +42,7 @@
                 <el-col :span="3" v-show="type === 2">校准期</el-col>
                 <el-col :span="4">操作</el-col>
             </el-row>
-            <el-row class="order-list-header" v-else>
+            <el-row class="order-list-header" v-else> 
                 <el-col :span="3">设备编码devCode</el-col>
                 <el-col :span="3">设备编号devNo</el-col>
                 <el-col :span="4">名称</el-col>
@@ -73,7 +73,7 @@
                             <el-col :span="5" class="R">{{ item.devNo }}</el-col>
                             <el-col :span="5" class="R">{{ item.devName }}</el-col>
                             <el-col :span="type !== 2 ? 3 : 2">
-                                {{ formatStatus(item.devStatus, statusType) }}
+                                {{ formatStatus(item.devStatus, statusType) }} 
                             </el-col>
                             <el-col :span="type !== 2 ? 3 : 2">
                                 <el-tooltip :content="showRecordDate(item.recordDate)" effect="dark" placement="top">
@@ -102,7 +102,7 @@
                             <el-col :span="4" class="R">{{ item.devName }}</el-col>
                             <el-col :span="4">{{ tempTypeList[item.devType] }}</el-col>
                             <el-col :span="3">
-                                {{ formatStatus(item.devStatus, item.devType !== '1' ? orderType : wifiType) }}
+                                {{ formatStatus(item.devStatus, item.devType == '1' ? wifiType : orderType) }}
                             </el-col>
                             <el-col :span="3">
                                 <el-tooltip :content="showRecordDate(item.recordDate)" effect="dark" placement="top">

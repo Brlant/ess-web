@@ -388,7 +388,7 @@ export default [
             {
                 'id': 'ccs-devmap-manager',
                 'parentId': 'ccs-monitor-center',
-                'label': '静态场景',
+                'label': '静态场景（室内定位）',
                 'sort': 7,
                 'children': [{
                     'id': 'ccs-org-devmap-authorized',
