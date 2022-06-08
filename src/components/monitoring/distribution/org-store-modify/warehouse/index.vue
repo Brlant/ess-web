@@ -66,7 +66,7 @@
   }
 
   .d-table > div.d-table-left {
-    width: 120px;
+    width: 222px;
     /*
     min-width: 180px;
     width: 180px;
