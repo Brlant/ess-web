@@ -436,9 +436,11 @@
             ccsWarehouseImagePointRelationDTOListData() {
               let width = this.imgWidth;
               let height = this.imgHeight;
+
                 
               if( this.$refs.svgPart ){
                 this.ccsWarehouseImagePointRelationDTOList.filter(f => !f.positionX || !f.positionY).map((m, index) => {
+                    // console.error( 88, f, this.currentGraph ) ;
                     m.initPositionX = this.currentGraph.pointX ; 
                     m.initPositionY = this.currentGraph.pointY;
                     // 之前逻辑以图片宽高比进行定位 
@@ -455,8 +457,8 @@
                     } 
 
                     let obj = {
-                      color: this.getColor(m),
-                        fontcolor:m.fontColor,
+                      color: this.getColorPx(m),
+                        fontcolor:m.indoorPositionSceneDTO.fontColor,
                         position: {
                             // 原点坐标设置 x 轴： ( 实际坐标 + 偏移量 ) * 坐标缩放比例
                             // 原点坐标设置 y 轴： ( 实际坐标 - 偏移量 ) * 坐标缩放比例 [ 注意: 这里的 y 轴向上为正方向, 往下为负方向 ]
@@ -691,6 +693,9 @@
                 // return '#f00'; // 高温
                 */
             },
+            getColorPx(m) {
+                return m.warnFlag ? '#666' : '#0f0';
+            },
             setScaling() {
                 // 之前逻辑
                 // let url = Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + this.currentGraph.imageId;
@@ -814,6 +819,7 @@
             updateGraph(item) {
                 this.showIndex = 3;
                 this.currentGraph = item;
+                
             },
             showWarehouseDetail(item) {
                 this.idVal = item.backgroundId ; //更新 idVal
@@ -834,6 +840,14 @@
 
                 this.currentObj = { ...item } ; // 用于恢复原点设置的分布图列表对象
                 this.currentGraph = {...item} ;
+
+                // 获取原点设置信息
+                this.pointConfigObj = {
+                  x : item.pointX,
+                  y : item.pointY
+                } ;
+                // console.error( 77, item ) ;
+
                 this.activeId = item.backgroundId;
                 this.tempList = [];
                 this.isAlarm = false;
@@ -845,6 +859,8 @@
             },
             pointConfigFn(){
               this.isPointConfig = true ;
+
+              console.error( 88, this.currentGraph ) ;
 
               // 在原点编辑状态, 暂时屏蔽更新数据
               if( this.positionTimer ){ clearTimeout( this.positionTimer ) ; this.positionTimer = null ; }
@@ -861,8 +877,14 @@
                 let { code, msg } = res ;
 
                 if( +code === 200 ){
-                   this.currentGraph.pointX = this.pointConfigObj.x ;
-                   this.currentGraph.pointY = this.pointConfigObj.y ;
+                  // this.currentGraph.pointX = this.pointConfigObj.x ;
+                  // this.currentGraph.pointY = this.pointConfigObj.y ;
+
+                  this.$set( this.currentGraph, 'pointX', this.pointConfigObj.x ) ;
+                  this.$set( this.currentGraph, 'pointY', this.pointConfigObj.y ) ;
+
+                  this.currentObj = this.currentGraph ; // 赋值当前对象待下次更新数据
+                  console.error(6, this.currentGraph) ;
                 }
 
                 this.$message({
@@ -965,8 +987,6 @@
                   //   v.positionX = null ;
                   //   v.positionX = null ;
                   // } ) ;
-
-                  // console.error( 55, data.ccsWarehouseImagePointRelationDTOList, this.currentGraph ) ;
 
                   this.ccsWarehouseImagePointRelationDTOList = data.ccsWarehouseImagePointRelationDTOList ;
                   // this.tempList = [ ...this.tempList, ...data.ccsWarehouseImagePointRelationDTOList ]
@@ -1234,6 +1254,7 @@
 
             setPointConfig( obj ){
               this.pointConfigObj = obj ;
+              console.error(11, this.pointConfigObj) ;
             }
 
         }
