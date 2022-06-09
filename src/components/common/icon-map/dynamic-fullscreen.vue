@@ -621,6 +621,7 @@ export default {
                 return;
             }
             let results = elements.filter(item => {
+                item.value = item.scenesElementName
                 return item.value.toLowerCase().indexOf(queryString.toLowerCase()) >= 0;
             });
             cb(results);
@@ -646,7 +647,7 @@ export default {
         },
         //获取分类对象集合
         getShowElementTypeList(elementList) {
-            let elementColumn = this.elementColumn
+            let elementColumn = this.elementColumn  
             let list = []
             for (let obj in this.elementColumn) {
                 list.push(this.elementColumn[obj])
@@ -780,6 +781,7 @@ export default {
     background: gray;
     border-radius: 100px;
     border-color: gray;
+    color: #eaeaea;
 }
 
 .header /deep/ .el-input__inner:focus {

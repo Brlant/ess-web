@@ -320,7 +320,7 @@
                 }
                 let elementData = {...res.data};
                 if (elementData.scenesElementId === 187){
-                    console.log('静态场景，大图。。。。');
+                    console.log('静态场景，大图。。。。'); 
                     elementData.backgroundUrl = require('../../../assets/img/scence_bg.png')
                     // elementData.backgroundUrl = 'https://test-iotap-osp.cdcerp.cn/api/common/getFile/d6244a81-e64c-46c3-8e3f-3275359ce5e4.png'
                 }
@@ -436,6 +436,7 @@
     background: gray;
     border-radius: 100px;
     border-color: gray;
+    color: #eaeaea;
 }
 
 .header /deep/ .el-input__inner:focus {
