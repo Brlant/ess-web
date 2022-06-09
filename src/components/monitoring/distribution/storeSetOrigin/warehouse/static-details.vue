@@ -51,7 +51,7 @@
             <el-date-picker
                 size="small"
                 v-if="showDatePickerRange"
-                style="position: absolute;top: -28px;right: 0px;z-index: 1000;height: 32px;width: 400px;"
+                style="position: absolute;top: -25px;right: 0px;z-index: 1000;height: 32px;width: 400px;"
                 v-model="datePickerRangeValue"
                 type="datetimerange"
                 range-separator="至"
@@ -630,12 +630,13 @@ export default {
 .container-box {
     min-width: 980px;
     width: 80%;
-    height: 240px;
+    /* height: 240px; */
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     box-sizing: border-box;
     position: relative;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 1);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 1);   
+    /* 就是这个 */
 }
 
 .container-box .header {
@@ -650,7 +651,7 @@ export default {
 .container-box .content {
     background: rgba(0, 0, 0, 0.7);
     width: 100%;
-    height: 210px;
+    /* height: 210px; */
     padding: 10px 20px;
     box-sizing: border-box;
     position: relative;
@@ -667,7 +668,7 @@ export default {
 .content .left {
     /* width:100px; */
     width:13em;
-    height: 190px;
+    /* height: 190px; */
 }
 
 .content .left .title {
