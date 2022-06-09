@@ -3,7 +3,7 @@
         <div class="container-box">
             <div class="header">
                 <el-row>
-                    <el-col :span="24">
+                    <el-col :span="24">{{ sliderMaxCount }}
                         <el-slider
                             v-model="sliderValue"
                             :max="sliderMaxCount"
@@ -270,7 +270,7 @@ export default {
             showDatePickerRange: false,
             datePickerRangeValue: "",
             activeTab: "",
-            sliderMaxCount: 0,
+            sliderMaxCount: 1,
             options: {},
             warningRecord: [],
             points: [],
@@ -282,7 +282,9 @@ export default {
             },
             colors: ["#91CC75", "#5470C6", "#eeab7f"],
             activeDevice: 0,
-            ccsScenesElementHistoryData: []
+            ccsScenesElementHistoryData: [],
+
+            tipsDataList : [] // slider tips 数据列表
         };
     },
     watch: {
@@ -396,11 +398,17 @@ export default {
                 this.endDate
             );
         },
+        setTipsDataList( arr ){
+            this.tipsDataList = arr ;
+        },
+        setSliderMaxCount( sliderMaxCount ){
+            this.sliderMaxCount = sliderMaxCount ;
+        },
         formatSliderTootip(value) {
-            let item = this.ccsScenesElementHistoryData[value];
-            if (item && item.time) {
+            let item = this.tipsDataList[value];
+            if (item && item.createTime) {
                 return this.$options.filters["time"](
-                    this.ccsScenesElementHistoryData[value].time
+                    this.tipsDataList[value].createTime
                 );
             }
         },
@@ -491,8 +499,8 @@ export default {
                         // v.createTime =
                     } ) ;
 
-                    this.sliderMaxCount =
-                        list.length === 0 ? 0 : list.length - 1;
+                    // this.sliderMaxCount =
+                    //     list.length === 0 ? 0 : list.length - 1;
 
                     this.ccsScenesElementHistoryData = list;
                     this.options.legend.data = [];
@@ -623,9 +631,10 @@ export default {
                         this.options.yAxis.push(yAxisItem);
 
                         //重置进度条max属性
-                        this.sliderMaxCount = list.length - 1;
+                        // this.sliderMaxCount = 100;
+                        // this.sliderMaxCount = list.length - 1;
                     }
-                    this.$emit("select-device", res);
+                    // this.$emit("select-device", res); // 之前逻辑
                 })
                 .catch(error => {
                     this.$notify.error({
