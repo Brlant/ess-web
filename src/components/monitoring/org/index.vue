@@ -246,7 +246,13 @@
             },
             goToTemp(item, type) {
                 let devCode = item.devCode;
+
+                /*
+                  之前逻辑
+                   let id = item.ccsDevId; 
+                */
                 let id = item.ccsDevId;
+
                 let devName = item.devName || item.ccsDevName;
                 this.$router.push({path: '/monitoring/org/hot/spot/temp', query: {id, type}});
             }

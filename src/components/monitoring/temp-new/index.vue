@@ -68,6 +68,7 @@
     import ChartLineMultiple from './chart-line-new-multiple-dev';
 
      import {TempDev} from '@/resources';
+     
 
     export default {
         components: {
