@@ -3,6 +3,7 @@
         <div id="mapContainer" style="flex:1;"></div>
         <scene-right-page
             v-if="drawer"
+            ref="sceneRightPage"
             @slider-change="sliderChange"
             @select-device="selectDevice"
             :element="currentClickElement"
@@ -116,6 +117,7 @@ export default {
         //选择设备事件
         selectDevice(moveMarkerPolylineData) {
             this.moveMarkerPolylineList = moveMarkerPolylineData;
+
             let marker = this.markerList[this.currentClickElement.scenesElementId];
 
             //显示可移动marker
@@ -454,12 +456,14 @@ export default {
                             marker.getMap().remove(this.moveMarker);
                         }
                         marker.drawHistoryPolyline();
-                        this.moveMarker = new this.AMap.Marker({
-                            position: [121.489, 31.2534],
-                            zIndex: 9999,
-                        });
-                        this.map.add(this.moveMarker);
-                        this.moveMarker.hide();
+                        // this.moveMarker = new this.AMap.Marker({
+                        //     position: [121.489, 31.2534],
+                        //     zIndex: 9999,
+                        // });
+                        // this.map.add(this.moveMarker);
+                        // this.moveMarker.hide();
+
+                        marker.getScenesElementHistoryLocationFn() ;
 
                         
                     };
@@ -507,6 +511,61 @@ export default {
                             delete this.historyPolyline;
                         }
                     };
+
+                    
+
+                    // 获取拖动手柄轨迹数据
+                    marker.getScenesElementHistoryLocationFn = () => {
+                        let devList = marker.item.devList
+                        
+                        let scenesElementId = marker.item.scenesElementId
+                        let params = {
+                            ccsScenesElementId: scenesElementId,
+                            startDate: this.startDate,
+                            endDate: this.endDate,
+                        }
+
+
+                        https.get('/ccsScenesElement/getScenesElementHistoryLocation', params).then(res => {
+
+                            if ( res && Array.isArray( res ) && res.length > 0) {
+                                let tipsArr = [] ;
+
+                                res.forEach( v => {
+                                    tipsArr.push({
+                                        longitude : v.longitude,
+                                        latitude : v.latitude,
+                                        createTime : v.collectionTime
+                                    }) ;
+                                } ) ;
+
+                                this.moveMarkerPolylineList = tipsArr ;
+
+                                this.$refs['sceneRightPage'] && this.$refs['sceneRightPage'].setTipsDataList( tipsArr ) ; 
+                                this.$refs['sceneRightPage'] && this.$refs['sceneRightPage'].setSliderMaxCount( tipsArr.length ) ;
+
+                                this.moveMarker = new this.AMap.Marker({
+                                    position: [tipsArr[0].longitude, tipsArr[0].latitude],
+                                    // position: [121.489, 31.2534],
+                                    zIndex: 9999,
+                                });
+                                this.map.add(this.moveMarker);
+                                this.moveMarker.hide();
+
+                            } else {
+                                this.moveMarkerPolylineList = [] ;
+
+                                this.$refs['sceneRightPage'] && this.$refs['sceneRightPage'].setTipsDataList( [] ) ; 
+                                this.$refs['sceneRightPage'] && this.$refs['sceneRightPage'].setSliderMaxCount( 0 ) ;
+                                this.moveMarker && this.moveMarker.hide();
+                            }
+                              
+                                
+
+                        })
+                        
+                    };
+
                     marker.drawHistoryPolyline = () => {
                         let devList = marker.item.devList
                         // let params = {
