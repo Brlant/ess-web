@@ -9,7 +9,8 @@
         <span class="mr-10">{{devTitle.devName}}</span>
         <span class="mr-10">设备编号:{{devTitle.devNo}}</span>
         <span class="mr-10">编码: {{devTitle.devCode}}</span>
-        <span class="mr-10">类型:{{devTitle.devTypeName}}</span>
+        <!-- <span class="mr-10">类型:{{devTitle.devTypeName}}</span>  -->
+        <span class="mr-10">类型:{{tempTypeList[devTitle.devType]}}</span> 
         <!-- 
             之前逻辑
             <span class="mr-10">类型:{{tempTypeList[devTitle.devType]}}</span> 
