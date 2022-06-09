@@ -517,7 +517,8 @@ export default {
 
             currentTab : {},
 
-            videoDevList : []
+            videoDevList : [], 
+            devTypeVal : -1 // 初始化后的 formItemsSetOrigin 对象索引
         };
     },
     props: ['index', 'formItem'],
@@ -912,6 +913,7 @@ export default {
                 if( indoorPositionSceneDTO ){
                     this.formItemsSetOrigin.forEach( v => {
                         if (v.devType == res.data.devType) {
+                            this.devTypeVal = v.devType ;
                             v.normalImageId = indoorPositionSceneDTO.normalIconId ;
                             v.normalImageSrc = indoorPositionSceneDTO.normalIconUrl ; 
                             
@@ -1036,26 +1038,19 @@ export default {
                     } ;
 
                     this.formItemsSetOrigin.map( v => {
-                        if( v.normalFile ){
-                            form.indoorPositionSceneDTO.normalIconId = v.normalFile.attachmentId ;
-                            form.indoorPositionSceneDTO.normalIconUrl = v.normalFile.url ;
-                        }
-                        if( v.offlineWarnFile ){
-                            form.indoorPositionSceneDTO.offlineIconId = v.offlineWarnFile.attachmentId ;
-                            form.indoorPositionSceneDTO.offlineIconUrl = v.offlineWarnFile.url ;
+                        if( v.devType === this.devTypeVal ){
+                            
+                            form.indoorPositionSceneDTO.normalIconId = v.normalImageId ;
+                            form.indoorPositionSceneDTO.normalIconUrl = v.normalImageSrc ;
+
+                            form.indoorPositionSceneDTO.offlineIconId = v.offlineWarnImageId ;
+                            form.indoorPositionSceneDTO.offlineIconUrl = v.offlineWarnImageSrc ;
                         }
                         
                     } ) ;
 
-                    // this.formItemsSetOrigin[this.flag].normalImageId = res.attachmentId
-                    // this.formItemsSetOrigin[this.flag].normalImageSrc = res.url ? res.url : ''
-                    // this.formItemsSetOrigin[this.flag].offlineWarnImageId = res.attachmentId
-                    // this.formItemsSetOrigin[this.flag].offlineWarnImageSrc = res.url ? res.url : ''
-
                     this.doing = true;
                     
-                    // console.error( 88, form, this.form.id ) ;
-
                     this.$httpRequestOpera(warehouseDevImage.updateImage(this.form.id, form), {
                         successTitle: '编辑成功',
                         errorTitle: '编辑失败',
