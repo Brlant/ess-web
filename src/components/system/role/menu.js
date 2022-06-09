@@ -428,28 +428,28 @@ export default [
                 'label': '静态场景（室内定位）',
                 'sort': 7,
                 'children': [{
-                    'id': 'ccs-org-devmap-authorized',
+                    'id': 'ccs-org-image-authorized',
                     'parentId': 'ccs-devmap-manager-set-origin',
                     'label': '授权单位设备分布',
                     'sort': null,
                     'children': null,
                     'leaf': true
                 }, {
-                    'id': 'ccs-warehouse-dev-edit',
+                    'id': 'ccs-warehouse-image-edit',
                     'parentId': 'ccs-devmap-manager-set-origin',
                     'label': '编辑库区设备位置',
                     'sort': null,
                     'children': null,
                     'leaf': true
                 },  {
-                    'id': 'ccs-warehouse-dev-update',
+                    'id': 'ccs-warehouse-image-update',
                     'parentId': 'ccs-devmap-manager-set-origin',
                     'label': '修改仓库设备分布图',
                     'sort': null,
                     'children': null,
                     'leaf': true
                 },{
-                    'id': 'ccs-devmap-scan',
+                    'id': 'ccs-image-scan',
                     'parentId': 'ccs-devmap-manager-set-origin',
                     'label': '查看设备分布',
                     'sort': null,
