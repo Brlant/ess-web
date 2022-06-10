@@ -1,5 +1,5 @@
 <template>
-    <div>{{ mode }}
+    <div>
         <warehouse-part v-if="mode===2" class="w-part" ref="warehouse"></warehouse-part>
         <vehicle v-if="mode===1"></vehicle>
     </div>
