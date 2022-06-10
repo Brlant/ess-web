@@ -225,17 +225,23 @@
                     </div>
                   </div>
                 </el-col>
-                <el-col :span="10" align="right" v-has="'ccs-warehouse-dev-edit'" v-show="tmData.length">
+                <!-- 
+                  之前权限逻辑 - 控制范围权限
+                  <el-col :span="10" align="right" v-has="'ccs-warehouse-dev-edit'" v-show="tmData.length"> 
+                -->
+                <el-col :span="10" align="right" v-show="tmData.length">
                   <el-button-group>
-                    <el-button @click="pointConfigFn" v-if='!isPointConfig' plain="" size="mini">原点设置</el-button>
-                    <el-button @click="savePointConfigFn" v-if='isPointConfig' plain="" size="mini">保存原点设置</el-button>
-                    <el-button @click="cancelPointConfigFn" v-if='isPointConfig' plain="" size="mini">取消原点设置</el-button>
+                    <el-button @click="pointConfigFn" v-if='!isPointConfig'  v-has="'ccs-warehouse-dev-edit'" plain="" size="mini">原点设置</el-button>
+                    <el-button @click="savePointConfigFn" v-if='isPointConfig'  v-has="'ccs-warehouse-dev-edit'" plain="" size="mini">保存原点设置</el-button>
+                    <el-button @click="cancelPointConfigFn" v-if='isPointConfig'  v-has="'ccs-warehouse-dev-edit'" plain="" size="mini">取消原点设置</el-button>
                     <el-button @click="showBigMap" plain="" size="mini">查看大图</el-button>
+
                     <el-button @click="unitRight" plain="" size="mini" v-has="'ccs-org-devmap-authorized'">单位授权</el-button>
                     <!--<el-button plain="" size="mini" v-has="'ccs-org-devmap-authorized'">单位授权</el-button>-->
-                    <el-button @click="doEditPos" plain="" size="mini" v-if="!editPosition">编辑设备位置
+
+                    <el-button @click="doEditPos" plain="" size="mini" v-has="'ccs-warehouse-dev-edit'" v-if="!editPosition">编辑设备位置
                     </el-button>
-                    <template v-else>
+                    <template v-else  v-has="'ccs-warehouse-dev-edit'">
                       <el-button @click="savePos" plain="" size="mini">保存
                       </el-button>
                       <el-button @click="cancelEditPos" plain="" size="mini">取消
@@ -892,6 +898,7 @@
 
                   this.currentObj = this.currentGraph ; // 赋值当前对象待下次更新数据
                 }
+                console.error( res ) ;
 
                 this.$message({
                   type: +code === 200 ? 'success' : 'warning',
@@ -904,7 +911,10 @@
                 //   }
                 // } ) ;
 
-              });
+              })
+              .catch( err => {
+                console.error( 1, err ) ;
+              } );
 
               // this.$refs['tm-point-config'] && this.$refs['tm-point-config'].resetInfo() ;
               // this.onSubmit(dataArr);
