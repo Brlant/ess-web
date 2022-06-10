@@ -8,7 +8,7 @@
         "
          @click="goTo"
          @mousedown="dragPosition"
-         @mouseenter="showDetail" @mouseleave="hideDetail" @mouseup="isDraging = false" class="tm-container" :class="{ ani : item.indoorPositionSceneDTO && +item.indoorPositionSceneDTO.flashIcon  }">
+         @mouseenter="showDetail" @mouseleave="hideDetail" @mouseup="isDraging = false" class="tm-container" :class="{ anis : item.indoorPositionSceneDTO && +item.indoorPositionSceneDTO.flashIcon  }">
         <circle :cx="r" :cy="r" :fill="color"
                 :r="r"
                 :stroke="color"
@@ -351,5 +351,5 @@ export default {
     50%{ opacity:1; }
 }
 
-.ani{ animation:aniFade 200ms linear infinite; }
+.anis{ animation:aniFade 500ms linear infinite; }
 </style>

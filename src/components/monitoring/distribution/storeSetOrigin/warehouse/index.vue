@@ -225,17 +225,23 @@
                     </div>
                   </div>
                 </el-col>
-                <el-col :span="10" align="right" v-has="'ccs-warehouse-image-edit'" v-show="tmData.length">
+                <!-- 
+                  之前权限逻辑 - 控制范围权限
+                  <el-col :span="10" align="right" v-has="'ccs-warehouse-dev-edit'" v-show="tmData.length"> 
+                -->
+                <el-col :span="10" align="right" v-show="tmData.length">
                   <el-button-group>
-                    <el-button @click="pointConfigFn" v-if='!isPointConfig' plain="" size="mini">原点设置</el-button>
-                    <el-button @click="savePointConfigFn" v-if='isPointConfig' plain="" size="mini">保存原点设置</el-button>
-                    <el-button @click="cancelPointConfigFn" v-if='isPointConfig' plain="" size="mini">取消原点设置</el-button>
+                    <el-button @click="pointConfigFn" v-if='!isPointConfig'  v-has="'ccs-warehouse-dev-edit'" plain="" size="mini">原点设置</el-button>
+                    <el-button @click="savePointConfigFn" v-if='isPointConfig'  v-has="'ccs-warehouse-dev-edit'" plain="" size="mini">保存原点设置</el-button>
+                    <el-button @click="cancelPointConfigFn" v-if='isPointConfig'  v-has="'ccs-warehouse-dev-edit'" plain="" size="mini">取消原点设置</el-button>
                     <el-button @click="showBigMap" plain="" size="mini">查看大图</el-button>
-                    <el-button @click="unitRight" plain="" size="mini" v-has="'ccs-org-image-authorized'">单位授权</el-button>
-                    <!--<el-button plain="" size="mini" v-has="'ccs-org-image-authorized'">单位授权</el-button>-->
-                    <el-button @click="doEditPos" plain="" size="mini" v-if="!editPosition">编辑设备位置
+
+                    <el-button @click="unitRight" plain="" size="mini" v-has="'ccs-org-devmap-authorized'">单位授权</el-button>
+                    <!--<el-button plain="" size="mini" v-has="'ccs-org-devmap-authorized'">单位授权</el-button>-->
+
+                    <el-button @click="doEditPos" plain="" size="mini" v-has="'ccs-warehouse-dev-edit'" v-if="!editPosition">编辑设备位置
                     </el-button>
-                    <template v-else>
+                    <template v-else  v-has="'ccs-warehouse-dev-edit'">
                       <el-button @click="savePos" plain="" size="mini">保存
                       </el-button>
                       <el-button @click="cancelEditPos" plain="" size="mini">取消
@@ -452,18 +458,32 @@
                 });
                   
                 return this.ccsWarehouseImagePointRelationDTOList.map((m) => {
+                    let xScale = m.positionX * this.currentGraph.indoorPositionSceneDTO.pointRatio ;
+                    let yScale = m.positionY * this.currentGraph.indoorPositionSceneDTO.pointRatio ;
+                    let { pointX, pointY } = this.currentGraph ;
+
                     if (m.warnFlag) {
                       this.isAlarm = true;
                     } 
-
+                    
                     let obj = {
                       color: this.getColorPx(m),
                         fontcolor:m.indoorPositionSceneDTO.fontColor,
                         position: {
                             // 原点坐标设置 x 轴： ( 实际坐标 + 偏移量 ) * 坐标缩放比例
                             // 原点坐标设置 y 轴： ( 实际坐标 - 偏移量 ) * 坐标缩放比例 [ 注意: 这里的 y 轴向上为正方向, 往下为负方向 ]
-                            x: m.isNotAlloat ? m.initPositionX : ( m.positionX + this.currentGraph.pointX ) * this.currentGraph.indoorPositionSceneDTO.pointRatio,
-                            y: m.isNotAlloat ? m.initPositionY : ( m.positionY - this.currentGraph.pointY ) * this.currentGraph.indoorPositionSceneDTO.pointRatio
+                            x:  m.isNotAlloat ? 
+                                m.initPositionX :
+                                  m.positionX > 0 ? // 表示在原点的右侧
+                                  pointX + ( xScale ) :
+                                  pointX - ( Math.abs( xScale ) ),
+
+                            y:  m.isNotAlloat ? 
+                                m.initPositionY : 
+                                  m.positionY > 0 ? // 表示在原点的上方
+                                  pointY - ( yScale ) :
+                                  pointY + ( Math.abs( yScale ) ),
+
                             // x: m.isNotAlloat ? m.initPositionX : (m.positionX * this.scaling),
                             // y: m.isNotAlloat ? m.initPositionY : (m.positionY * this.scaling)
                         },
@@ -732,9 +752,15 @@
                     // 设置完缩放值后，在查询
                     this.queryDevs();
                     
-                    if( this.currentGraph.indoorPositionSceneDTO ){ // 如果有配置对象定位属性
-                      this.imgWidth = image.width * +this.currentGraph.indoorPositionSceneDTO.backgroundRatio ; 
-                      this.imgHeight = image.height * +this.currentGraph.indoorPositionSceneDTO.backgroundRatio ; 
+                    if( this.currentGraph.indoorPositionSceneDTO ){ // 如果有配置对象定位属性, 针对新增的时候没有 indoorPositionSceneDTO 属性参数时默认显示宽高比
+                      if( this.currentGraph.indoorPositionSceneDTO.backgroundRatio !== null ){
+                        this.imgWidth = image.width * +this.currentGraph.indoorPositionSceneDTO.backgroundRatio ; 
+                        this.imgHeight = image.height * +this.currentGraph.indoorPositionSceneDTO.backgroundRatio ; 
+                      } else {  
+                        this.imgWidth = image.width;
+                        this.imgHeight = image.height;
+                      }
+                      
                     } else {  // 针对新增的时候没有 indoorPositionSceneDTO 属性参数时默认显示宽高比
                       this.imgWidth = image.width;
                       this.imgHeight = image.height;
@@ -844,7 +870,7 @@
                 }
 
                 if( item.indoorPositionSceneDTO ){
-                  this.positionTimerStep = 1000 * +item.indoorPositionSceneDTO.refreshInterval ;
+                  this.positionTimerStep = item.indoorPositionSceneDTO.refreshInterval !== null ? 1000 * +item.indoorPositionSceneDTO.refreshInterval : 1000 * 5 ;
                   this.flashIcon = +item.indoorPositionSceneDTO.flashIcon ? true : false ;
                 }
 
@@ -866,6 +892,11 @@
 
                 // 之前逻辑 this.$router.push(`/monitoring/distribution/${item.backgroundId ? item.backgroundId : 'id'}`);
                 this.$router.push(`/monitoring/distributionsetorigin/${item.backgroundId ? item.backgroundId : 'id'}`);
+
+                this.isPointConfig = false ; // 恢复原点设置按钮状态
+                this.ccsWarehouseImagePointRelationDTOList = [] ; // 恢复室内定位数据列表
+                if( this.positionTimer ){ clearTimeout( this.positionTimer ) ; this.positionTimer = null ; }
+                this.reqPositionById(); // 重新请求室内定位数据
             },
             pointConfigFn(){
               this.isPointConfig = true ;
@@ -893,6 +924,7 @@
 
                   this.currentObj = this.currentGraph ; // 赋值当前对象待下次更新数据
                 }
+                console.error( res ) ;
 
                 this.$message({
                   type: +code === 200 ? 'success' : 'warning',
@@ -905,7 +937,10 @@
                 //   }
                 // } ) ;
 
-              });
+              })
+              .catch( err => {
+                console.error( 1, err ) ;
+              } );
 
               // this.$refs['tm-point-config'] && this.$refs['tm-point-config'].resetInfo() ;
               // this.onSubmit(dataArr);
@@ -991,9 +1026,10 @@
                   let { data } = res ;
 
                   // data.ccsWarehouseImagePointRelationDTOList.forEach( v => {
-                  //   v.positionX = null ;
-                  //   v.positionX = null ;
+                  //   v.positionX = -100 ;
+                  //   v.positionY = -100 ;
                   // } ) ;
+                  
 
                   this.ccsWarehouseImagePointRelationDTOList = data.ccsWarehouseImagePointRelationDTOList ;
                   // this.tempList = [ ...this.tempList, ...data.ccsWarehouseImagePointRelationDTOList ]
