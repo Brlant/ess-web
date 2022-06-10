@@ -481,7 +481,7 @@ export default {
 
                 picProportion : 1,
                 coordsProportion : 1,
-                refreshStep : ''
+                refreshStep : 5
             },
             logisticsCenterList: [],
             attachmentList: [],
@@ -798,7 +798,7 @@ export default {
 
                 picProportion : 1,
                 coordsProportion : 1,
-                refreshStep : ''
+                refreshStep : 5
             } ;
         },
         queryImageInfo(id, valFlag) {
