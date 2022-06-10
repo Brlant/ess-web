@@ -96,8 +96,7 @@
                     </el-upload> -->
                 </el-form-item>
                 <el-form-item label="物流中心">
-                    <el-select :remote-method="queryLogisticsCenterList" @change="logsicChange"
-                               @click.once.native="queryLogisticsCenterList('')"
+                    <el-select :remote-method="queryLogisticsCenterList" @change="logsicChange"  @focus="queryLogisticsCenterList" 
                                clearable filterable placeholder="请选择物流中心" remote v-model="form.logsicId">
                         <el-option :key="item.id" :label="item.warehouseCode" :value="item.id"
                                    v-for="item in logisticsCenterList"></el-option>
@@ -105,7 +104,7 @@
                 </el-form-item>
                 <el-form-item label="仓库" prop="warehouseIds">
                     <el-select clearable filterable remote :remote-method="queryWarehouse"
-                               @click.once.native="queryWarehouse('')"
+                                @focus="queryWarehouse"
                                multiple placeholder="请选择仓库" v-model="form.warehouseIds">
                         <el-option :key="item.id" :label="item.warehouseCode" :value="item.id"
                                    v-for="item in warehouseList"></el-option>
