@@ -458,18 +458,32 @@
                 });
                   
                 return this.ccsWarehouseImagePointRelationDTOList.map((m) => {
+                    let xScale = m.positionX * this.currentGraph.indoorPositionSceneDTO.pointRatio ;
+                    let yScale = m.positionY * this.currentGraph.indoorPositionSceneDTO.pointRatio ;
+                    let { pointX, pointY } = this.currentGraph ;
+
                     if (m.warnFlag) {
                       this.isAlarm = true;
                     } 
-
+                    
                     let obj = {
                       color: this.getColorPx(m),
                         fontcolor:m.indoorPositionSceneDTO.fontColor,
                         position: {
                             // 原点坐标设置 x 轴： ( 实际坐标 + 偏移量 ) * 坐标缩放比例
                             // 原点坐标设置 y 轴： ( 实际坐标 - 偏移量 ) * 坐标缩放比例 [ 注意: 这里的 y 轴向上为正方向, 往下为负方向 ]
-                            x: m.isNotAlloat ? m.initPositionX : ( m.positionX + this.currentGraph.pointX ) * this.currentGraph.indoorPositionSceneDTO.pointRatio,
-                            y: m.isNotAlloat ? m.initPositionY : ( m.positionY - this.currentGraph.pointY ) * this.currentGraph.indoorPositionSceneDTO.pointRatio
+                            x:  m.isNotAlloat ? 
+                                m.initPositionX :
+                                  m.positionX > 0 ? // 表示在原点的右侧
+                                  pointX + ( xScale ) :
+                                  pointX - ( Math.abs( xScale ) ),
+
+                            y:  m.isNotAlloat ? 
+                                m.initPositionY : 
+                                  m.positionY > 0 ? // 表示在原点的上方
+                                  pointY - ( yScale ) :
+                                  pointY + ( Math.abs( yScale ) ),
+
                             // x: m.isNotAlloat ? m.initPositionX : (m.positionX * this.scaling),
                             // y: m.isNotAlloat ? m.initPositionY : (m.positionY * this.scaling)
                         },
@@ -737,9 +751,15 @@
                     // 设置完缩放值后，在查询
                     this.queryDevs();
                     
-                    if( this.currentGraph.indoorPositionSceneDTO ){ // 如果有配置对象定位属性
-                      this.imgWidth = image.width * +this.currentGraph.indoorPositionSceneDTO.backgroundRatio ; 
-                      this.imgHeight = image.height * +this.currentGraph.indoorPositionSceneDTO.backgroundRatio ; 
+                    if( this.currentGraph.indoorPositionSceneDTO ){ // 如果有配置对象定位属性, 针对新增的时候没有 indoorPositionSceneDTO 属性参数时默认显示宽高比
+                      if( this.currentGraph.indoorPositionSceneDTO.backgroundRatio !== null ){
+                        this.imgWidth = image.width * +this.currentGraph.indoorPositionSceneDTO.backgroundRatio ; 
+                        this.imgHeight = image.height * +this.currentGraph.indoorPositionSceneDTO.backgroundRatio ; 
+                      } else {  
+                        this.imgWidth = image.width;
+                        this.imgHeight = image.height;
+                      }
+                      
                     } else {  // 针对新增的时候没有 indoorPositionSceneDTO 属性参数时默认显示宽高比
                       this.imgWidth = image.width;
                       this.imgHeight = image.height;
@@ -849,7 +869,7 @@
                 }
 
                 if( item.indoorPositionSceneDTO ){
-                  this.positionTimerStep = 1000 * +item.indoorPositionSceneDTO.refreshInterval ;
+                  this.positionTimerStep = item.indoorPositionSceneDTO.refreshInterval !== null ? 1000 * +item.indoorPositionSceneDTO.refreshInterval : 1000 * 5 ;
                   this.flashIcon = +item.indoorPositionSceneDTO.flashIcon ? true : false ;
                 }
 
@@ -871,6 +891,11 @@
 
                 // 之前逻辑 this.$router.push(`/monitoring/distribution/${item.backgroundId ? item.backgroundId : 'id'}`);
                 this.$router.push(`/monitoring/distributionsetorigin/${item.backgroundId ? item.backgroundId : 'id'}`);
+
+                this.isPointConfig = false ; // 恢复原点设置按钮状态
+                this.ccsWarehouseImagePointRelationDTOList = [] ; // 恢复室内定位数据列表
+                if( this.positionTimer ){ clearTimeout( this.positionTimer ) ; this.positionTimer = null ; }
+                this.reqPositionById(); // 重新请求室内定位数据
             },
             pointConfigFn(){
               this.isPointConfig = true ;
@@ -1000,9 +1025,10 @@
                   let { data } = res ;
 
                   // data.ccsWarehouseImagePointRelationDTOList.forEach( v => {
-                  //   v.positionX = null ;
-                  //   v.positionX = null ;
+                  //   v.positionX = -100 ;
+                  //   v.positionY = -100 ;
                   // } ) ;
+                  
 
                   this.ccsWarehouseImagePointRelationDTOList = data.ccsWarehouseImagePointRelationDTOList ;
                   // this.tempList = [ ...this.tempList, ...data.ccsWarehouseImagePointRelationDTOList ]

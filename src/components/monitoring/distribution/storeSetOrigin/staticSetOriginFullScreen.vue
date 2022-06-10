@@ -120,6 +120,9 @@ export default {
             });
                 
             return this.ccsWarehouseImagePointRelationDTOList.map((m) => {
+                let xScale = m.positionX * +this.pointRatio ;
+                let yScale = m.positionY * +this.pointRatio ;
+                
                 if (m.warnFlag) {
                     this.isAlarm = true;
                 } 
@@ -130,8 +133,18 @@ export default {
                     position: {
                         // 原点坐标设置 x 轴： ( 实际坐标 + 偏移量 ) * 坐标缩放比例
                         // 原点坐标设置 y 轴： ( 实际坐标 - 偏移量 ) * 坐标缩放比例 [ 注意: 这里的 y 轴向上为正方向, 往下为负方向 ]
-                        x: m.isNotAlloat ? m.initPositionX : ( m.positionX + this.pointX ) * +this.pointRatio,
-                        y: m.isNotAlloat ? m.initPositionY : ( m.positionY - this.pointY ) * +this.pointRatio
+                        x:  m.isNotAlloat ? 
+                            m.initPositionX :
+                                m.positionX > 0 ? // 表示在原点的右侧
+                                this.pointX + ( xScale ) :
+                                this.pointX - ( Math.abs( xScale ) ),
+
+                        y:  m.isNotAlloat ? 
+                            m.initPositionY : 
+                                m.positionY > 0 ? // 表示在原点的上方
+                                this.pointY - ( yScale ) :
+                                this.pointY + ( Math.abs( yScale ) ),
+                        
                         // x: m.isNotAlloat ? m.initPositionX : (m.positionX * this.scaling),
                         // y: m.isNotAlloat ? m.initPositionY : (m.positionY * this.scaling)
                     },
