@@ -229,7 +229,7 @@
                   之前权限逻辑 - 控制范围权限
                   <el-col :span="10" align="right" v-has="'ccs-warehouse-dev-edit'" v-show="tmData.length"> 
                 -->
-                <el-col :span="10" align="right" v-show="tmData.length">
+                <el-col :span="10" align="right" v-show="tmData.length || ccsWarehouseImagePointRelationDTOListData.length">
                   <el-button-group>
                     <el-button @click="pointConfigFn" v-if='!isPointConfig'  v-has="'ccs-warehouse-dev-edit'" plain="" size="mini">原点设置</el-button>
                     <el-button @click="savePointConfigFn" v-if='isPointConfig'  v-has="'ccs-warehouse-dev-edit'" plain="" size="mini">保存原点设置</el-button>
@@ -853,8 +853,11 @@
                 this.showIndex = 1;
             },
             updateGraph(item) {
+                let { pointX, pointY } =  this.currentGraph ;
                 this.showIndex = 3;
-                this.currentGraph = item;
+                this.currentGraph = { ...item };
+                this.currentGraph.pointX = pointX;
+                this.currentGraph.pointY = pointY;
                 
             },
             showWarehouseDetail(item) {
@@ -924,7 +927,6 @@
 
                   this.currentObj = this.currentGraph ; // 赋值当前对象待下次更新数据
                 }
-                console.error( res ) ;
 
                 this.$message({
                   type: +code === 200 ? 'success' : 'warning',
@@ -1062,10 +1064,7 @@
                       //   } ) ;
                       // }
                     
-                    
-                    
                     // this.count ++ ;
-
                    
 
                     /*

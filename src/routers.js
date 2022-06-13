@@ -70,6 +70,11 @@ export const routes = [
                   path: '/monitoring/org/hot/spot/temp',
                   component: () => import('./components/monitoring/temp-new/index.vue'),
                   meta: { moduleId: 'monitoring', showDev: false }
+                },
+                {
+                  path: '/monitoring/org/hot/spot/hot',
+                  component: () => import('./components/monitoring/temp-new-hot/index.vue'),
+                  meta: { moduleId: 'monitoring', showDev: false }
                 }
               ]
             },
