@@ -95,6 +95,7 @@ export default {
             pointRatio : 1,
             pointX : 0, 
             pointY : 0, 
+            graphList : [],
 
             step : 500, // 间隔
             videoTimer : null // 定时器引用
@@ -102,6 +103,14 @@ export default {
         } ;
     },
     computed : {
+        currPosObj(){
+            let res = this.graphList.filter( v => {
+                if( v.backgroundId === this.activeId ){
+                    return { pointX : v.pointX, pointY : v.pointY }
+                }
+            }) ;
+            return res.length ? res[0] : { pointX : 0, pointY : 0 } ;
+        },
         ccsWarehouseImagePointRelationDTOListData() {
             let width = this.imgWidth;
             let height = this.imgHeight;
@@ -136,14 +145,14 @@ export default {
                         x:  m.isNotAlloat ? 
                             m.initPositionX :
                                 m.positionX > 0 ? // 表示在原点的右侧
-                                this.pointX + ( xScale ) :
-                                this.pointX - ( Math.abs( xScale ) ),
+                                this.currPosObj.pointX + ( xScale ) :
+                                this.currPosObj.pointX - ( Math.abs( xScale ) ),
 
                         y:  m.isNotAlloat ? 
                             m.initPositionY : 
                                 m.positionY > 0 ? // 表示在原点的上方
-                                this.pointY - ( yScale ) :
-                                this.pointY + ( Math.abs( yScale ) ),
+                                this.currPosObj.pointY - ( yScale ) :
+                                this.currPosObj.pointY + ( Math.abs( yScale ) ),
                         
                         // x: m.isNotAlloat ? m.initPositionX : (m.positionX * this.scaling),
                         // y: m.isNotAlloat ? m.initPositionY : (m.positionY * this.scaling)
@@ -162,7 +171,6 @@ export default {
                     }
                       
                 }
-                // console.error( '--------: ', m.positionX, m.positionY, this.pointX, this.pointY, +this.pointRatio ) ;
                 return obj;
             }) || [];
             }
@@ -248,9 +256,7 @@ export default {
             this.imgHeight = this.$route.query.imgHeight ;
             this.positionTimerStep = this.$route.query.positionTimerStep ;
             this.pointRatio = this.$route.query.pointRatio ;
-            this.pointX = +this.$route.query.pointX ;
-            this.pointY = +this.$route.query.pointY ;
-
+           
         }
 
         if( this.$route.params ){
@@ -278,6 +284,15 @@ export default {
             this.queryDevs() ; // 默认初始化
             this.reqListFn() ; // 定时请求渲染数据
             this.reqPositionById() ;
+            this.queryGraphList() ; // 获取分布图列表 用于拉取最新原点配置坐标
+        },
+        queryGraphList() {
+
+            warehouseDevImage.query({ 
+                sceneType : 2  // 1 : 静态场景     2 : 室内定位场景
+            }).then(res => {
+                this.graphList = res.data.ccsWarehouseImageDTOS;
+            });
         },
         getPlayObj( obj ){
             return obj[ this.idVal ] || {}  ;
@@ -329,6 +344,7 @@ export default {
         },
 
         reqPositionById() {
+            this.queryGraphList() ; // 获取分布图列表 用于拉取最新原点配置坐标
             this.positionByIdFn();
             if( this.positionTimer ){ clearTimeout( this.positionTimer ) ; this.positionTimer = null ; }
             this.positionTimer = setTimeout( () => {

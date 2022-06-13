@@ -531,7 +531,7 @@ export default {
             this.warehouseList=[];
             this.queryImageInfo(this.formItem.backgroundId, newVal);
             this.getVideoDevListFn() ;
-            
+
         }
     },
     
@@ -847,7 +847,7 @@ export default {
                 if (warehouseImageIconList) {
                     this.formItems.forEach(v1 => {
                         warehouseImageIconList.forEach(v2 => {
-                            if (v1.devType == v2.devType) {
+                            if (+v1.devType === +v2.devType) {
                                 v1.normalImageId = v2.normalAttachmentId || ''
                                 v1.highWarnImageId = v2.highWarnAttachmentId || ''
                                 v1.lowWarnImageId = v2.lowWarnAttachmentId || ''
@@ -859,36 +859,28 @@ export default {
                                 v1.offlineWarnImageSrc= v2.offlineWarnIconUrl ? v2.offlineWarnIconUrl: ''
 
                                 // 正常
-                                if( v2.normalAttachmentId && v2.normalIconUrl ){
-                                    v1.normalFile = {
-                                        attachmentId : v2.normalAttachmentId,
-                                        url : v2.normalIconUrl
-                                    } ;
-                                }
+                                v1.normalFile = {
+                                    attachmentId : ( v2.normalAttachmentId && v2.normalIconUrl ) ? v2.normalAttachmentId : '',
+                                    url : ( v2.normalAttachmentId && v2.normalIconUrl ) ? v2.normalIconUrl : ''
+                                } ;
 
                                 // 高温
-                                if( v2.highWarnAttachmentId && v2.highWarnIconUrl ){
-                                    v1.highWarnFile = {
-                                        attachmentId : v2.highWarnAttachmentId,
-                                        url : v2.highWarnIconUrl
-                                    } ;
-                                }
+                                v1.highWarnFile = {
+                                    attachmentId : ( v2.highWarnAttachmentId && v2.highWarnIconUrl ) ? v2.highWarnAttachmentId : '',
+                                    url : ( v2.highWarnAttachmentId && v2.highWarnIconUrl ) ? v2.highWarnIconUrl : ''
+                                } ;
 
                                 // 低温
-                                if( v2.lowWarnAttachmentId && v2.lowWarnIconUrl ){
-                                    v1.lowWarnFile = {
-                                        attachmentId : v2.lowWarnAttachmentId,
-                                        url : v2.lowWarnIconUrl
-                                    } ;
-                                }
+                                v1.lowWarnFile = {
+                                    attachmentId : ( v2.lowWarnAttachmentId && v2.lowWarnIconUrl ) ? v2.lowWarnAttachmentId : '',
+                                    url : ( v2.lowWarnAttachmentId && v2.lowWarnIconUrl ) ? v2.lowWarnIconUrl : ''
+                                } ;
 
                                 // 离线
-                                if( v2.offlineWarnAttachmentId && v2.offlineWarnIconUrl ){
-                                    v1.offlineWarnFile = {
-                                        attachmentId : v2.offlineWarnAttachmentId,
-                                        url : v2.offlineWarnIconUrl
-                                    } ;
-                                }
+                                v1.offlineWarnFile = {
+                                    attachmentId : ( v2.offlineWarnAttachmentId && v2.offlineWarnIconUrl ) ? v2.offlineWarnAttachmentId : '',
+                                    url : ( v2.offlineWarnAttachmentId && v2.offlineWarnIconUrl ) ? v2.offlineWarnIconUrl : ''
+                                } ;
                                 
                                 // 之前字段
                                 // v1.normalImageId = v2.normalImageId || ''
@@ -972,6 +964,7 @@ export default {
         onSubmit: function (formName) {
             this.$refs[formName].validate((valid) => {
                     if (!valid || this.doing) return;
+                    
                     const warehouseImageIconList = this.formItems.map(v => {
                         return {
                             backgroundId: this.formItem.backgroundId,
@@ -1050,7 +1043,7 @@ export default {
                     } ) ;
 
                     this.doing = true;
-                    
+
                     this.$httpRequestOpera(warehouseDevImage.updateImage(this.form.id, form), {
                         successTitle: '编辑成功',
                         errorTitle: '编辑失败',
