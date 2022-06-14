@@ -33,12 +33,14 @@
         data() {
             return {
                 loadingData: false,
-                isHasData: false
+                isHasData: false,
+                returnMap: [],
+                tip: []
             };
         },
         watch: {
             filters: {
-                handler: function (v, n) {
+                handler: function (newVal, oldVal) {
                     this.queryList();
                 },
                 deep: true,
@@ -48,100 +50,29 @@
         methods: {
             getLegend(typeList) {
                 return {
-                    data: typeList.map(m => m.devName)
+                    data: typeList.map(m => m.pointName)
                 };
             },
             getYAxis(typeList) {
                 let {setMaxAndMin} = this;
-                return typeList.map((m, index) => {
-                    let ot = this.isRecord ? 40 : 50;
-                    let obj = {
-                        name: titleAry[m] + `(${unitAry[m]})`,
-                        offset: index === 2 ? ot : 0,
-                        type: 'value'
-                    };
-                    setMaxAndMin(obj, m);
-                    return obj;
-                });
+                let index = typeList -1;
+                let ot = this.isRecord ? 40 : 50;
+                let obj = {
+                    name: titleAry[typeList] + `(${unitAry[typeList]})`,
+                    offset: index === 2 ? ot : 0,
+                    type: 'value'
+                };
+                setMaxAndMin(obj, typeList);
+                return obj;
             },
             setMaxAndMin(obj, type) {
-
                 obj.min = value => value.min;
                 obj.max = value => value.max;
-
-                // if (type === '1') {
-                //   obj.min = value => value.min;
-                //   obj.max = value => value.max;
-                // } else if (type === '2') {
-                //   obj.min = value => value.min;
-                //   obj.max = value => value.max;
-                // } else {
-                //   obj.max = function (value) {
-                //     return value.max !== Infinity
-                //       ? value.max + value.max > 10 ? 10 : 5
-                //       : '';
-                //   };
-                //   obj.min = function (value) {
-                //     let v = value.min - value.min > 10 ? 10 : 5;
-                //     return value.min !== Infinity
-                //       ? v > 0 ? v : 0
-                //       : value.min;
-                //   };
-                // }
-            },
-            getData2(data, i, index) {
-
-                let markLine = [] ;
-                
-                if( data.devBindPointTimeList && data.devBindPointTimeList.length ){
-                    markLine = data.devBindPointTimeList.map( ( v, i ) => {
-                        return {
-                            xAxis: v.time,
-                            label: {
-                                formatter(params) {
-                                    return ( v.type === 1 ? '上线' : v.type === 2 ? '下线' : '' ) + '\n' + moment(v.time).format(('HH:mm:ss')) + '\n' + moment(v.time).format(('YYYY-MM-DD'))
-                                },
-                                position: 'start',
-                                distance: 7,
-                            }
-                        } ;
-                    } ) ;
-                }
-
-                return {
-                    name: i.devName,
-                    type: 'line',
-                    showSymbol: true,
-                    symbolSize: 6,
-                    data: data,
-                    smooth: true,
-                    markPoint: {
-                        data: [
-                            {type: 'max', name: '最大值'},
-                            {type: 'min', name: '最小值'}
-                        ]
-                    },
-                    markLine: {
-                        data: [
-                            [
-                                {
-                                    type: 'average',
-                                    name: '平均值',
-                                    x: '10%'
-                                },
-                                {
-                                    type: 'average',
-                                    x: '92%'
-                                }
-                            ],
-                            ...markLine
-                        ]
-                    }
-                };
             },
             getData(data, i, index) {
+                console.log('执行了第一种方法')
                 return {
-                    name: i.devName,
+                    name: i.pointName,
                     type: 'line',
                     showSymbol: true,
                     symbolSize: 6,
@@ -170,6 +101,55 @@
                     }
                 };
             },
+            getData2(data, i, index, returnMap) {
+                let markline = []
+                if (data.length) {
+                    markline = data[0].returnMap.map(v => {
+                        return {
+                            xAxis: v.timeStamp,
+                            label: {
+                                formatter(params) {
+                                    return moment(v.timeStamp).format(('HH:mm:ss')) + '\n' + moment(v.timeStamp).format(('YYYY-MM-DD'))
+                                },
+                                position: 'start',
+                                distance: 7,
+                            },
+                        }
+                    })
+
+                }
+                return {
+                    name: i.pointName,
+                    type: 'line',
+                    showSymbol: true,
+                    symbolSize: 6,
+                    data: data,
+                    smooth: true,
+                    markPoint: {
+                        data: [
+                            {type: 'max', name: '最大值'},
+                            {type: 'min', name: '最小值'}
+                        ]
+                    },
+                    markLine: {
+                        data: [
+                            [
+                                {
+                                    type: 'average',
+                                    name: '平均值',
+                                    x: '10%'
+                                },
+                                {
+                                    type: 'average',
+                                    x: '92%'
+                                }
+                            ],
+                            ...markline
+                        ],
+                        silent: true
+                    }
+                };
+            },
             getOption() {
                 let obj = {
                     tooltip: {
@@ -182,7 +162,7 @@
                         type: 'time',
                         splitLine: {
                             show: false
-                        }
+                        },
                     },
                     dataZoom: [
                         {
@@ -204,25 +184,30 @@
                 };
                 let _this = this;
                 obj.tooltip.formatter = function (params) {
-                    if (!params.length) return '';
-                    let collectTime = '';
-                    let insertTime = '';
-                    if (_this.isRecord) {
-                        // 告警事件
-                        collectTime = moment(params[0].value[0]).format('MM-DD: HH:mm:ss');
-                        insertTime = moment(params[0].value[2]).format('MM-DD: HH:mm:ss');
-                    } else {
-                        // 历史数据
-                        collectTime = formatTime(params[0].value[0]);
-                        insertTime = formatTime(params[0].value[2]);
-                    }
-                    let str = `采集时间: ${collectTime}<br/>插入时间: ${insertTime}<br/>`;
-                    params.forEach(i => {
-                        str += `${i.marker}${i.seriesName}: ${i.value[1]}<br/>`;
-                    });
-                    return str;
+                    return _this.getTip(params)
                 };
                 return obj;
+            },
+            getTip(params) {
+                if (!params.length) return '';
+                let collectTime = '';
+                let insertTime = '';
+                if (this.isRecord) {
+                    // 告警事件
+                    collectTime = moment(params[0].value[0]).format('MM-DD: HH:mm:ss');
+                    insertTime = moment(params[0].value[2]).format('MM-DD: HH:mm:ss');
+                } else {
+                    // 历史数据
+                    collectTime = formatTime(params[0].value[0]);
+                    insertTime = formatTime(params[0].value[2]);
+                }
+                const devCode =params[0].value[3]==null||params[0].value[3]==undefined?'': params[0].value[3]
+                const devNo= params[0].value[4]==null||params[0].value[4]==undefined?'':params[0].value[4]
+                let str = `采集时间: ${collectTime}<br/>插入时间: ${insertTime}<br/>设备DevCode: ${devCode}<br/>设备DevNo: ${devNo}<br/>`;
+                params.forEach(i => {
+                    str += `${i.marker}${i.seriesName}: ${i.value[1]}<br/>`;
+                });
+                return str;
             },
             getAlarmLine(time) {
                 return {
@@ -251,34 +236,38 @@
                 option.series = [];
                 let httpAry = [];
                 this.filters.forEach((i, index) => {
-                    const {startTime, endTime, devId, devCode, valType, startPrice} = i;
-
-                    // 之前逻辑 只查询 valType 类型为数据第一个的数据类型
-                        const params = {startTime, endTime, devId, devCode, valType: valType[0], startPrice};
-                        httpAry.push(TempDev.queryTempData(params));
-
+                    const {startTime, endTime, pointId, valType, startPrice} = i;
+                    const params = {startTime, endTime, pointId,valType: valType[0], startPrice};
+                    httpAry.push(TempDev.queryPointDevDataNew(params));
                 });
                 this.loadingData = true;
                 this.isHasData = false;
+                const flag = this.filters[0].switch
                 axios.all(httpAry)
                     .then(axios.spread((...args) => {
                         this.loadingData = false;
                         this.filters.forEach((i, index) => {
-                            const data = args[index].data.ccsDevDataRecordDTOList && args[index].data.ccsDevDataRecordDTOList.map(m => {
-                                return {
-                                    name: m.createTime,
-                                    value: [m.createTime, m.devActval, m.insertTime]
-                                };
-                            }) || [];
-                            data.length && (this.isHasData = true);
+                            let dataList=args[index].data;
+                            dataList.forEach(d => {
+                                let devCode=d.devCode;
+                                let devNo=d.devNo;
+                                const data = d.ccsDevDataRecordDTOList && d.ccsDevDataRecordDTOList.map(m => {
+                                    return {
+                                        name: m.createTime,
+                                        value: [m.createTime, m.devActval, m.insertTime, devCode,devNo],
+                                        returnMap: d.returnMap
+                                    };
+                                }) || [];
+                                data.length && (this.isHasData = true);
+                                // console.log(1111,data)
 
+                                if (!flag) {
+                                    option.series.push(getData(data, i, index));
+                                } else {
+                                    option.series.push(getData2(data, i, index))
+                                }
 
-                            if( i.switch ){ // 如果是明细
-                                data.devBindPointTimeList = args[index].data.devBindPointTimeList ;
-                                option.series.push(getData2(data, i, index));
-                            } else {
-                                option.series.push(getData(data, i, index));
-                            }
+                            })
                         });
                         this.$nextTick(() => {
                             let chartDom = document.getElementById('newChartLine');

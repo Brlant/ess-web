@@ -57,6 +57,8 @@
               </des-btn>
               <des-btn @click="cancelAttention(item)" icon="delete" v-has="'ccs-hotmonitor-del'">删除</des-btn>
               <des-btn @click="ruleConfig('o,' + item.id)" icon="edit" v-has="'ccs-hotmonitor-rulecfg'">配置规则</des-btn>
+
+              <!-- 之前逻辑 <des-btn @click="goToTemp(item, $formatDevType(item))" icon="detail" v-has="'ccs-hotpints-history-scan'"> -->
               <des-btn @click="goToTemp(item, $formatDevType(item))" icon="detail" v-has="'ccs-hotpints-history-scan'">
                 历史数据
               </des-btn>
@@ -255,7 +257,7 @@
                 console.error(88, item) ;
 
                 let devName = item.devName || item.ccsDevName;
-                this.$router.push({path: '/monitoring/org/hot/spot/hot', query: {id, type}});
+                this.$router.push({path: '/monitoring/org/hot/spot/hot', query: {pointId : id, type}});
             }
         }
     };
