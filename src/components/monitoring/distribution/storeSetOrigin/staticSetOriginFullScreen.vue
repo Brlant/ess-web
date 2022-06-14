@@ -98,18 +98,20 @@ export default {
             graphList : [],
 
             step : 500, // 间隔
-            videoTimer : null // 定时器引用
+            videoTimer : null, // 定时器引用
+
+            normalIconUrlBase64 : '',
+            offlineIconUrlBase64 : ''
 
         } ;
     },
     computed : {
+        curPos(){
+            let res = this.graphList.filter( v => v.backgroundId === this.activeId ) ;
+            return res.length ? res[0] : [{indoorPositionSceneDTO : {}}] ;
+        },
         currPosObj(){
-            let res = this.graphList.filter( v => {
-                if( v.backgroundId === this.activeId ){
-                    return { pointX : v.pointX, pointY : v.pointY }
-                }
-            }) ;
-            return res.length ? res[0] : { pointX : 0, pointY : 0 } ;
+            return this.curPos ? { pointX : this.curPos.pointX, pointY : this.curPos.pointY }  : { pointX : 0, pointY : 0 } ;
         },
         ccsWarehouseImagePointRelationDTOListData() {
             let width = this.imgWidth;
@@ -138,7 +140,10 @@ export default {
 
                 let obj = {
                     color: this.getColorPx(m),
-                    fontcolor:m.indoorPositionSceneDTO.fontColor,
+
+                    // fontcolor:m.indoorPositionSceneDTO.fontColor, // 之前逻辑
+                    fontcolor: this.curPos ? this.curPos.indoorPositionSceneDTO.fontColor : '',
+
                     position: {
                         // 原点坐标设置 x 轴： ( 实际坐标 + 偏移量 ) * 坐标缩放比例
                         // 原点坐标设置 y 轴： ( 实际坐标 - 偏移量 ) * 坐标缩放比例 [ 注意: 这里的 y 轴向上为正方向, 往下为负方向 ]
@@ -157,9 +162,9 @@ export default {
                         // x: m.isNotAlloat ? m.initPositionX : (m.positionX * this.scaling),
                         // y: m.isNotAlloat ? m.initPositionY : (m.positionY * this.scaling)
                     },
-                    // text: `${ m.pointName}(室内定位)`,
-                    text: `${ m.pointName}`,
-                    devDetail: m
+                    text: `${ m.pointName}(室内定位)`,
+                    // devDetail: m
+                    devDetail: {...m, indoorPositionSceneDTO : { ...this.curPos.indoorPositionSceneDTO, normalIconUrlBase64 : this.normalIconUrlBase64, offlineIconUrlBase64 : this.offlineIconUrlBase64 } }
                 } ;
 
                 if( m.pointName === this.currentClickElement.scenesElementName ){ 
@@ -168,7 +173,8 @@ export default {
                         scenesElementId:m.pointId,
                         devCode:m.devCode,
                         devlist:[m],
-                        itemValue : m
+                        itemValue : {...m, indoorPositionSceneDTO : { ...this.curPos.indoorPositionSceneDTO } }
+                        // itemValue : m
                     }
                       
                 }
@@ -287,12 +293,61 @@ export default {
             this.reqPositionById() ;
             this.queryGraphList() ; // 获取分布图列表 用于拉取最新原点配置坐标
         },
+        getBase64Image(img, suf) {
+            var canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, img.width, img.height);
+            var dataURL = canvas.toDataURL(`image/${suf}`);  // 可选其他值 image/jpeg
+            return dataURL;
+        },
         queryGraphList() {
+
+            // 重置数据
+            this.normalIconUrlBase64 = '' ;
+            this.offlineIconUrlBase64 = '' ;
 
             warehouseDevImage.query({ 
                 sceneType : 2  // 1 : 静态场景     2 : 室内定位场景
             }).then(res => {
                 this.graphList = res.data.ccsWarehouseImageDTOS;
+
+                // 重新更新列表后, 同步更新 base64 数据
+
+                // 做图片本地缓存处理
+                if( this.curPos && this.curPos.indoorPositionSceneDTO ){
+                  if( this.curPos.indoorPositionSceneDTO.normalIconUrl ){ // 正常图标信息
+
+                    let img = new Image();
+                    img.src = this.curPos.indoorPositionSceneDTO.normalIconUrl + '?v=' + Math.random(); // 处理缓存
+                    img.crossOrigin = "*";  // 支持跨域图片
+
+                    img.addEventListener( 'load', e => {
+                        var base64 = this.getBase64Image(img, this.curPos.indoorPositionSceneDTO.normalIconUrl.slice(this.curPos.indoorPositionSceneDTO.normalIconUrl.lastIndexOf('.') + 1));
+                        this.normalIconUrlBase64 = base64 ;
+                    }, false ) ;
+                  
+                  } else {
+                    this.normalIconUrlBase64 = '' ;
+                  }
+
+                  if( this.curPos.indoorPositionSceneDTO.offlineIconUrl ){ // 离线图标信息
+
+                    let img = new Image();
+                    img.src = this.curPos.indoorPositionSceneDTO.offlineIconUrl + '?v=' + Math.random(); // 处理缓存
+                    img.crossOrigin = "*";  // 支持跨域图片
+
+                    img.addEventListener( 'load', e => {
+                        var base64 = this.getBase64Image(img, this.curPos.indoorPositionSceneDTO.offlineIconUrl.slice(this.curPos.indoorPositionSceneDTO.offlineIconUrl.lastIndexOf('.') + 1));
+                        this.offlineIconUrlBase64 = base64 ;
+                    }, false ) ;
+
+                  } else {
+                    this.offlineIconUrlBase64 = '' ;
+                  }
+                }
+
             });
         },
         getPlayObj( obj ){
@@ -357,7 +412,7 @@ export default {
             if (!this.activeId) return;
             warehouseDevImage.positionById(this.activeId).then(res => {
                 let { data } = res ;
-
+                
                 this.ccsWarehouseImagePointRelationDTOList = data.ccsWarehouseImagePointRelationDTOList ;
                
             });
@@ -406,7 +461,8 @@ export default {
                     scenesElementId:item.pointId,
                     devCode:item.devCode,
                     devlist:[item],
-                    itemValue : item
+                    itemValue : {...item, indoorPositionSceneDTO : { ...this.curPos.indoorPositionSceneDTO } }
+                    // itemValue : item // 之前字段
                 };
                 if(this.drawer){
                     this.refreshEcharts=this.currentClickElement.scenesElementId;

@@ -227,9 +227,9 @@
                 </el-col>
                 <!-- 
                   之前权限逻辑 - 控制范围权限
-                  <el-col :span="10" align="right" v-has="'ccs-warehouse-dev-edit'" v-show="tmData.length"> 
+                  <el-col :span="10" align="right" v-has="'ccs-warehouse-dev-edit'" v-show="tmData.length || ccsWarehouseImagePointRelationDTOListData.length"> 
                 -->
-                <el-col :span="10" align="right" v-show="tmData.length || ccsWarehouseImagePointRelationDTOListData.length">
+                <el-col :span="10" align="right" v-show="tmData.length || ( ccsWarehouseImagePointRelationDTOListData && ccsWarehouseImagePointRelationDTOListData.length ) ">
                   <el-button-group>
                     <el-button @click="pointConfigFn" v-if='!isPointConfig'  v-has="'ccs-warehouse-dev-edit'" plain="" size="mini">原点设置</el-button>
                     <el-button @click="savePointConfigFn" v-if='isPointConfig'  v-has="'ccs-warehouse-dev-edit'" plain="" size="mini">保存原点设置</el-button>
@@ -341,7 +341,7 @@
     </div>
     <page-right :css="{'width':'900px','padding':0}" :show="showIndex !== -1" @right-close="resetRightBox">
       <form-part :form-item="currentGraph" :index="showIndex" @refresh="refresh" v-show="showIndex === 1"></form-part>
-        <edit-form-part :form-item="currentGraph" :index="showIndex" @refresh="refresh" v-show="showIndex === 3" ref="editForm"/>
+        <edit-form-part :form-item="currentGraph" :normalIconUrlBase64="normalIconUrlBase64" :offlineIconUrlBase64="offlineIconUrlBase64" :index="showIndex" @refresh="refresh" v-show="showIndex === 3" ref="editForm"/>
       <right-part :form-item="currentGraph" :index="showIndex" v-show="showIndex === 2"/>
     </page-right>
     <!-- <el-dialog :fullscreen="true" :title="currentGraph.backgroundName" :visible.sync="isShowBigMap"
@@ -430,6 +430,10 @@
 
                 currentObj : {}, // 初始化当前分布图列表对象
 
+                // 室内定位本地缓存图片信息
+                normalIconUrlBase64 : '', // 正常
+                offlineIconUrlBase64 : '' // 离线 
+
                 
 
                 // count : 0
@@ -468,7 +472,11 @@
                     
                     let obj = {
                       color: this.getColorPx(m),
-                        fontcolor:m.indoorPositionSceneDTO.fontColor,
+                        fontcolor : this.currentGraph.indoorPositionSceneDTO.fontColor,
+                        /*
+                          之前逻辑
+                          fontcolor:m.indoorPositionSceneDTO.fontColor,
+                        */
                         position: {
                             // 原点坐标设置 x 轴： ( 实际坐标 + 偏移量 ) * 坐标缩放比例
                             // 原点坐标设置 y 轴： ( 实际坐标 - 偏移量 ) * 坐标缩放比例 [ 注意: 这里的 y 轴向上为正方向, 往下为负方向 ]
@@ -487,9 +495,8 @@
                             // x: m.isNotAlloat ? m.initPositionX : (m.positionX * this.scaling),
                             // y: m.isNotAlloat ? m.initPositionY : (m.positionY * this.scaling)
                         },
-                        // text: `${ m.pointName}(室内定位)`,
-                        text: `${ m.pointName}`,
-                        devDetail: m
+                        text: `${ m.pointName}(室内定位)`,
+                        devDetail: {...m, indoorPositionSceneDTO : { ...this.currentGraph.indoorPositionSceneDTO, normalIconUrlBase64 : this.normalIconUrlBase64, offlineIconUrlBase64 : this.offlineIconUrlBase64 } }
                     } ;
                     if( m.pointName === this.currentClickElement.scenesElementName ){ 
                      this.currentClickElement = {
@@ -497,7 +504,8 @@
                         scenesElementId:m.pointId,
                         devCode:m.devCode,
                         devlist:[m],
-                        itemValue : m
+                        itemValue : {...m, indoorPositionSceneDTO : { ...this.currentGraph.indoorPositionSceneDTO } }
+                        // itemValue : m // 之前字段
                       }
                     }
                     return obj;
@@ -858,7 +866,105 @@
                 this.currentGraph = { ...item };
                 this.currentGraph.pointX = pointX;
                 this.currentGraph.pointY = pointY;
-                
+
+                function toBase64( arr ){ // 存在跨域问题
+                  let result = [] ;
+
+                  arr.forEach( v => {
+                    result.push( new Promise( ( resolve, rej ) => {
+                      let req = new Request( v ) ;
+                      
+                      fetch(req)
+                      .then(res => res.blob())
+                      .then(d => {
+                        let reader = new FileReader() ;
+                        reader.readAsDataURL( d ) ;
+                        reader.addEventListener( 'load', res => {
+                          resolve( reader.result ) ;
+                        }, false ) ;
+                      }) ;
+
+                    }) ) ;
+                  } ) ;
+
+                  return result ;
+
+                }
+
+                // 重置数据
+                this.normalIconUrlBase64 = '' ;
+                this.offlineIconUrlBase64 = '' ;
+
+                function getBase64Image(img, suf) {
+                    var canvas = document.createElement("canvas");
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    var ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, img.width, img.height);
+                    var dataURL = canvas.toDataURL(`image/${suf}`);  // 可选其他值 image/jpeg
+                    return dataURL;
+                }
+
+
+                // 做图片本地缓存处理
+                if( this.currentGraph && this.currentGraph.indoorPositionSceneDTO ){
+                  if( this.currentGraph.indoorPositionSceneDTO.normalIconUrl ){ // 正常图标信息
+
+                    let img = new Image();
+                    img.src = this.currentGraph.indoorPositionSceneDTO.normalIconUrl + '?v=' + Math.random(); // 处理缓存
+                    img.crossOrigin = "*";  // 支持跨域图片
+
+                    img.addEventListener( 'load', e => {
+                        var base64 = getBase64Image(img, this.currentGraph.indoorPositionSceneDTO.normalIconUrl.slice(this.currentGraph.indoorPositionSceneDTO.normalIconUrl.lastIndexOf('.') + 1));
+                        this.normalIconUrlBase64 = base64 ;
+                    }, false ) ;
+                    
+                    // 存在跨域问题
+                      // Promise.all( 
+                      //   toBase64([
+                      //     this.currentGraph.indoorPositionSceneDTO.normalIconUrl
+                      //   ]) 
+                      // )
+                      // .then( base64Url => {
+                      //   if( !this.currentGraph.indoorPositionSceneDTO.normalIconUrlBase64 ){
+                      //     this.normalIconUrlBase64 = base64Url[0] ;
+                      //   }
+                        
+                      // } ) ;
+                  
+                  } else {
+                    this.normalIconUrlBase64 = '' ;
+                  }
+
+                  if( this.currentGraph.indoorPositionSceneDTO.offlineIconUrl ){ // 离线图标信息
+
+                    let img = new Image();
+                    img.src = this.currentGraph.indoorPositionSceneDTO.offlineIconUrl + '?v=' + Math.random(); // 处理缓存
+                    img.crossOrigin = "*";  // 支持跨域图片
+
+                    img.addEventListener( 'load', e => {
+                        var base64 = getBase64Image(img, this.currentGraph.indoorPositionSceneDTO.offlineIconUrl.slice(this.currentGraph.indoorPositionSceneDTO.offlineIconUrl.lastIndexOf('.') + 1));
+                        this.offlineIconUrlBase64 = base64 ;
+                    }, false ) ;
+
+                    // 存在跨域问题
+                      // Promise.all( 
+                      //   toBase64([
+                      //     this.currentGraph.indoorPositionSceneDTO.offlineIconUrl
+                      //   ]) 
+                      // )
+                      // .then( base64Url => {
+                      //   if( !this.currentGraph.indoorPositionSceneDTO.offlineIconUrlBase64 ){
+                      //     this.offlineIconUrlBase64 = base64Url[0] ;
+                      //   }
+                        
+                      // } ) ;
+
+                  } else {
+                    this.offlineIconUrlBase64 = '' ;
+                  }
+                }
+
             },
             showWarehouseDetail(item) {
                 this.idVal = item.backgroundId ; //更新 idVal
@@ -879,6 +985,7 @@
 
                 this.currentObj = { ...item } ; // 用于恢复原点设置的分布图列表对象
                 this.currentGraph = {...item} ;
+                // console.error( 888, this.currentGraph ) ;
 
                 // 获取原点设置信息
                 this.pointConfigObj = {
@@ -1032,7 +1139,6 @@
                   //   v.positionY = -100 ;
                   // } ) ;
                   
-
                   this.ccsWarehouseImagePointRelationDTOList = data.ccsWarehouseImagePointRelationDTOList ;
                   // this.tempList = [ ...this.tempList, ...data.ccsWarehouseImagePointRelationDTOList ]
                  
@@ -1262,7 +1368,8 @@
                     scenesElementId:value.pointId,
                     devCode:value.devCode,
                     devlist:[value],
-                    itemValue : value
+                    itemValue : {...value, indoorPositionSceneDTO : { ...this.currentGraph.indoorPositionSceneDTO } }
+                    // itemValue : value // 之前字段
                   };
                   
                   if(this.drawer){

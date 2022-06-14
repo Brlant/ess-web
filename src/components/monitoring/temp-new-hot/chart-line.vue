@@ -145,7 +145,7 @@
             getData(data, type, index) {
                 let {option} = this;
                 return {
-                    name: titleAry[type],
+                    name: "设备名称"+titleAry[type],
                     type: 'line',
                     showSymbol: true,
                     yAxisIndex: index,
@@ -175,58 +175,61 @@
                 };
             },
             queryList() {
-                const {startTime, endTime, devId, devCode, valType} = this.filters;
+                const {startTime, endTime, pointId, valType} = this.filters;
                 let {setLegend, setYAxis, getData} = this;
                 this.dataList = [];
-                if (!devCode) return;
+                if (!pointId) return;
                 const typeList = valType.filter(f => f !== '4');
                 // 设置图例
                 setLegend(typeList);
                 // 设置Y轴
                 setYAxis(typeList);
                 typeList.forEach((i, index) => {
-                    const params = {startTime, endTime, devId, devCode, valType: i};
+                    const params = {startTime, endTime, pointId, valType: i};
                     this.loadingData = true;
-                    TempDev.queryTempData(params).then(res => {
-                        const data = res.data.ccsDevDataRecordDTOList.map(m => {
-                            return {
-                                name: m.createTime,
-                                value: [m.createTime, m.devActval]
-                            };
+                    TempDev.queryPointDevData(params).then(res => {
+                        let dataList=res.data;
+                        dataList.forEach(i=>{
+                            const data =i.ccsDevDataRecordDTOList.map(m => {
+                                return {
+                                    name: m.createTime,
+                                    value: [m.createTime, m.devActval]
+                                };
+                            });
+                            // 设置数据
+                            this.dataList.push(getData(data, i, index));
+                            let {isRecord, detail} = this;
+                            if (isRecord && this.dataList.length) {
+                                const data = this.dataList[0].markLine.data;
+                                if (data.length > 1) return;
+                                data.push(
+                                    {
+                                        xAxis: detail.createTime,
+                                        label: {
+                                            formatter: obj => {
+                                                return this.$moment(obj.value).format('HH:mm:ss');
+                                            }
+                                        },
+                                        lineStyle: {
+                                            color: 'red'
+                                        }
+                                    }
+                                );
+                                detail.restoreTime && data.push(
+                                    {
+                                        xAxis: detail.restoreTime,
+                                        label: {
+                                            formatter: obj => {
+                                                return this.$moment(obj.value).format('HH:mm:ss');
+                                            }
+                                        },
+                                        lineStyle: {
+                                            color: 'red'
+                                        }
+                                    }
+                                );
+                            }
                         });
-                        // 设置数据
-                        this.dataList.push(getData(data, i, index));
-                        let {isRecord, detail} = this;
-                        if (isRecord && this.dataList.length) {
-                            const data = this.dataList[0].markLine.data;
-                            if (data.length > 1) return;
-                            data.push(
-                                {
-                                    xAxis: detail.createTime,
-                                    label: {
-                                        formatter: obj => {
-                                            return this.$moment(obj.value).format('HH:mm:ss');
-                                        }
-                                    },
-                                    lineStyle: {
-                                        color: 'red'
-                                    }
-                                }
-                            );
-                            detail.restoreTime && data.push(
-                                {
-                                    xAxis: detail.restoreTime,
-                                    label: {
-                                        formatter: obj => {
-                                            return this.$moment(obj.value).format('HH:mm:ss');
-                                        }
-                                    },
-                                    lineStyle: {
-                                        color: 'red'
-                                    }
-                                }
-                            );
-                        }
                         this.loadingData = false;
                     });
                 });
