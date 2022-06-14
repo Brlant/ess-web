@@ -521,7 +521,15 @@ export default {
             devTypeVal : -1 // 初始化后的 formItemsSetOrigin 对象索引
         };
     },
-    props: ['index', 'formItem'],
+    props: ['index', 'formItem', 'normalIconUrlBase64', 'offlineIconUrlBase64'],
+    computed : {
+        normalUrlBase64(){
+            return this.normalIconUrlBase64 ;
+        },
+        offlineUrlBase64(){
+            return this.offlineIconUrlBase64 ;
+        }
+    },
     watch: {
         index: function (newVal, oldVal) {
 
@@ -811,7 +819,6 @@ export default {
             // this.$http.get(`warehouseDevImage/info/${id}`).then(res => {
             this.$http.get(`warehousePointImage/info/${id}`).then(res => {
                 this.form = res.data;
-                // console.error( 68,  res.data ) ;
                 this.logisticsCenterList.push({id: this.form.logsicId, warehouseCode: this.form.logsicName});
                 this.warehouseList = this.form.warehouseList;
 
@@ -907,11 +914,17 @@ export default {
                         if (v.devType == res.data.devType) {
                             this.devTypeVal = v.devType ;
                             v.normalImageId = indoorPositionSceneDTO.normalIconId ;
-                            v.normalImageSrc = indoorPositionSceneDTO.normalIconUrl ; 
+                            // v.normalImageSrc = indoorPositionSceneDTO.normalIconUrl ; // 之前逻辑
+
+                            // 如果接口有数据用接口数据, 否则用 base64数据
+                            v.normalImageSrc = indoorPositionSceneDTO.normalIconUrl ? indoorPositionSceneDTO.normalIconUrl : this.normalUrlBase64 ;  
                             
 
                             v.offlineWarnImageId = indoorPositionSceneDTO.offlineIconId ;
-                            v.offlineWarnImageSrc = indoorPositionSceneDTO.offlineIconUrl ; 
+                            // v.offlineWarnImageSrc = indoorPositionSceneDTO.offlineIconUrl ;  // 之前逻辑
+
+                            // 如果接口有数据用接口数据, 否则用 base64数据
+                            v.offlineWarnImageSrc = indoorPositionSceneDTO.offlineIconUrl ? indoorPositionSceneDTO.offlineIconUrl : this.offlineUrlBase64 ; 
                         }
                     } ) ;
 
@@ -1034,10 +1047,10 @@ export default {
                         if( v.devType === this.devTypeVal ){
                             
                             form.indoorPositionSceneDTO.normalIconId = v.normalImageId ;
-                            form.indoorPositionSceneDTO.normalIconUrl = v.normalImageSrc ;
+                            // form.indoorPositionSceneDTO.normalIconUrl = v.normalImageSrc ; // 后台让修改的, 做图片本地缓存, 不用传 url 字段值, 只用传图片相关的 id 值
 
                             form.indoorPositionSceneDTO.offlineIconId = v.offlineWarnImageId ;
-                            form.indoorPositionSceneDTO.offlineIconUrl = v.offlineWarnImageSrc ;
+                            // form.indoorPositionSceneDTO.offlineIconUrl = v.offlineWarnImageSrc ;  // 后台让修改的, 做图片本地缓存, 不用传 url 字段值, 只用传图片相关的 id 值
                         }
                         
                     } ) ;

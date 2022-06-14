@@ -8,41 +8,9 @@
     -->
     <!-- <chart-line-multiple :filters="filters" chartWidth="1200px" /> -->
     
-    <div v-if="isEcharts">
-        <chart-line :filters="filters" chartWidth="1200px" v-if="filters.length === 1"/>
-        <chart-line-multiple :filters="filters" v-else chartWidth="1200px" />
-    </div>
-    <div v-else>
-        <el-table
-            :data="dataList"
-            v-loading="dataListLoading"    
-        >
-            <el-table-column
-                prop="collectionTime"
-                label="时间"
-                width="180"
-            >
-                <template slot-scope="{ row }">
-                    {{ row.collectionTime }}
-                </template>
-            </el-table-column>
-            <el-table-column
-                label="x"
-                width="180"
-            >
-                <template slot-scope="{ row }">
-                    {{ row.propValueMap.pointX }}
-                </template>
-            </el-table-column>
-            <el-table-column
-                label="y"
-            >
-                <template slot-scope="{ row }">
-                    {{ row.propValueMap.pointY }}
-                </template>
-            </el-table-column>
-        </el-table>
-    </div>
+    <chart-line :filters="filters" chartWidth="1200px" v-if="filters.length === 1"/>
+    <chart-line-multiple :filters="filters" v-else chartWidth="1200px" />
+
     <!-- <div class="order-list" v-else>
         <el-row class="order-list-header">
             <el-col :span="5">时间</el-col>
@@ -98,6 +66,7 @@
         methods: {
             searchResult: function (search, isEcharts) {
                 this.filters = JSON.parse(JSON.stringify(search)) ;
+                console.error( 11, search, isEcharts ) ;  
 
                 this.isEcharts = isEcharts ;
                 

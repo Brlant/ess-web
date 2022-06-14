@@ -19,12 +19,15 @@
             // 之前字段
              v-if="item.imageId" 
         -->
+
+        <!-- 最近之前逻辑 v-if="item.imageUrl" -->
+
         <image
             x="0"
             y="0"
             class="image"
             :xlink:href="getImageURL(item)"
-            v-if="item.imageUrl"
+            v-if="isImgInfo"
         ></image>
 
         <image
@@ -71,6 +74,23 @@ export default {
         },
         labelId() {
             return this.item.ccsWarehouseImagePointRelationId + this.iconScale + '';
+        },
+        isImgInfo(){
+            // warnFlag : true 表示离线, false : 表示正常, 【 离线和正常的图标是一样的 】
+            if(this.item.warnFlag){ // 离线 
+                if(!this.item.indoorPositionSceneDTO.offlineIconUrl ){
+                    return false;
+                } else {
+                    return true ;
+                }
+            } else { // 在线
+                if(!this.item.indoorPositionSceneDTO.normalIconUrl ){
+                    return false;
+                } else {
+                    return true ;
+                }
+            }
+           
         }
     },
     props: {
@@ -123,7 +143,13 @@ export default {
             return `@/assets/img/3-1.png`
         },
         getImageURL(item){
-            return `${item.imageUrl}`
+            return item.warnFlag ? // warnFlag : true 表示离线, false : 表示正常, 【 离线和正常的图标是一样的 】
+            `${item.indoorPositionSceneDTO && item.indoorPositionSceneDTO.offlineIconUrl ? item.indoorPositionSceneDTO.offlineIconUrl : item.indoorPositionSceneDTO.offlineIconUrlBase64 }` :
+            `${item.indoorPositionSceneDTO && item.indoorPositionSceneDTO.normalIconUrl ? item.indoorPositionSceneDTO.normalIconUrl : item.indoorPositionSceneDTO.normalIconUrlBase64 }` 
+
+            // return `${item.imageUrl}` // 之前逻辑
+
+
             // 之前逻辑
             // return `${Vue.prototype.$http.defaults.baseURL}/open-api/file/download?imageId=${item.imageId}`
         },

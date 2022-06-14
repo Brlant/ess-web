@@ -293,6 +293,7 @@
                         this.searchCondition.valType = ['1'];
                     }
                 }
+                console.error(88, val) ;
                 
                 this.search();
             },
