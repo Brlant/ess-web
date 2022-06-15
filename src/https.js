@@ -40,14 +40,15 @@ http.interceptors.request.use(function (config) {
 });
 
 http.interceptors.response.use(response => {
+
     if (isNewReturnType(response.data)) {
         switch (response.data.code) {
             case 200:
                 return response.data;
             case 401:
                 // window.location.href = 'https://iot.tracentsure.com';
-                window.location.href = '#/login';
                 window.localStorage.removeItem('user'); //  如果请求超时返回 401, 则清除缓存数据, 下次请求返回登录界面
+                window.location.href = '#/login';
                 return Promise.reject({response});
             case 403:
                 Notification.error({

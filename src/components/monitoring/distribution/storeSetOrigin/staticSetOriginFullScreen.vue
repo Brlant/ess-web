@@ -162,7 +162,8 @@ export default {
                         // x: m.isNotAlloat ? m.initPositionX : (m.positionX * this.scaling),
                         // y: m.isNotAlloat ? m.initPositionY : (m.positionY * this.scaling)
                     },
-                    text: `${ m.pointName}(室内定位)`,
+                    text: `${ m.pointName }`,
+                    // text: `${ m.pointName}(室内定位)`, // 之前逻辑
                     // devDetail: m
                     devDetail: {...m, indoorPositionSceneDTO : { ...this.curPos.indoorPositionSceneDTO, normalIconUrlBase64 : this.normalIconUrlBase64, offlineIconUrlBase64 : this.offlineIconUrlBase64 } }
                 } ;
