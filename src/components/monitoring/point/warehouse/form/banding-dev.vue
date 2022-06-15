@@ -168,7 +168,7 @@ export default {
                 oldPointRelationId: '',
                 currentDevFlag: '',
                 pointName: '',
-                isLocation : true,
+                isLocation : false,
                 devType : '',
                 devClass : 1
             },
@@ -231,7 +231,7 @@ export default {
                 oldPointRelationId: '',
                 currentDevFlag: '',
                 pointName: '',
-                isLocation : true,
+                isLocation : false,
                 devType : '',
                 devClass : 1
             };
@@ -294,14 +294,29 @@ export default {
             }
         },
         resetForm() {
+            /*
+                之前逻辑
+                this.form = {
+                    pointRelationList: '',
+                    devCode: '',
+                    startTime: '',
+                    endTime: '',
+                    oldPointRelationId: '',
+                    currentDevFlag: '',
+                    pointName: ''
+                };
+            */
             this.form = {
-                pointRelationList: '',
+                devId: '',
                 devCode: '',
                 startTime: '',
                 endTime: '',
                 oldPointRelationId: '',
                 currentDevFlag: '',
-                pointName: ''
+                pointName: '',
+                isLocation : false,
+                devType : '',
+                devClass : 1
             };
         },
         queryPointRelationRecord() {

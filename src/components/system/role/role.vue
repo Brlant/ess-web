@@ -259,7 +259,6 @@
             },
             getMenuList: function (cache = true) {
                 this.getRoleMenus(cache).then(res => {
-                  console.error( '333: ', res.data ) ;
                     this.menuList = res.data;
                 });
             },
