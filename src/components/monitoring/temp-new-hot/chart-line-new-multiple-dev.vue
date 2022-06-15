@@ -237,7 +237,8 @@
                 let httpAry = [];
                 this.filters.forEach((i, index) => {
                     const {startTime, endTime, pointId, valType, startPrice} = i;
-                    const params = {startTime, endTime, pointId,valType: valType[0], startPrice};
+                    // const params = {startTime, endTime, pointId,valType: valType[0], startPrice}; // 之前逻辑参数
+                    const params = {startTime, endTime, pointId,valType: valType + '', startPrice};
                     httpAry.push(TempDev.queryPointDevDataNew(params));
                 });
                 this.loadingData = true;
