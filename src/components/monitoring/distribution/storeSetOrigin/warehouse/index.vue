@@ -144,7 +144,7 @@
     <div class="container d-table f-w flexDis">
       <div class="d-table-left ">
         <h2 class="header">
-            <span class="pull-right" v-has="'ccs-warehouse-dev-edit'">
+            <span class="pull-right" v-has="'ccs-warehouse-image-edit'">
               <a @click.stop.prevent="addGraph" class="btn-circle" href="#" v-has="'show'">
                 <i class="el-icon-t-plus"></i>
               </a>
@@ -168,7 +168,7 @@
                   <span class="des-btn_name applyFlex" :title="item.backgroundName">{{item.backgroundName}}</span>
                   <span class="des-btn__position flexDis" v-show="item.backgroundId===currentGraph.backgroundId">
                       <des-btn @click="updateGraph(item)" icon="edit" v-has="'ccs-warehouse-dev-update'"></des-btn>
-                      <des-btn @click="deleteGraph(item)" icon="delete" v-has="'ccs-warehouse-dev-edit'"></des-btn>
+                      <des-btn @click="deleteGraph(item)" icon="delete" v-has="'ccs-warehouse-image-edit'"></des-btn>
                   </span>
                 </li>
               </ul>
@@ -227,21 +227,21 @@
                 </el-col>
                 <!-- 
                   之前权限逻辑 - 控制范围权限
-                  <el-col :span="10" align="right" v-has="'ccs-warehouse-dev-edit'" v-show="tmData.length || ccsWarehouseImagePointRelationDTOListData.length"> 
+                  <el-col :span="10" align="right" v-has="'ccs-warehouse-image-edit'" v-show="tmData.length || ccsWarehouseImagePointRelationDTOListData.length"> 
                 -->
                 <el-col :span="10" align="right" v-show="tmData.length || ( ccsWarehouseImagePointRelationDTOListData && ccsWarehouseImagePointRelationDTOListData.length ) ">
                   <el-button-group>
-                    <el-button @click="pointConfigFn" v-if='!isPointConfig'  v-has="'ccs-warehouse-dev-edit'" plain="" size="mini">原点设置</el-button>
-                    <el-button @click="savePointConfigFn" v-if='isPointConfig'  v-has="'ccs-warehouse-dev-edit'" plain="" size="mini">保存原点设置</el-button>
-                    <el-button @click="cancelPointConfigFn" v-if='isPointConfig'  v-has="'ccs-warehouse-dev-edit'" plain="" size="mini">取消原点设置</el-button>
+                    <el-button @click="pointConfigFn" v-if='!isPointConfig'  v-has="'ccs-warehouse-image-edit'" plain="" size="mini">原点设置</el-button>
+                    <el-button @click="savePointConfigFn" v-if='isPointConfig'  v-has="'ccs-warehouse-image-edit'" plain="" size="mini">保存原点设置</el-button>
+                    <el-button @click="cancelPointConfigFn" v-if='isPointConfig'  v-has="'ccs-warehouse-image-edit'" plain="" size="mini">取消原点设置</el-button>
                     <el-button @click="showBigMap" plain="" size="mini">查看大图</el-button>
 
                     <el-button @click="unitRight" plain="" size="mini" v-has="'ccs-org-devmap-authorized'">单位授权</el-button>
                     <!--<el-button plain="" size="mini" v-has="'ccs-org-devmap-authorized'">单位授权</el-button>-->
 
-                    <el-button @click="doEditPos" plain="" size="mini" v-has="'ccs-warehouse-dev-edit'" v-if="!editPosition">编辑设备位置
+                    <el-button @click="doEditPos" plain="" size="mini" v-has="'ccs-warehouse-image-edit'" v-if="!editPosition">编辑设备位置
                     </el-button>
-                    <template v-else  v-has="'ccs-warehouse-dev-edit'">
+                    <template v-else  v-has="'ccs-warehouse-image-edit'">
                       <el-button @click="savePos" plain="" size="mini">保存
                       </el-button>
                       <el-button @click="cancelEditPos" plain="" size="mini">取消

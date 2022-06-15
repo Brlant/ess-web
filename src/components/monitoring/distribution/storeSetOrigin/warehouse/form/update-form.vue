@@ -537,6 +537,7 @@ export default {
             // this.$refs.uploadFile.$refs.upload.clearFiles();
             this.logisticsCenterList=[];
             this.warehouseList=[];
+            this.resetItemsFn() ;
             this.queryImageInfo(this.formItem.backgroundId, newVal);
             this.getVideoDevListFn() ;
 
@@ -674,6 +675,45 @@ export default {
         
         typeChange(value) {
             this.flag = value
+        },
+        resetItemsFn(){
+            this.formItems.forEach(v => {
+                v.normalFile = {
+                    attachmentId : '',
+                    url : '',
+                } ;
+                v.highWarnFile = {
+                    attachmentId : '',
+                    url : '',
+                } ;
+                v.lowWarnFile = {
+                    attachmentId : '',
+                    url : '',
+                } ;
+                v.offlineWarnFile = {
+                    attachmentId : '',
+                    url : '',
+                } ;
+                v.normalImageSrc = ''
+                v.highWarnImageSrc = ''
+                v.lowWarnImageSrc = ''
+                v.offlineWarnImageSrc = ''
+                v.normalImageId = ''
+                v.highWarnImageId = ''
+                v.lowWarnImageId=''
+                v.offlineWarnImageId=''
+            })
+
+            this.formItemsSetOrigin.forEach(v => {
+                v.normalImageSrc = ''
+                v.highWarnImageSrc = ''
+                v.lowWarnImageSrc = ''
+                v.offlineWarnImageSrc = ''
+                v.normalImageId = ''
+                v.highWarnImageId = ''
+                v.lowWarnImageId=''
+                v.offlineWarnImageId=''
+            })
         },
         reset() {
             this.flag = 0

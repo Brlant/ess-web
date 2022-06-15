@@ -11,14 +11,12 @@ export default {
                 
                 if (noCache === false && menu && menu.data.length) {
                     resolve(menu);
-                    console.error(1, menu) ;
                 } else {
                     let res = {
                         data: menuTree
                     };
                     this.$store.commit('initPermList', res);
                     resolve(res);
-                    console.error(2, res) ;
                     let getParentIds = (menus, parentsIds) => {
                         menus.forEach(i => {
                             if (i.children) {
