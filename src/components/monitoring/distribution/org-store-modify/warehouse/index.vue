@@ -66,7 +66,7 @@
   }
 
   .d-table > div.d-table-left {
-    width: 120px;
+    width: 222px;
     /*
     min-width: 180px;
     width: 180px;
@@ -669,6 +669,8 @@
                         this.activeId = this.graphList.length ? this.graphList[0].backgroundId : '';
                         this.graphList.length && this.showWarehouseDetail(this.graphList[0]);
                     }
+
+                    this.queryDevs(); // 初始化请求
                     this.loadingDataWare = false;
                 });
             },

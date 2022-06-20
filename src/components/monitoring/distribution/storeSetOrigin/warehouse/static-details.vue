@@ -1,5 +1,5 @@
 <template>
-    <div class="drawer-box ani-bottom">
+    <div class="drawer-box ani-bottom" :class="{ bigScreen : isBigScreen }">
         <div class="container-box">
             <div class="header">
                 <el-row style="width: 100%;">
@@ -16,13 +16,15 @@
                     <i class="el-icon-error" @click="closeDrawer"></i>
                     </el-col>
                 </el-row>
-            </div>   
+            </div>
             <div class="content">
                 <div class="left">
                     <el-tooltip  :content="element.scenesElementName"  placement="right"  >
                         <div class="title">{{ element.scenesElementName }}</div>
                     </el-tooltip>
                  <p class="device-name" >{{"设备Code："+selectDevice.devCode }}</p>
+                 <p class="device-name" v-if="+element.itemValue.isLocation">{{`坐标: ${element.itemValue.positionX}, ${element.itemValue.positionY}` }}</p>
+                 <p class="device-name" v-if="+element.itemValue.isLocation">{{`转换坐标: ${element.itemValue.positionX * element.itemValue.indoorPositionSceneDTO.pointRatio}, ${element.itemValue.positionY * element.itemValue.indoorPositionSceneDTO.pointRatio}` }}</p>
                 </div>
                 <div class="right">
                     <e-charts
@@ -72,7 +74,7 @@
 
 <script>
 import utils from "@/tools/utils";
-import https from "../../../../../https";
+import https from "@/https";
 import {TempDev} from '@/resources';
 
 export default {
@@ -81,6 +83,10 @@ export default {
         element: {
             type: Object,
             default: {}
+        },
+        isBigScreen : {
+            type : Boolean,
+            default : false
         },
         refreshEcharts: {
             type: String,
@@ -598,8 +604,6 @@ export default {
         }
         this.getPonitHistory(this.ponitId)
 
-
-
     },
     destroyed() {
         if (this.firstEvent) {
@@ -631,7 +635,8 @@ export default {
     border-top-right-radius: 5px;
     box-sizing: border-box;
     position: relative;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 1);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 1);   
+    /* 就是这个 */
 }
 
 .container-box .header {
@@ -662,7 +667,6 @@ export default {
 }
 .content .left {
     /* width:100px; */
-    
     width:13em;
     /* height: 190px; */
 }
@@ -808,8 +812,12 @@ export default {
 }
 
 .ani-bottom {
-    animation: ani 0.7s ease forwards;
+    /**/animation: ani 0.7s ease forwards;
     -webkit-animation: ani 0.7s ease forwards;
+}
+
+.bigScreen{
+    position:fixed; bottom:0;
 }
 
 @-webkit-keyframes ani {

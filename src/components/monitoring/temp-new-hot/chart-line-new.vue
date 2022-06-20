@@ -18,7 +18,7 @@
 </template>
 <script>
     const unitAry = ['', '°C', '%', '%'];
-    const titleAry = ['', '温度', '湿度', '电压'];
+    const titleAry = ['', '【温度】', '【湿度】', '【电压】'];
     import {TempDev} from '@/resources';
     import axios from 'axios';
     import Echarts from 'echarts/lib/echarts';
@@ -90,8 +90,12 @@
                 // }
             },
             getData(data, type, index) {
+                let devTitle ="";
+                if (data.length>0){
+                    devTitle="【设备名称】：" +data[0].devName+"【设备编码】："+data[0].devCode;
+                }
                 return {
-                    name: titleAry[type],
+                    name: devTitle+titleAry[type],
                     type: 'line',
                     showSymbol: true,
                     symbolSize: 6,
@@ -197,10 +201,10 @@
                     if (!this.filters) return;
                     filter = this.filters;
                 }
-                const {startTime, endTime, devId, devCode, valType, startPrice} = filter;
+                const {startTime, endTime, pointId,valType, startPrice} = filter;
                 let {getLegend, getYAxis, getData, getOption, getAlarmLine} = this;
                 const option = getOption();
-                if (!devCode) return;
+                if (!pointId) return;
                 const typeList = valType.filter(f => f !== '4');
                 // 设置图例
                 option.legend = getLegend(typeList);
@@ -209,8 +213,8 @@
                 option.series = [];
                 let httpAry = [];
                 typeList.forEach((i, index) => {
-                    const params = {startTime, endTime, devId, devCode, valType: i, startPrice};
-                    httpAry.push(TempDev.queryTempData(params));
+                    const params = {startTime, endTime, pointId, valType: i, startPrice};
+                    httpAry.push(TempDev.queryPointDevData(params));
                 });
                 this.loadingData = true;
                 this.isHasData = false;
@@ -218,21 +222,25 @@
                     .then(axios.spread((...args) => {
                         this.loadingData = false;
                         typeList.forEach((i, index) => {
-                            const data = args[index].data.ccsDevDataRecordDTOList && args[index].data.ccsDevDataRecordDTOList.map(m => {
-                                return {
-                                    name: m.createTime,
-                                    value: [m.createTime, m.devActval, m.insertTime]
-                                };
-                            }) || [];
-                            data.length && (this.isHasData = true);
-                            option.series.push(getData(data, i, index));
+                            let dataList=args[index].data;
+                            dataList.forEach(d => {
+                                const data = d.ccsDevDataRecordDTOList && d.ccsDevDataRecordDTOList.map(m => {
+                                    return {
+                                        name: m.createTime,
+                                        value: [m.createTime, m.devActval, m.insertTime],
+                                        devName: d.devName?d.devName:'',
+                                        devCode: d.devCode?d.devCode:''
+                                    };
+                                }) || [];
+                                data.length && (this.isHasData = true);
+                                option.series.push(getData(data, i, index));
+                            })
                         });
                         this.$nextTick(() => {
                             let chartDom = document.getElementById('chartLine');
                             if (!chartDom) return;
                             let chartLine = Echarts.init(chartDom, 'light');
                             if (!chartLine) return;
-                            chartLine.setOption({}) ; // 清除
                             let {isRecord, detail} = this;
                             if (isRecord && option.series.length) {
                                 // 时间标线， 起始时间，终止时间
@@ -242,10 +250,8 @@
                                     data.push(getAlarmLine(detail.createTime));
                                     detail.restoreTime && data.push(getAlarmLine(detail.restoreTime));
                                 });
-                                console.error( 'good' ) ;
                                 chartLine.setOption(option);
                             } else {
-                                console.error( 'noooooo' ) ;
                                 chartLine.setOption(option);
                             }
                         });

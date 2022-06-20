@@ -7,6 +7,7 @@ import qs from 'qs';
 export const http = axios.create({
   baseURL: process.env.VUE_APP_API,
   timeout: 30000,
+  // withCredentials: true
   withCredentials: true
 });
 
@@ -36,12 +37,14 @@ http.interceptors.request.use(function (config) {
 });
 
 http.interceptors.response.use(response => {
+    
     if (isNewReturnType(response.data)) {
         switch (response.data.code) {
             case 200 :
                 return response.data;
             case 401:
                 window.location.href = '#/login';
+                window.localStorage.removeItem('user'); //  如果请求超时返回 401, 则清除缓存数据, 下次请求返回登录界面
                 return Promise.reject({response});
             case 403:
                 Notification.error({
@@ -59,6 +62,8 @@ http.interceptors.response.use(response => {
     } else {
         return response;
     }
+
+    
 }, error => {
   let noticeTipKey = 'noticeError';
   let notice = window.localStorage.getItem(noticeTipKey);
@@ -82,6 +87,7 @@ http.interceptors.response.use(response => {
     let lastUrl = window.localStorage.getItem('lastUrl');
     if (!lastUrl || lastUrl.indexOf('/base/dict') === -1) {
     }
+    window.localStorage.removeItem('user'); //  如果请求超时返回 401, 则清除缓存数据, 下次请求返回登录界面
     window.location.href = '#/login';
     return Promise.reject(error);
   }
@@ -111,7 +117,16 @@ Vue.prototype.$http = http;
 export const warehouseDevImage = resource('/warehousePointImage', http, {
     updateImage: (id, params) => {
         return http.put('/warehousePointImage/'+id, params);
+    },
+
+    positionById: (id, params) => {
+        return http.get('/warehousePointImage/indoor/position/'+id, params);
+    },
+
+    saveConfigPoint: (params) => {
+      return http.put('/warehousePointImage/base/point', params);
     }
+
 });
 /*
     // yxh 修改所有带请求路径 /warehouseDevImage 的地址修改为 /warehousePointImage
@@ -219,6 +234,12 @@ export const Point = resource('/ccs-point', http, {
     queryPager(params) {
         return http.get(`/ccs-point/pager`, {params});
     },
+
+    gainPointThingDataList(params) {
+        return http.get(`mcc-data/ccsDevice/gainPointThingDataList`, {params});
+    },
+
+
 });
 
 // 点位设备关系
@@ -263,8 +284,21 @@ export const TempDev = resource('/ccsDevice', http, {
         return http.get('/ccsDevice/queryDevListFuzzy', {params});
     },
     exportDevInfo(params) {
-        return http.get('/ccsDevice/export-dev', {params});
-    }
+      return http.get('/ccsDevice/export-dev', {params});
+    },
+    
+    reqAllDevListByDevType(params) {
+      return http.get('/ccsDevice/type/list', {params});
+    },
+    
+    gainDeviceThingDataList(params) {
+      return http.get('mcc-data/ccsDevice/gainDeviceThingDataList', {params});
+    },
+    
+    findAllDevListFuzzy(params) {
+        return http.get('/ccsDevice/findAllDevListFuzzy', {params});
+    },
+
 });
 
 export const HandoverData = resource('/handover-data', http, {

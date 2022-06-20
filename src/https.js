@@ -40,12 +40,14 @@ http.interceptors.request.use(function (config) {
 });
 
 http.interceptors.response.use(response => {
+
     if (isNewReturnType(response.data)) {
         switch (response.data.code) {
             case 200:
                 return response.data;
             case 401:
                 // window.location.href = 'https://iot.tracentsure.com';
+                window.localStorage.removeItem('user'); //  如果请求超时返回 401, 则清除缓存数据, 下次请求返回登录界面
                 window.location.href = '#/login';
                 return Promise.reject({response});
             case 403:
@@ -79,6 +81,7 @@ http.interceptors.response.use(response => {
             message: '服务器太久没有响应, 请重试',
             onClose: function () {
                 window.localStorage.removeItem(noticeTipKey);
+               
             }
         });
         return Promise.reject(error);
@@ -87,6 +90,7 @@ http.interceptors.response.use(response => {
         let lastUrl = window.localStorage.getItem('lastUrl');
         if (!lastUrl || lastUrl.indexOf('/base/dict') === -1) {
         }
+        window.localStorage.removeItem('user'); //  如果请求超时返回 401, 则清除缓存数据, 下次请求返回登录界面
         // window.location.href = 'https://iot.tracentsure.com';
         window.location.href = '#/login';
         return Promise.reject(error);

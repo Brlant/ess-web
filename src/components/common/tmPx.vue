@@ -2,12 +2,13 @@
     <!-- <svg :style="`left:${currentPos.x}px;top:${currentPos.y}px;height: ${iconScale !== 1 ? '30px' : '20px'}`" -->
     <!-- <svg  :style="`left:${currentPos.x}px;top:${currentPos.y}px;height: ${iconScale !== 1 ? '30px' : '20px'}`" -->
         
-    <svg :style="
-        `left:${currentPos.x}%;top:${currentPos.y}%;height: ${iconScale !== 1 ? '30px' : '20px'};`  
-    "
+    <svg
+        :style="
+            `left:${currentPos.x}px;top:${currentPos.y}px;height: ${iconScale !== 1 ? '30px' : '20px'};`  
+        "
          @click="goTo"
          @mousedown="dragPosition"
-         @mouseenter="showDetail" @mouseleave="hideDetail" @mouseup="isDraging = false" class="tm-container" :class="{ ani : item.indoorPositionSceneDTO && +item.indoorPositionSceneDTO.flashIcon  }">
+         @mouseenter="showDetail" @mouseleave="hideDetail" @mouseup="isDraging = false" class="tm-container" :class="{ anis : item.indoorPositionSceneDTO && +item.indoorPositionSceneDTO.flashIcon  }">
         <circle :cx="r" :cy="r" :fill="color"
                 :r="r"
                 :stroke="color"
@@ -18,12 +19,15 @@
             // 之前字段
              v-if="item.imageId" 
         -->
+
+        <!-- 最近之前逻辑 v-if="item.imageUrl" -->
+
         <image
             x="0"
             y="0"
             class="image"
             :xlink:href="getImageURL(item)"
-            v-if="item.imageUrl"
+            v-if="isImgInfo"
         ></image>
 
         <image
@@ -33,13 +37,17 @@
             xlink:href="@/assets/img/video_icon.gif"
             v-else-if="+item.isVideo"
         ></image>
-        <use :height="getDevIconWH(item, 3)" :style="'fill:'+ color" :width="getDevIconWH(item, 2)"
+        <use 
+        height="20" 
+        width="20"
+        :style="'fill:'+ color" 
              :xlink:href="getDevIcon(item)" v-show="item.devType !== '3'" v-else></use>
         <text :font-size="12" :x="getDevIconOffset(item).x" :y="getDevIconOffset(item).y"
-              :fill="fontColor" text-anchor="start" class="text">
+              :fill="fontColor" text-anchor="start" class="text" style="user-select:none;">
             <slot></slot>
         </text>
     </svg>
+    
 </template>
 
 <script>
@@ -66,6 +74,23 @@ export default {
         },
         labelId() {
             return this.item.ccsWarehouseImagePointRelationId + this.iconScale + '';
+        },
+        isImgInfo(){
+            // warnFlag : true 表示离线, false : 表示正常, 【 离线和正常的图标是一样的 】
+            if(this.item.warnFlag){ // 离线 
+                if(!this.item.indoorPositionSceneDTO.offlineIconUrl ){
+                    return false;
+                } else {
+                    return true ;
+                }
+            } else { // 在线
+                if(!this.item.indoorPositionSceneDTO.normalIconUrl ){
+                    return false;
+                } else {
+                    return true ;
+                }
+            }
+           
         }
     },
     props: {
@@ -118,14 +143,27 @@ export default {
             return `@/assets/img/3-1.png`
         },
         getImageURL(item){
-            return `${item.imageUrl}`
+            return item.warnFlag ? // warnFlag : true 表示离线, false : 表示正常, 【 离线和正常的图标是一样的 】
+            `${item.indoorPositionSceneDTO && item.indoorPositionSceneDTO.offlineIconUrl ? item.indoorPositionSceneDTO.offlineIconUrl : item.indoorPositionSceneDTO.offlineIconUrlBase64 }` :
+            `${item.indoorPositionSceneDTO && item.indoorPositionSceneDTO.normalIconUrl ? item.indoorPositionSceneDTO.normalIconUrl : item.indoorPositionSceneDTO.normalIconUrlBase64 }` 
+
+            // return `${item.imageUrl}` // 之前逻辑
+
+
             // 之前逻辑
             // return `${Vue.prototype.$http.defaults.baseURL}/open-api/file/download?imageId=${item.imageId}`
         },
         getDevIcon(item) {
             // yxh 之前逻辑 DevIcon[item.devType] 可能为 undefined
             // return '#el-icon-t-' + DevIcon[item.devType][item.warnFlag ? 1 : 0];
-            return '#el-icon-t-' + ( DevIcon[item.devType] ? DevIcon[item.devType][item.warnFlag ? 1 : 0] : '' );
+            return '#el-icon-t-' + ( 
+                item.warnFlag ? // warnFlag : true 表示离线, false : 表示正常, 【 离线和正常的图标是一样的 】
+                'temp-wire'
+                : 'temp-wire' );
+            /*
+                之前逻辑
+                return '#el-icon-t-' + ( DevIcon[item.devType] ? DevIcon[item.devType][item.warnFlag ? 1 : 0] : '' );
+            */
         },
         getDevIconWH(item, index) {
             // yxh 之前逻辑 DevIcon[item.devType] 可能为 undefined
@@ -166,8 +204,13 @@ export default {
                 el.style.display = 'none';
                 return;
             }
+            console.error( 88, item ) ;
             let time = item.recordDate ? this.$moment(item.recordDate).format('YYYY-MM-DD HH:mm:ss') : '';
-            el.innerHTML = `<div>名称:${item.pointName}</div><div>编码:${item.devCode}</div><div>最新时间:${time}</div>`;
+            
+            // 之前逻辑
+            // el.innerHTML = `<div>名称:${ +item.isLocation ? item.pointName + '(室内定位)' : item.pointName }</div><div>编码:${item.devCode}</div><div>最新时间:${time}</div>`;
+            el.innerHTML = `<div>名称:${ item.pointName }</div><div>编码:${item.devCode}</div><div>最新时间:${time}</div>`;
+            
             el.style.display = 'block';
             let w = el.clientWidth;
             let cx = 0;
@@ -242,33 +285,34 @@ export default {
             let oEvent = e || event;
             let rootNode = this.$el.parentNode;
             let oldPos = this.getPos(oEvent);
-            // oldPos = {
-            //     x: oldPos.x - this.currentPos.x,
-            //     y: oldPos.y - this.currentPos.y
-            // };
-            let boundPos = rootNode.getBoundingClientRect() ;
             oldPos = {
-                x: oEvent.clientX - boundPos.x,
-                y: oEvent.clientY - boundPos.y,
-                ex : oEvent.offsetX,
-                ey : oEvent.offsetY
+                x: oldPos.x - this.currentPos.x,
+                y: oldPos.y - this.currentPos.y
             };
+            let boundPos = rootNode.getBoundingClientRect() ;
+            // oldPos = {
+            //     x: oEvent.clientX - boundPos.x,
+            //     y: oEvent.clientY - boundPos.y,
+            //     ex : oEvent.offsetX,
+            //     ey : oEvent.offsetY
+            // };
             this.isDraging = true;
 
             rootNode.onmousemove = function (e) {
                 let oEvent = e || event;
-                // let dpos = self.getPos(oEvent);
-                let dpos = {
-                    x : oEvent.clientX,
-                    y : oEvent.clientY
-                };
+                let dpos = self.getPos(oEvent);
+               
 
                 // 转百分比坐标
-                self.currentPos.x = ( ( dpos.x - boundPos.x - oldPos.ex ) / self.parentNodeWidth * 100 ) ;
-                self.currentPos.y = ((dpos.y - boundPos.y - oldPos.ey ) / self.parentNodeHeight * 100) ;
+                // let dpos = {
+                //     x : oEvent.clientX,
+                //     y : oEvent.clientY
+                // };
+                // self.currentPos.x = ( ( dpos.x - boundPos.x - oldPos.ex ) / self.parentNodeWidth * 100 ) ;
+                // self.currentPos.y = ((dpos.y - boundPos.y - oldPos.ey ) / self.parentNodeHeight * 100) ;
 
-                // self.currentPos.x = dpos.x - oldPos.x;
-                // self.currentPos.y = dpos.y - oldPos.y;
+                self.currentPos.x = dpos.x - oldPos.x;
+                self.currentPos.y = dpos.y - oldPos.y;
             };
             document.onmouseup = function (e) {
                 rootNode.onmousemove = null;
@@ -288,7 +332,6 @@ export default {
         // 去除减的半径
         let x = this.position.x * this.scale;
         let y = this.position.y * this.scale;
-
 
         this.currentPos = {
             x,
@@ -338,5 +381,5 @@ export default {
     50%{ opacity:1; }
 }
 
-.ani{ animation:aniFade 200ms linear infinite; }
+.anis{ animation:aniFade 500ms linear infinite; }
 </style>

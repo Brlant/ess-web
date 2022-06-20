@@ -29,7 +29,19 @@
                     <oms-input v-model="form.imageName"></oms-input>
                 </el-form-item>
                 <el-form-item label="上传分布图">
-                    <oms-upload :limit="1" @change="changeFiles" ref="uploadFile"></oms-upload>
+                   <oms-upload :limit="1" @change="changeFiles" ref="uploadFile"></oms-upload>
+                    <!-- 
+                        // 之前逻辑
+                        <el-upload
+                            ref="uploadRef"
+                            class="upload-demo"
+                            :action="fileUploadUrl"
+                            :headers="headers"
+                            :limit="1"
+                            :on-success="handleSuccess">
+                            <el-button size="small" type="primary">点击上传</el-button>
+                        </el-upload> 
+                    -->
                 </el-form-item>
                 <el-form-item label="物流中心">
                     <el-select :remote-method="queryLogisticsCenterList" @change="logsicChange" @focus="queryLogisticsCenterList"
@@ -52,11 +64,16 @@
 <script>
     import {CcsWarehouse, warehouseDevImage} from '@/resources';
     import methodsMixin from '@/mixins/methodsMixin';
+    import Vue from "vue";
 
     export default {
         mixins: [methodsMixin],
         data: function () {
             return {
+                fileUploadUrl: Vue.prototype.$http.defaults.baseURL + '/open-api/file/upload',
+                headers: {
+                    token: window.localStorage.getItem('token')
+                },
                 labelWidth: '100px',
                 form: {
                     imageName: '',
@@ -85,7 +102,15 @@
         watch: {
             index: function (val) {
                 this.$refs['form'].resetFields();
-                this.$refs.uploadFile.$refs.upload.clearFiles();
+                //默认新增的时候清除上一个图片路径
+                if(val===1){
+
+                  this.$refs.uploadFile && this.$refs.uploadFile.$refs.upload.clearFiles();
+
+                  // 之前逻辑
+                  // this.$refs.uploadRef.clearFiles();
+                }
+
             }
         },
         methods: {
@@ -117,18 +142,25 @@
                 this.queryWarehouse();
             },
             changeFiles(files) {
+                // console.error( files, 88 ) ;
                 this.form.imageId = files.length ? files[0].attachmentId : '';
                 this.form.imageUrl = files.length ? files[0].attachmentStoragePath : '';
+            },
+            //处理上传
+            handleSuccess(res) {
+                this.form.imageId = res;
             },
             onSubmit: function (formName) {
                 this.$refs[formName].validate((valid) => {
                         if (!valid || this.doing) return;
                         if (!this.form.id) {
                             let form = {
+                                picId: this.form.imageId,
                                 imageName: this.form.imageName,
                                 imageUrl: this.form.imageUrl,
                                 imageId: this.form.imageId,
-                                warehouseIds: this.form.warehouseIds
+                                warehouseIds: this.form.warehouseIds,
+                                sceneType : 2  // 1 : 静态场景     2 : 室内定位场景
                             };
                             this.doing = true;
                             this.$httpRequestOpera(warehouseDevImage.save(form), {
@@ -144,7 +176,7 @@
                                         imageId: '',
                                         imageUrl: ''
                                     };
-                                    this.$refs.uploadFile.$refs.upload.clearFiles();
+                                    // this.$refs.uploadFile.$refs.upload.clearFiles();
                                 },
                                 error: () => {
                                     this.doing = false;

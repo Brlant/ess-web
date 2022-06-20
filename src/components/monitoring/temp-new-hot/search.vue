@@ -40,7 +40,7 @@
                                             type="datetimerange" v-model="times1"/>
                         </oms-form-row>
                     </el-col>
-                    <el-col :span="9" v-show="$route.meta.showDev">
+                    <el-col :span="9" v-if="$route.meta.showDev">
                         <oms-form-row :span="4" label="点位">
                             <el-select :remote-method="queryPointList" @change="devChange"
                                        clearable filterable multiple
@@ -74,9 +74,9 @@
                                 <el-radio-button label="3">电压</el-radio-button>
                             </el-radio-group>
 
-                            <el-checkbox-group v-model="coordsVal" size="small" @change="coordsValChangeFn">
+                            <!-- <el-checkbox-group v-model="coordsVal" size="small" @change="coordsValChangeFn">
                                 <el-checkbox-button label="coords">坐标</el-checkbox-button>
-                            </el-checkbox-group>
+                            </el-checkbox-group> -->
                         </oms-form-row>
                     </el-col>
                     <!-- 新增-精简/明细 -->
@@ -187,7 +187,7 @@ export default {
             this.searchCondition.endTime = this.formatTimeAry(this.times1, 1);
 
             // if (!this.searchCondition.pointIdList.length || !this.searchCondition.valType) return;
-            if (!this.searchCondition.pointIdList.length && !this.searchCondition.valType && !this.coordsVal.length ) return;
+            if (!this.searchCondition.pointIdList.length && !this.searchCondition.valType ) return;
 
             // if( this.searchCondition.pointIdList.length && !this.searchCondition.valType.length &&  !this.coordsVal.length ) return ;
 
@@ -205,7 +205,7 @@ export default {
                 item.pointName = point && point.pointName;
                 return item;
             });
-            this.$emit('search', ary, this.coordsVal.length === 0);
+            this.$emit('search', ary);
         },
         reset() {
             this.searchCondition = {
@@ -271,7 +271,7 @@ export default {
             }
             let params = {
                 pointIdList: this.searchCondition.pointIdList,
-
+                
                 // startPiece: startPrice, // 之前字段
                 startPrice,
 

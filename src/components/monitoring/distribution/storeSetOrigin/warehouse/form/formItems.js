@@ -1,0 +1,67 @@
+export default [
+    {
+        devType: 0,
+        normalImageId: '',
+        highWarnImageId: '',
+        lowWarnImageId: '',
+        offlineWarnImageId: '',
+        icon: 'el-icon-t-temp-wire',
+        normalImageSrc: '',
+        highWarnImageSrc: '',
+        lowWarnImageSrc: '',
+        offlineWarnImageSrc: '',
+        file : null // 文件上传青云成功后的文件对象
+    },
+    {
+        devType: 1,
+        normalImageId: '',
+        highWarnImageId: '',
+        lowWarnImageId: '',
+        offlineWarnImageId: '',
+        icon: 'el-icon-t-temp-wifi',
+        normalImageSrc: '',
+        highWarnImageSrc: '',
+        lowWarnImageSrc: '',
+        offlineWarnImageSrc: '',
+        file : null // 文件上传青云成功后的文件对象
+    },
+    {
+        devType: 2,
+        normalImageId: '',
+        highWarnImageId: '',
+        lowWarnImageId: '',
+        offlineWarnImageId: '',
+        icon: 'el-icon-t-temp-freezer',
+        normalImageSrc: '',
+        highWarnImageSrc: '',
+        lowWarnImageSrc: '',
+        offlineWarnImageSrc: '',
+        file : null // 文件上传青云成功后的文件对象
+    },
+    {
+        devType: 3,
+        normalImageId: '',
+        highWarnImageId: '',
+        lowWarnImageId: '',
+        offlineWarnImageId: '',
+        icon: 'el-icon-t-temp-car',
+        normalImageSrc: '',
+        highWarnImageSrc: '',
+        lowWarnImageSrc: '',
+        offlineWarnImageSrc: '',
+        file : null // 文件上传青云成功后的文件对象
+    },
+    {
+        devType: 4,
+        normalImageId: '',
+        highWarnImageId: '',
+        lowWarnImageId: '',
+        offlineWarnImageId: '',
+        icon: 'el-icon-t-humidity-limit-normal-copy',
+        normalImageSrc: '',
+        highWarnImageSrc: '',
+        lowWarnImageSrc: '',
+        offlineWarnImageSrc: '',
+        file : null // 文件上传青云成功后的文件对象
+    },
+]

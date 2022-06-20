@@ -3,6 +3,7 @@
 
 #myTablesInfo{
   .d-table > div.d-table-right {
+    width:calc( 100% - 222px ) ;
     padding: 0;
   }
 
@@ -114,10 +115,19 @@
   .flexWAuto{ flex-shrink:1; }
 
   #d-table-left_scroll .el-scrollbar__view, .content-right{ width:100%; height:100%; position:relative; }
-  .svgPart{ width:100%; height:100%!important; position:relative; background-size:100% 100%!important; overflow:hidden; }
+  #svgPart{ width:100%!important; height:calc(100% - 28px)!important; position:relative; background-size:100% 100%!important; overflow:auto; box-sizing:border-box; }
+  .imgUrlInfo{ overflow-x:auto; overflow-y:auto; 
+    /*
+    &::-webkit-scrollbar{ width:.4em; height:.5em; background:rgba(0,0,0,0); border-radius:1em; overflow:hidden; }
+    &::-webkit-scrollbar:hover{ background:rgba(0,0,0,0); }
+    &::-webkit-scrollbar-thumb{ background:rgba(24, 144, 255, 1); border:solid 1px rgba(0,0,0,.1); border-radius:1em; }
+    &::-webkit-scrollbar-thumb:hover{  }
+    */
+  }
+
  }
 
- .content{ width:100%!important; height:100%!important; position:relative; overflow:hidden; }
+ .content{ width:100%!important; height:100%!important; position:relative; overflow:hidden; box-sizing:border-box; }
 
  .titleTxt{ display:flex; justify-content:space-between; padding:.1em .7em .3em; }
     .dragContainer{ width:400px; height:auto; z-index:2!important; position:absolute; color:white; }
@@ -132,9 +142,9 @@
 <template>
   <div id="myTablesInfo">
     <div class="container d-table f-w flexDis">
-      <div class="d-table-left flexWStatic">
+      <div class="d-table-left ">
         <h2 class="header">
-            <span class="pull-right" v-has="'ccs-warehouse-dev-edit'">
+            <span class="pull-right" v-has="'ccs-warehouse-image-edit'">
               <a @click.stop.prevent="addGraph" class="btn-circle" href="#" v-has="'show'">
                 <i class="el-icon-t-plus"></i>
               </a>
@@ -157,8 +167,8 @@
                     v-for="(item,index) in graphList">
                   <span class="des-btn_name applyFlex" :title="item.backgroundName">{{item.backgroundName}}</span>
                   <span class="des-btn__position flexDis" v-show="item.backgroundId===currentGraph.backgroundId">
-                      <des-btn @click="updateGraph(item)" icon="edit" v-has="'ccs-warehouse-dev-update'"></des-btn>
-                      <des-btn @click="deleteGraph(item)" icon="delete" v-has="'ccs-warehouse-dev-edit'"></des-btn>
+                      <des-btn @click="updateGraph(item)" icon="edit" v-has="'ccs-warehouse-image-update'"></des-btn>
+                      <des-btn @click="deleteGraph(item)" icon="delete" v-has="'ccs-warehouse-image-edit'"></des-btn>
                   </span>
                 </li>
               </ul>
@@ -166,7 +176,9 @@
           </div>
         </el-scrollbar>
       </div>
-      <div class="d-table-right applyFlex flexWStatic">
+      
+      <!-- <div class="d-table-right applyFlex flexWStatic"> -->
+      <div class="d-table-right">
         <!-- 
           之前标签
           <el-scrollbar :style="'height:'+ (bodyHeight+20) + 'px'" class="d-table-left_scroll" id="d-table-left_scroll" tag="div"> 
@@ -193,9 +205,12 @@
             <!--<oms-row label="仓库编码" :span="3" style="font-size: 14px">{{warehouseList.join('，')}}</oms-row>-->
             <!--</div>-->
             <!--</div>-->
-            <div class="form-header-part is-mini part-bg flexDis flexDirV"  ref="topRow">
+
+
+            <!--<div class="form-header-part is-mini part-bg flexDis flexDirV flexWStatic"  ref="topRow"> -->
+            <div class="form-header-part is-mini part-bg"  ref="topRow">
               <el-row class="top">
-                <el-col :span="17">
+                <el-col :span="14">
                   <div class="header" >
                     <div class="sign f-dib index"></div>
                     <div class="header-right">
@@ -210,22 +225,23 @@
                     </div>
                   </div>
                 </el-col>
-
-                <!--
+                <!-- 
                   之前权限逻辑 - 控制范围权限
-                 <el-col :span="7" align="right" v-has="'ccs-warehouse-dev-edit'" v-show="tmData.length"> 
+                  <el-col :span="10" align="right" v-has="'ccs-warehouse-image-edit'" v-show="tmData.length || ccsWarehouseImagePointRelationDTOListData.length"> 
                 -->
-                <el-col :span="7" align="right" v-show="tmData.length">
-
+                <el-col :span="10" align="right" v-show="tmData.length || ( ccsWarehouseImagePointRelationDTOListData && ccsWarehouseImagePointRelationDTOListData.length ) ">
                   <el-button-group>
+                    <el-button @click="pointConfigFn" v-if='!isPointConfig'  v-has="'ccs-warehouse-image-edit'" plain="" size="mini">原点设置</el-button>
+                    <el-button @click="savePointConfigFn" v-if='isPointConfig'  v-has="'ccs-warehouse-image-edit'" plain="" size="mini">保存原点设置</el-button>
+                    <el-button @click="cancelPointConfigFn" v-if='isPointConfig'  v-has="'ccs-warehouse-image-edit'" plain="" size="mini">取消原点设置</el-button>
                     <el-button @click="showBigMap" plain="" size="mini">查看大图</el-button>
 
                     <el-button @click="unitRight" plain="" size="mini" v-has="'ccs-org-devmap-authorized'">单位授权</el-button>
                     <!--<el-button plain="" size="mini" v-has="'ccs-org-devmap-authorized'">单位授权</el-button>-->
 
-                    <el-button @click="doEditPos" plain="" v-has="'ccs-warehouse-dev-edit'" size="mini" v-if="!editPosition">编辑设备位置
+                    <el-button @click="doEditPos" plain="" size="mini" v-has="'ccs-warehouse-image-edit'" v-if="!editPosition">编辑设备位置
                     </el-button>
-                    <template v-else  v-has="'ccs-warehouse-dev-edit'">
+                    <template v-else  v-has="'ccs-warehouse-image-edit'">
                       <el-button @click="savePos" plain="" size="mini">保存
                       </el-button>
                       <el-button @click="cancelEditPos" plain="" size="mini">取消
@@ -234,8 +250,9 @@
                   </el-button-group>
                 </el-col>
               </el-row>
-              <!-- <div class="content clearfix applyFlex flexDis flexDirV" :style="{ 'width': currentWidth + 'px', 'height' : currentHeight + 'px' }"> -->
-              <div class="content clearfix applyFlex flexDis flexDirV">
+              <!-- <div class="content clearfix applyFlex flexDis flexDirV flexWStatic" :style="{ 'width': currentWidth + 'px', 'height' : currentHeight + 'px' }"> -->
+              <!-- <div class="content clearfix applyFlex flexDis flexDirV flexWStatic"> -->
+              <div class="content clearfix">
                 
                 <VueDraggableResizable
                   :x="v.x"
@@ -260,16 +277,43 @@
                   <iframe data-v-5a9dd0f5="" class="myiframe" ref="myiframe" :src="v.src" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen"></iframe>
                 </VueDraggableResizable>
 
-                <div :style="svgFrameStyle" id="svgPart" ref="svgPart" class="svgPart applyFlex" >
+                <!-- 之前逻辑 
+                  <div :style="svgFrameStyle" id="svgPart" ref="svgPart" class="svgPart applyFlex" > 
+                <div id="svgPart" ref="svgPart" class="svgPart imgUrlInfo" @mousemove='e => e.preventDefault()' >
+                -->
+                
+                  <div id="svgPart" ref="svgPart" class="svgPart applyFlex imgUrlInfo flexWStatic" @mousemove='e => e.preventDefault()' >
                   <!--
                     暂时屏蔽跳转大图功能
                     @showBigMap="showBigMap"
                   -->
-                  <tm :color="item.color" :fontColor="item.fontcolor" :item="item.devDetail" :key="index" :position="item.position" @goTo="goTo"
+                  
+                  <tmPer :color="item.color" :fontColor="item.fontcolor" :item="item.devDetail" :key="index" :position="item.position" @goTo="goTo"
                       :read-only="!editPosition"
                       :size="12" :tmData="tmData" ref="tm-part" v-for="(item, index) in tmData">
                     {{item.text}}
+                  </tmPer>
+
+                  
+
+                  <!-- 原点设置列表数据不能编辑, 但原点设置可以编辑 -->
+                  <tm :color="item.color" :fontColor="item.fontcolor" :item="item.devDetail" :key="item.ccsDevId" :position="item.position" @goTo="goTo"
+                      :read-only="true"
+                      :size="12" :tmData="ccsWarehouseImagePointRelationDTOListData" ref="tm-point" v-for="(item, index) in ccsWarehouseImagePointRelationDTOListData">
+                    {{item.text}}
                   </tm>
+
+                  <tmconfig 
+                    ref="tm-point-config"
+                    :isDrag="isPointConfig"
+                    :currentGraph="currentGraph"
+                    @setPointConfig="setPointConfig"
+                  >
+                    <i class="el-icon-location" style="font-size:28px; color:red; font-weight:bold;"></i>
+                  </tmconfig>
+
+                  <img :src="imgUrl" @mousemove="() => null" style="user-select:none; pointer-events:none; z-index:-1;" :style="{ width : imgWidth + 'px', height : imgHeight + 'px' }" />
+
                 </div>
               </div>
 
@@ -297,7 +341,7 @@
     </div>
     <page-right :css="{'width':'900px','padding':0}" :show="showIndex !== -1" @right-close="resetRightBox">
       <form-part :form-item="currentGraph" :index="showIndex" @refresh="refresh" v-show="showIndex === 1"></form-part>
-        <edit-form-part :form-item="currentGraph" :index="showIndex" @refresh="refresh" v-show="showIndex === 3" ref="editForm"/>
+        <edit-form-part :form-item="currentGraph" :normalIconUrlBase64="normalIconUrlBase64" :offlineIconUrlBase64="offlineIconUrlBase64" :index="showIndex" @refresh="refresh" v-show="showIndex === 3" ref="editForm"/>
       <right-part :form-item="currentGraph" :index="showIndex" v-show="showIndex === 2"/>
     </page-right>
     <!-- <el-dialog :fullscreen="true" :title="currentGraph.backgroundName" :visible.sync="isShowBigMap"
@@ -314,7 +358,9 @@
 </template>
 <script>
     import {warehouseDevImage} from '@/resources';
-    import Tm from '@/components/common/tm';
+    import Tm from '@/components/common/tmPx';
+    import tmPer from '@/components/common/tm';
+    import tmconfig from '@/components/common/tmPointConfig';
     import Bg from '@/assets/img/empty-type.png';
     import Bg1 from '@/assets/img/empty.png';
     import TimeMixins from '@/mixins/timeMixin';
@@ -327,7 +373,7 @@
     import VueDraggableResizable from 'vue-draggable-resizable';
 
     export default {
-        components: {Tm, FormPart, RightPart,editFormPart,staticDetails, VueDraggableResizable},
+        components: {Tm, tmPer, FormPart, RightPart,editFormPart,staticDetails, VueDraggableResizable, tmconfig},
         mixins: [TimeMixins],
         data: function () {
             return {
@@ -371,6 +417,24 @@
                 idVal : '', // 场景 id 
                 step : 1000, // 间隔
                 timer : null, // 定时器引用
+                positionTimer : null,
+                positionTimerStep : 1000,
+
+                flashIcon : false,
+
+                imgWidth : 0,
+                imgHeight : 0,
+                ccsWarehouseImagePointRelationDTOList : [], // 定位数据列表
+                isPointConfig : false, // 是否原点设置
+                pointConfigObj : {}, // 原点配置对象
+
+                currentObj : {}, // 初始化当前分布图列表对象
+
+                // 室内定位本地缓存图片信息
+                normalIconUrlBase64 : '', // 正常
+                offlineIconUrlBase64 : '' // 离线 
+
+                
 
                 // count : 0
             };
@@ -379,9 +443,80 @@
             bodyHeight: function () {
                 return parseInt(this.$store.state.bodyHeight, 10) - 20;
             },
+            ccsWarehouseImagePointRelationDTOListData() {
+              let width = this.imgWidth;
+              let height = this.imgHeight;
+
+                
+              if( this.$refs.svgPart ){
+                this.ccsWarehouseImagePointRelationDTOList.filter(f => !f.positionX || !f.positionY).map((m, index) => {
+                    // console.error( 88, f, this.currentGraph ) ;
+                    m.initPositionX = this.currentGraph.pointX ; 
+                    m.initPositionY = this.currentGraph.pointY;
+                    // 之前逻辑以图片宽高比进行定位 
+                    // m.initPositionX = width  / 2 ; 
+                    // m.initPositionY = height / 2; 
+
+                    m.isNotAlloat = true;
+
+                });
+                  
+                return this.ccsWarehouseImagePointRelationDTOList.map((m) => {
+                    let xScale = m.positionX * this.currentGraph.indoorPositionSceneDTO.pointRatio ;
+                    let yScale = m.positionY * this.currentGraph.indoorPositionSceneDTO.pointRatio ;
+                    let { pointX, pointY } = this.currentGraph ;
+
+                    if (m.warnFlag) {
+                      this.isAlarm = true;
+                    } 
+                    
+                    let obj = {
+                      color: this.getColorPx(m),
+                        fontcolor : this.currentGraph.indoorPositionSceneDTO.fontColor,
+                        /*
+                          之前逻辑
+                          fontcolor:m.indoorPositionSceneDTO.fontColor,
+                        */
+                        position: {
+                            // 原点坐标设置 x 轴： ( 实际坐标 + 偏移量 ) * 坐标缩放比例
+                            // 原点坐标设置 y 轴： ( 实际坐标 - 偏移量 ) * 坐标缩放比例 [ 注意: 这里的 y 轴向上为正方向, 往下为负方向 ]
+                            x:  m.isNotAlloat ? 
+                                m.initPositionX :
+                                  m.positionX > 0 ? // 表示在原点的右侧
+                                  pointX + ( xScale ) :
+                                  pointX - ( Math.abs( xScale ) ),
+
+                            y:  m.isNotAlloat ? 
+                                m.initPositionY : 
+                                  m.positionY > 0 ? // 表示在原点的上方
+                                  pointY - ( yScale ) :
+                                  pointY + ( Math.abs( yScale ) ),
+
+                            // x: m.isNotAlloat ? m.initPositionX : (m.positionX * this.scaling),
+                            // y: m.isNotAlloat ? m.initPositionY : (m.positionY * this.scaling)
+                        },
+                        text: `${ m.pointName }`,
+                        // text: `${ m.pointName}(室内定位)`, // 之前逻辑
+                        devDetail: {...m, indoorPositionSceneDTO : { ...this.currentGraph.indoorPositionSceneDTO, normalIconUrlBase64 : this.normalIconUrlBase64, offlineIconUrlBase64 : this.offlineIconUrlBase64 } }
+                    } ;
+                    if( m.pointName === this.currentClickElement.scenesElementName ){ 
+                     this.currentClickElement = {
+                        scenesElementName:m.pointName,
+                        scenesElementId:m.pointId,
+                        devCode:m.devCode,
+                        devlist:[m],
+                        itemValue : {...m, indoorPositionSceneDTO : { ...this.currentGraph.indoorPositionSceneDTO } }
+                        // itemValue : m // 之前字段
+                      }
+                    }
+                    return obj;
+                }) || [];
+              }
+            },
             tmData() {
               let height = this.currentHeight ? this.currentHeight : (this.bodyHeight);
               let width = this.currentWidth ? this.currentWidth : 866;
+
 
               // 70 为绘制一个 svg 的宽度
               let perW = ( 70 / width ) * 100 ; // 这里算出一个 svg 占容器的百分比
@@ -390,7 +525,7 @@
               let xN = 0 ;
 
                 this.tempList.filter(f => !f.positionX || !f.positionY).map((m, index) => {
-                    m.initPositionX = (xN * perW) % 100 ; // 对 x 轴求模, 保证不会超过 100
+                    m.initPositionX = ( xN * perW ) % 100 ; // 对 x 轴求模, 保证不会超过 100
                     m.initPositionY = ( yN * perH ) ;
 
                     if( ( m.initPositionX + perW ) > ( 100 - perW ) ){ // x 轴坐标和一个 svg 窗口的占比 大于100 减去一个窗口的占比
@@ -408,6 +543,7 @@
                       m.isNotAlloat = true;
                     */
                 });
+                
                 return this.tempList.map((m) => {
                     if (m.warnFlag) {
                       this.isAlarm = true;
@@ -433,14 +569,22 @@
                     // 这里的绝对坐标转变为相对百分比坐标, 用于大图展示
                     // obj.position.x = (obj.position.x / width) * 100
                     // obj.position.y = (obj.position.y / height) * 100
-                    // console.error( obj.position, obj.text ) ;
                     return obj;
                 }) || [];
             },
+            imgUrl() {
+                // let height = this.currentHeight ? this.currentHeight + 'px' : (this.bodyHeight) + 'px';
+                // let width = this.currentWidth ? this.currentWidth + 'px' : '866px';
+                // console.error( this.currentGraph ) ;
+
+                return `${this.currentGraph.backgroundUrl}`;
+            },
+
             svgFrameStyle() {
                 // let height = this.currentHeight ? this.currentHeight + 'px' : (this.bodyHeight) + 'px';
                 // let width = this.currentWidth ? this.currentWidth + 'px' : '866px';
 
+                
                 return {
                     // height,
                     // width,
@@ -451,6 +595,7 @@
                     'background-repeat': 'no-repeat',
                     'background-size': 'contain'
                 };
+                
             },
             warehouseList() {
                 let wSet = new Set();
@@ -487,6 +632,7 @@
             this.switchAlarm();
             this.alarmAudio();
             this.setTimes(setTimeout(this.loopQueryDevs, 10000));
+            this.reqPositionById() ;
             let id = this.$route.params.id;
             if (id === ':id') this.$router.push(this.$route.path.replace(':', ''));
 
@@ -499,6 +645,10 @@
 
             }
 
+        },
+        beforeDestroy(){
+          // 清除定时器
+          if( this.positionTimer ){ clearTimeout( this.positionTimer ) ; this.positionTimer = null ; }
         },
         methods: {
             getPlayObj( obj ){
@@ -582,6 +732,9 @@
                 // return '#f00'; // 高温
                 */
             },
+            getColorPx(m) {
+                return m.warnFlag ? '#666' : '#0f0';
+            },
             setScaling() {
                 // 之前逻辑
                 // let url = Vue.prototype.$http.defaults.baseURL+ '/open-api/file/download?imageId=' + this.currentGraph.imageId;
@@ -607,6 +760,21 @@
                     // console.error( this.currentWidth,this.$refs.svgPart.offsetHeight, 88 ) ;
                     // 设置完缩放值后，在查询
                     this.queryDevs();
+                    
+                    if( this.currentGraph.indoorPositionSceneDTO ){ // 如果有配置对象定位属性, 针对新增的时候没有 indoorPositionSceneDTO 属性参数时默认显示宽高比
+                      if( this.currentGraph.indoorPositionSceneDTO.backgroundRatio !== null ){
+                        this.imgWidth = image.width * +this.currentGraph.indoorPositionSceneDTO.backgroundRatio ; 
+                        this.imgHeight = image.height * +this.currentGraph.indoorPositionSceneDTO.backgroundRatio ; 
+                      } else {  
+                        this.imgWidth = image.width;
+                        this.imgHeight = image.height;
+                      }
+                      
+                    } else {  // 针对新增的时候没有 indoorPositionSceneDTO 属性参数时默认显示宽高比
+                      this.imgWidth = image.width;
+                      this.imgHeight = image.height;
+                    }
+
                 };
             },
             setBigScaling(width, height) {
@@ -694,11 +862,112 @@
                 this.showIndex = 1;
             },
             updateGraph(item) {
+                let { pointX, pointY } =  this.currentGraph ;
                 this.showIndex = 3;
-                this.currentGraph = item;
+                this.currentGraph = { ...item };
+                this.currentGraph.pointX = pointX;
+                this.currentGraph.pointY = pointY;
+
+                function toBase64( arr ){ // 存在跨域问题
+                  let result = [] ;
+
+                  arr.forEach( v => {
+                    result.push( new Promise( ( resolve, rej ) => {
+                      let req = new Request( v ) ;
+                      
+                      fetch(req)
+                      .then(res => res.blob())
+                      .then(d => {
+                        let reader = new FileReader() ;
+                        reader.readAsDataURL( d ) ;
+                        reader.addEventListener( 'load', res => {
+                          resolve( reader.result ) ;
+                        }, false ) ;
+                      }) ;
+
+                    }) ) ;
+                  } ) ;
+
+                  return result ;
+
+                }
+
+                // 重置数据
+                this.normalIconUrlBase64 = '' ;
+                this.offlineIconUrlBase64 = '' ;
+
+                function getBase64Image(img, suf) {
+                    var canvas = document.createElement("canvas");
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    var ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, img.width, img.height);
+                    var dataURL = canvas.toDataURL(`image/${suf}`);  // 可选其他值 image/jpeg
+                    return dataURL;
+                }
+
+
+                // 做图片本地缓存处理
+                if( this.currentGraph && this.currentGraph.indoorPositionSceneDTO ){
+                  if( this.currentGraph.indoorPositionSceneDTO.normalIconUrl ){ // 正常图标信息
+
+                    let img = new Image();
+                    img.src = this.currentGraph.indoorPositionSceneDTO.normalIconUrl + '?v=' + Math.random(); // 处理缓存
+                    img.crossOrigin = "*";  // 支持跨域图片
+
+                    img.addEventListener( 'load', e => {
+                        var base64 = getBase64Image(img, this.currentGraph.indoorPositionSceneDTO.normalIconUrl.slice(this.currentGraph.indoorPositionSceneDTO.normalIconUrl.lastIndexOf('.') + 1));
+                        this.normalIconUrlBase64 = base64 ;
+                    }, false ) ;
+                    
+                    // 存在跨域问题
+                      // Promise.all( 
+                      //   toBase64([
+                      //     this.currentGraph.indoorPositionSceneDTO.normalIconUrl
+                      //   ]) 
+                      // )
+                      // .then( base64Url => {
+                      //   if( !this.currentGraph.indoorPositionSceneDTO.normalIconUrlBase64 ){
+                      //     this.normalIconUrlBase64 = base64Url[0] ;
+                      //   }
+                        
+                      // } ) ;
+                  
+                  } else {
+                    this.normalIconUrlBase64 = '' ;
+                  }
+
+                  if( this.currentGraph.indoorPositionSceneDTO.offlineIconUrl ){ // 离线图标信息
+
+                    let img = new Image();
+                    img.src = this.currentGraph.indoorPositionSceneDTO.offlineIconUrl + '?v=' + Math.random(); // 处理缓存
+                    img.crossOrigin = "*";  // 支持跨域图片
+
+                    img.addEventListener( 'load', e => {
+                        var base64 = getBase64Image(img, this.currentGraph.indoorPositionSceneDTO.offlineIconUrl.slice(this.currentGraph.indoorPositionSceneDTO.offlineIconUrl.lastIndexOf('.') + 1));
+                        this.offlineIconUrlBase64 = base64 ;
+                    }, false ) ;
+
+                    // 存在跨域问题
+                      // Promise.all( 
+                      //   toBase64([
+                      //     this.currentGraph.indoorPositionSceneDTO.offlineIconUrl
+                      //   ]) 
+                      // )
+                      // .then( base64Url => {
+                      //   if( !this.currentGraph.indoorPositionSceneDTO.offlineIconUrlBase64 ){
+                      //     this.offlineIconUrlBase64 = base64Url[0] ;
+                      //   }
+                        
+                      // } ) ;
+
+                  } else {
+                    this.offlineIconUrlBase64 = '' ;
+                  }
+                }
+
             },
             showWarehouseDetail(item) {
-
                 this.idVal = item.backgroundId ; //更新 idVal
 
                 let staticVideo = JSON.parse(localStorage.getItem( 'staticVideo' )) || {} ;
@@ -710,13 +979,91 @@
                   }
                 }
 
-                this.currentGraph = item;
+                if( item.indoorPositionSceneDTO ){
+                  this.positionTimerStep = item.indoorPositionSceneDTO.refreshInterval !== null ? 1000 * +item.indoorPositionSceneDTO.refreshInterval : 1000 * 5 ;
+                  this.flashIcon = +item.indoorPositionSceneDTO.flashIcon ? true : false ;
+                }
+
+                this.currentObj = { ...item } ; // 用于恢复原点设置的分布图列表对象
+                this.currentGraph = {...item} ;
+                // console.error( 888, this.currentGraph ) ;
+
+                // 获取原点设置信息
+                this.pointConfigObj = {
+                  x : item.pointX,
+                  y : item.pointY
+                } ;
+                // console.error( 77, item ) ;
+
                 this.activeId = item.backgroundId;
                 this.tempList = [];
                 this.isAlarm = false;
                 this.drawer=false;
                 this.setScaling();
-                this.$router.push(`/monitoring/distribution/${item.backgroundId ? item.backgroundId : 'id'}`);
+
+                // 之前逻辑 this.$router.push(`/monitoring/distribution/${item.backgroundId ? item.backgroundId : 'id'}`);
+                this.$router.push(`/monitoring/distributionsetorigin/${item.backgroundId ? item.backgroundId : 'id'}`);
+
+                this.isPointConfig = false ; // 恢复原点设置按钮状态
+                this.ccsWarehouseImagePointRelationDTOList = [] ; // 恢复室内定位数据列表
+                if( this.positionTimer ){ clearTimeout( this.positionTimer ) ; this.positionTimer = null ; }
+                this.reqPositionById(); // 重新请求室内定位数据
+            },
+            pointConfigFn(){
+              this.isPointConfig = true ;
+
+              // 在原点编辑状态, 暂时屏蔽更新数据
+              if( this.positionTimer ){ clearTimeout( this.positionTimer ) ; this.positionTimer = null ; }
+            },
+            savePointConfigFn(){
+              this.isPointConfig = false ;
+              this.reqPositionById() ; // 恢复定位接口逻辑
+
+              warehouseDevImage.saveConfigPoint({ 
+                imageId : this.activeId,
+                positionX : this.pointConfigObj.x,
+                positionY : this.pointConfigObj.y,
+              }).then(res => {
+                let { code, msg } = res ;
+
+                if( +code === 200 ){
+                  // this.currentGraph.pointX = this.pointConfigObj.x ;
+                  // this.currentGraph.pointY = this.pointConfigObj.y ;
+
+                  this.$set( this.currentGraph, 'pointX', this.pointConfigObj.x ) ;
+                  this.$set( this.currentGraph, 'pointY', this.pointConfigObj.y ) ;
+
+                  this.currentObj = this.currentGraph ; // 赋值当前对象待下次更新数据
+                }
+
+                this.$message({
+                  type: +code === 200 ? 'success' : 'warning',
+                  message: msg
+                });
+
+                // this.graphList.forEach( v => {
+                //   if( v.backgroundId === this.currentGraph.backgroundId ){
+                //     this.showWarehouseDetail( v ) ;
+                //   }
+                // } ) ;
+
+              })
+              .catch( err => {
+                console.error( 1, err ) ;
+              } );
+
+              // this.$refs['tm-point-config'] && this.$refs['tm-point-config'].resetInfo() ;
+              // this.onSubmit(dataArr);
+            },
+            cancelPointConfigFn(){
+              this.isPointConfig = false ;
+              this.reqPositionById() ; // 恢复定位接口逻辑
+
+              // 重置分布图列表对象, 以恢复原点设置坐标
+              this.currentGraph = { ...this.currentObj } ; 
+
+
+              // this.$refs['tm-point-config'] && this.$refs['tm-point-config'].resetInfo() ;
             },
             showBigMap() { // 显示大图
                 this.tempList = [];
@@ -732,13 +1079,21 @@
 
 
                 let routeData = this.$router.resolve({
-                    path: `/monitoring/distribution/staticFullScreen/${this.currentGraph.backgroundId ? this.currentGraph.backgroundId : 'id'}`,
+                    path: `/monitoring/distribution/staticSetOriginFullScreen/${this.currentGraph.backgroundId ? this.currentGraph.backgroundId : 'id'}`,
                     query : {
                       // svgFrameStyle : JSON.stringify(this.svgFrameStyle), // 之前逻辑
                       // currentGraph : JSON.stringify(this.currentGraph), // 之前逻辑
                       // tmData : JSON.stringify(this.tmData), // 之前逻辑
                       background : this.svgFrameStyle.backgroundImage,
-                      activeId : this.activeId
+                      imgUrl : this.imgUrl,
+                      imgWidth : this.imgWidth,
+                      imgHeight : this.imgHeight,
+                      positionTimerStep : this.positionTimerStep,
+                      flashIcon : this.flashIcon,
+                      activeId : this.activeId,
+                      pointRatio : this.currentGraph.indoorPositionSceneDTO.pointRatio,
+                      pointX : this.currentGraph.pointX, 
+                      pointY : this.currentGraph.pointY
                     }
                 });
                 window.open(routeData.href, '_blank') ;
@@ -747,14 +1102,14 @@
                 // this.$router.push(`/monitoring/distribution/fullScreen/${this.currentGraph.backgroundId ? this.currentGraph.backgroundId : 'id'}`);
             },
             refresh() {
-                this.queryGraphList();
+                this.queryGraphList();  
                 this.resetRightBox();
             },
             queryGraphList: function () {
                 this.loadingDataWare = true;
-
+                
                 warehouseDevImage.query({ 
-                  sceneType : 1  // 1 : 静态场景     2 : 室内定位场景
+                  sceneType : 2  // 1 : 静态场景     2 : 室内定位场景
                 }).then(res => {
                   this.currentGraph = {};
                     this.graphList = res.data.ccsWarehouseImageDTOS;
@@ -771,8 +1126,75 @@
                         this.graphList.length && this.showWarehouseDetail(this.graphList[0]);
                     }
                     this.loadingDataWare = false;
+
                 });
             },
+            positionByIdFn(){
+                if (!this.activeId) return;
+                // this.tempList = [];
+                warehouseDevImage.positionById(this.activeId).then(res => {
+                  let { data } = res ;
+
+                  // data.ccsWarehouseImagePointRelationDTOList.forEach( v => {
+                  //   v.positionX = -100 ;
+                  //   v.positionY = -100 ;
+                  // } ) ;
+                  
+                  this.ccsWarehouseImagePointRelationDTOList = data.ccsWarehouseImagePointRelationDTOList ;
+                  // this.tempList = [ ...this.tempList, ...data.ccsWarehouseImagePointRelationDTOList ]
+                 
+
+                  //   // yxh 之前取的 ccsWarehouseImageDevRelationDTOList 字段信息
+                    // let list = res.data.ccsWarehouseImageDevRelationDTOList;
+
+                    
+                  //   let list = res.data.ccsWarehouseImagePointRelationDTOList;  // 现在取 ccsWarehouseImagePointRelationDTOList 字段信息
+                  //   // if (list.length && list[0].backgroundId !== this.activeId) return; 
+                  //   // console.error( this.$refs.svgPart.offsetWidth, this.currentWidth, 77 ) ; 
+                  //   this.currentWidth = this.$refs.svgPart.offsetWidth ; 
+                  //   this.currentHeight = this.$refs.svgPart.offsetHeight ; 
+
+                  //   this.tempList = [ ...this.tempList, ...list ]; 
+                  //   if( this.$refs.alarmMusic ){
+                  //       this.isPlay ? this.$refs.alarmMusic.play() : this.$refs.alarmMusic.pause();
+                  //   }
+                    /**/
+                    
+                    // debugger
+                      // if( this.count % 2 === 0 ){
+                      //   list.forEach( v => {
+                      //     v.warnFlag = false ;
+                      //   } ) ;
+                      // } else {
+                      //     list.forEach( v => {
+                      //     v.warnFlag = true ;
+                      //   } ) ;
+                      // }
+                    
+                    // this.count ++ ;
+                   
+
+                    /*
+                      // 暂时屏蔽掉大图跳转逻辑
+                      if( isStaticFullScreen ){
+
+                          let routeData = this.$router.resolve({
+                              path: `/monitoring/distribution/staticFullScreen/${this.currentGraph.backgroundId ? this.currentGraph.backgroundId : 'id'}`,
+                              query : {
+                                // svgFrameStyle : JSON.stringify(this.svgFrameStyle), // 之前逻辑
+                                // currentGraph : JSON.stringify(this.currentGraph), // 之前逻辑
+                                // tmData : JSON.stringify(this.tmData), // 之前逻辑
+                                background : this.svgFrameStyle.backgroundImage,
+                                activeId : this.activeId
+                              }
+                          });
+                          window.open(routeData.href, '_blank') ;
+
+                      }
+                    */
+                });
+            },
+
             queryDevs: function ( isStaticFullScreen ) {
                 if (!this.activeId) return;
                 // this.tempList = [];
@@ -829,6 +1251,13 @@
             loopQueryDevs() {
                 this.queryDevs();
                 this.setTimes(setTimeout(this.loopQueryDevs, 10000));
+            },
+            reqPositionById() {
+                this.positionByIdFn();
+                if( this.positionTimer ){ clearTimeout( this.positionTimer ) ; this.positionTimer = null ; }
+                this.positionTimer = setTimeout( () => {
+                  this.reqPositionById() ;
+                }, this.positionTimerStep);
             },
             doEditPos() {
                 this.editPosition = true;
@@ -904,7 +1333,7 @@
                 });
             },
             goTo(value){
-                
+
                 // 重置
                 value.x = value.x || 0 ;
                 value.y = value.y || 0 ;
@@ -939,7 +1368,9 @@
                     scenesElementName:value.pointName,
                     scenesElementId:value.pointId,
                     devCode:value.devCode,
-                    devlist:[value]
+                    devlist:[value],
+                    itemValue : {...value, indoorPositionSceneDTO : { ...this.currentGraph.indoorPositionSceneDTO } }
+                    // itemValue : value // 之前字段
                   };
                   
                   if(this.drawer){
@@ -970,6 +1401,10 @@
                 this.endDate = ''
                 this.drawer = false;
             },
+
+            setPointConfig( obj ){
+              this.pointConfigObj = obj ;
+            }
 
         }
     };
