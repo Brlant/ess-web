@@ -271,7 +271,10 @@ export default {
             }
             let params = {
                 pointIdList: this.searchCondition.pointIdList,
-                startPiece: startPrice,
+                
+                // startPiece: startPrice, // 之前字段
+                startPrice,
+
                 startTime: this.formatTimeAry(this.times1, 0),
                 endTime: this.formatTimeAry(this.times1, 1)
             };
