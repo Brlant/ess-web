@@ -204,7 +204,6 @@ export default {
                 el.style.display = 'none';
                 return;
             }
-            console.error( 88, item ) ;
             let time = item.recordDate ? this.$moment(item.recordDate).format('YYYY-MM-DD HH:mm:ss') : '';
             
             // 之前逻辑

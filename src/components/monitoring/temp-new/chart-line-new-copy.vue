@@ -242,10 +242,8 @@
                                     data.push(getAlarmLine(detail.createTime));
                                     detail.restoreTime && data.push(getAlarmLine(detail.restoreTime));
                                 });
-                                console.error( 'good' ) ;
                                 chartLine.setOption(option);
                             } else {
-                                console.error( 'noooooo' ) ;
                                 chartLine.setOption(option);
                             }
                         });

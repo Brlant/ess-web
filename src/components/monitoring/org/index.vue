@@ -254,7 +254,6 @@
                    let id = item.ccsDevId; 
                 */
                 let id = item.monitorTargetId;
-                console.error(88, item) ;
 
                 let devName = item.devName || item.ccsDevName;
                 this.$router.push({path: '/monitoring/org/hot/spot/hot', query: {pointId : id, type}});
