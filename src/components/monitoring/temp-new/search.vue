@@ -264,7 +264,7 @@
                 this.search();
             },
             exportData() {
-                let {devId, startPrice} = this.searchCondition;
+                let {devId, startPrice, valType} = this.searchCondition;
                 let {$notify} = this;
                 if (!devId || !devId.length) {
                     return $notify.info({
@@ -281,16 +281,30 @@
                     devIds: devId,
                     statPiece: startPrice,
                     startDate: this.formatTimeAry(this.times1, 0),
-                    endDate: this.formatTimeAry(this.times1, 1)
+                    endDate: this.formatTimeAry(this.times1, 1),
+                    valTypes : valType
                 };
                 this.doing = true;
                 const httpAxios = axios.create();
                 httpAxios.defaults.timeout = 120000;
+
                 httpAxios({
                     methods: 'get',
+
+                    /**
+                     * 之前逻辑
+                        url: !this.coordsVal.length ?  // 如果坐标数据没有, 默认导出温度、湿度、电压数据, 否则导出坐标数据
+                            `${process.env.VUE_APP_API}/mcc-data/ccsWarehouse/export/dev-report` :
+                            `${process.env.VUE_APP_API}/mcc-data/ccsWarehouse/export/dev-thing-data`,
+                    */
+
+                    // 应后台人员要求修改接口地址
                     url: !this.coordsVal.length ?  // 如果坐标数据没有, 默认导出温度、湿度、电压数据, 否则导出坐标数据
-                        `${process.env.VUE_APP_API}/mcc-data/ccsWarehouse/export/dev-report` :
-                        `${process.env.VUE_APP_API}/mcc-data/ccsWarehouse/export/dev-thing-data`,
+                    
+                            `${process.env.VUE_APP_API}/mcc-data/export/ccsDevReport` : // 针对温度、湿度、电压 接口
+                            
+                            `${process.env.VUE_APP_API}/mcc-data/ccsWarehouse/export/dev-thing-data`, // 针对坐标 接口
+
                     params,
                     paramsSerializer(params) {
                         return qs.stringify(params, {indices: false});
