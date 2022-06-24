@@ -179,8 +179,19 @@
         methods: {
             search() {
 
-                this.searchCondition.startTime = this.formatTimeAry(this.times1, 0);
-                this.searchCondition.endTime = this.formatTimeAry(this.times1, 1);
+                if( this.times1 ){
+                    this.searchCondition.startTime = this.formatTimeAry(this.times1, 0);
+                    this.searchCondition.endTime = this.formatTimeAry(this.times1, 1);
+                } else {
+
+                    this.$message({
+                        message : '请选择上报时间!',
+                        type : 'warning'
+                    }) ;
+                    
+                    return ;
+                    
+                }
 
                 // if (!this.searchCondition.devId.length || !this.searchCondition.valType.length) return;
                 
@@ -214,7 +225,6 @@
                     }
                     return item;
                 });
-
                 
                 this.$emit('search', ary, this.coordsVal.length === 0);
 
@@ -277,6 +287,17 @@
                         message: '时间间隔必须大于0'
                     });
                 }
+
+                if( !this.times1 ){
+
+                    this.$message({
+                        message : '请选择上报时间!',
+                        type : 'warning'
+                    }) ;
+                    
+                    return ;
+                }
+                
                 let params = {
                     devIds: devId,
                     statPiece: startPrice,
