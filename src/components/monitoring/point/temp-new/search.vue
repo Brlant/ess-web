@@ -183,8 +183,18 @@ export default {
         },
         search() {
 
-            this.searchCondition.startTime = this.formatTimeAry(this.times1, 0);
-            this.searchCondition.endTime = this.formatTimeAry(this.times1, 1);
+            if( this.times1 ){
+                this.searchCondition.startTime = this.formatTimeAry(this.times1, 0);
+                this.searchCondition.endTime = this.formatTimeAry(this.times1, 1);
+            } else {
+                this.$message({
+                    message : '请选择上报时间!',
+                    type : 'warning'
+                }) ;
+                
+                return ;
+            }
+            
 
             // if (!this.searchCondition.pointIdList.length || !this.searchCondition.valType) return;
             if (!this.searchCondition.pointIdList.length && !this.searchCondition.valType && !this.coordsVal.length ) return;
@@ -257,7 +267,7 @@ export default {
             this.search()
         },
         exportData() {
-            let {pointIdList, startPrice} = this.searchCondition;
+            let {pointIdList, startPrice, valType} = this.searchCondition;
             let {$notify} = this;
             if (!pointIdList || !pointIdList.length) {
                 return $notify.info({
@@ -269,6 +279,16 @@ export default {
                     message: '时间间隔必须大于0'
                 });
             }
+
+            if( !this.times1 ){
+                this.$message({
+                    message : '请选择上报时间!',
+                    type : 'warning'
+                }) ;
+                
+                return ;
+            }
+            
             let params = {
                 pointIdList: this.searchCondition.pointIdList,
 
@@ -276,16 +296,30 @@ export default {
                 startPrice,
 
                 startTime: this.formatTimeAry(this.times1, 0),
-                endTime: this.formatTimeAry(this.times1, 1)
+                endTime: this.formatTimeAry(this.times1, 1), 
+                valType
             };
+
             this.doing = true;
             const httpAxios = axios.create();
             httpAxios.defaults.timeout = 120000;
+  
             httpAxios({
                 methods: 'get',
-                url: !this.coordsVal.length ? // 如果坐标数据没有, 默认导出温度、湿度、电压数据, 否则导出坐标数据
-                    `${process.env.VUE_APP_API}/mcc-data/point/export/dev-report` :
-                    `${process.env.VUE_APP_API}/mcc-data/point/export/dev-thing-data`, 
+
+                /*
+                    之前逻辑
+                    url: !this.coordsVal.length ? // 如果坐标数据没有, 默认导出温度、湿度、电压数据, 否则导出坐标数据
+                        `${process.env.VUE_APP_API}/mcc-data/point/export/dev-report` :
+                        `${process.env.VUE_APP_API}/mcc-data/point/export/dev-thing-data`, 
+                */
+               url: !this.coordsVal.length ? // 如果坐标数据没有, 默认导出温度、湿度、电压数据, 否则导出坐标数据
+
+                   `${process.env.VUE_APP_API}/mcc-data/export/ccsPointReport` :    // 温度、湿度、电压 接口
+
+                   `${process.env.VUE_APP_API}/mcc-data/point/export/dev-thing-data`, // 坐标 接口
+
+                    
                 params,
                 paramsSerializer(params) {
                     return qs.stringify(params, {indices: false});

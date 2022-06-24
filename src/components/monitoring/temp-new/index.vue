@@ -99,6 +99,7 @@
             searchResult: function (search, isEcharts) {
                 this.filters = JSON.parse(JSON.stringify(search)) ;
 
+
                 this.isEcharts = isEcharts ;
                 
                 if( !this.isEcharts ){ // 如果为坐标
