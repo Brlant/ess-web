@@ -75,8 +75,8 @@ init(Vue);
 window.$mapInit = function () {
     if (lazyAMapApiLoaderInstance) return;
     VueAMap.initAMapApiLoader({
-        key: 'b551e033d09a45de75ebbc1170025c20',
-        plugin: ['AMap.Scale', 'AMap.OverView', 'AMap.ToolBar', 'AMap.MapType', 'AMap.Geocoder'],
+        key: '6c228c74ad098018b2e889b27a303a07',
+        plugin: ['AMap.Scale', 'AMap.OverView', 'AMap.ToolB ar', 'AMap.MapType', 'AMap.Geocoder'],
         uiVersion: '1.0',
         v: '1.4.13'
     });
