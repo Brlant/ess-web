@@ -237,6 +237,7 @@
                     devCode: '',
                     valType: ['1']
                 };
+                this.coordsVal  = [] ;
                 this.times1 = [this.$moment(this.$moment().format('YYYY-MM-DD')), this.$moment()];
                 this.$emit('search', this.searchCondition, true);
             },
@@ -292,6 +293,16 @@
 
                     this.$message({
                         message : '请选择上报时间!',
+                        type : 'warning'
+                    }) ;
+                    
+                    return ;
+                }
+
+                if( !valType.length && !this.coordsVal.length ){ // 如果数据类型没有任何一种选择
+
+                    this.$message({
+                        message : '请选择至少一种数据类型!',
                         type : 'warning'
                     }) ;
                     

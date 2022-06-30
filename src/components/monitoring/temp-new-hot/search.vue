@@ -217,11 +217,13 @@ export default {
             this.$emit('search', ary);
         },
         reset() {
+            let {id, type, pointId} = this.$route.query;
             this.searchCondition = {
                 startTime: '',
                 endTime: '',
-                pointIdList: [],
-                valType: '1',
+                pointIdList: [pointId],
+                valType: type,
+                // valType: '1',
                 startPrice: '',
                 switch: false
             };
