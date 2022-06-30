@@ -180,8 +180,19 @@
         methods: {
             search() {
 
-                this.searchCondition.startTime = this.formatTimeAry(this.times1, 0);
-                this.searchCondition.endTime = this.formatTimeAry(this.times1, 1);
+                if( this.times1 ){
+                    this.searchCondition.startTime = this.formatTimeAry(this.times1, 0);
+                    this.searchCondition.endTime = this.formatTimeAry(this.times1, 1);
+                } else {
+
+                    this.$message({
+                        message : '请选择上报时间!',
+                        type : 'warning'
+                    }) ;
+                    
+                    return ;
+                    
+                }
 
                 // if (!this.searchCondition.devId.length || !this.searchCondition.valType.length) return;
                 
@@ -215,7 +226,6 @@
                     }
                     return item;
                 });
-
                 
                 this.$emit('search', ary, this.coordsVal.length === 0);
 
@@ -228,6 +238,7 @@
                     devCode: '',
                     valType: ['1']
                 };
+                this.coordsVal  = [] ;
                 this.times1 = [this.$moment(this.$moment().format('YYYY-MM-DD')), this.$moment()];
                 this.$emit('search', this.searchCondition, true);
             },
@@ -265,7 +276,7 @@
                 this.search();
             },
             exportData() {
-                let {devId, startPrice} = this.searchCondition;
+                let {devId, startPrice, valType} = this.searchCondition;
                 let {$notify} = this;
                 if (!devId || !devId.length) {
                     return $notify.info({
@@ -278,20 +289,55 @@
                         message: '时间间隔必须大于0'
                     });
                 }
+
+                if( !this.times1 ){
+
+                    this.$message({
+                        message : '请选择上报时间!',
+                        type : 'warning'
+                    }) ;
+                    
+                    return ;
+                }
+
+                if( !valType.length && !this.coordsVal.length ){ // 如果数据类型没有任何一种选择
+
+                    this.$message({
+                        message : '请选择至少一种数据类型!',
+                        type : 'warning'
+                    }) ;
+                    
+                    return ;
+                }
+                
                 let params = {
                     devIds: devId,
                     statPiece: startPrice,
                     startDate: this.formatTimeAry(this.times1, 0),
-                    endDate: this.formatTimeAry(this.times1, 1)
+                    endDate: this.formatTimeAry(this.times1, 1),
+                    valTypes : valType
                 };
                 this.doing = true;
                 const httpAxios = axios.create();
                 httpAxios.defaults.timeout = 120000;
+
                 httpAxios({
                     methods: 'get',
+
+                    /**
+                     * 之前逻辑
+                        url: !this.coordsVal.length ?  // 如果坐标数据没有, 默认导出温度、湿度、电压数据, 否则导出坐标数据
+                            `${process.env.VUE_APP_API}/mcc-data/ccsWarehouse/export/dev-report` :
+                            `${process.env.VUE_APP_API}/mcc-data/ccsWarehouse/export/dev-thing-data`,
+                    */
+
+                    // 应后台人员要求修改接口地址
                     url: !this.coordsVal.length ?  // 如果坐标数据没有, 默认导出温度、湿度、电压数据, 否则导出坐标数据
-                        `${process.env.VUE_APP_API}/mcc-data/ccsWarehouse/export/dev-report` :
-                        `${process.env.VUE_APP_API}/mcc-data/ccsWarehouse/export/dev-thing-data`,
+                    
+                            `${process.env.VUE_APP_API}/mcc-data/export/ccsDevReport` : // 针对温度、湿度、电压 接口
+                            
+                            `${process.env.VUE_APP_API}/mcc-data/ccsWarehouse/export/dev-thing-data`, // 针对坐标 接口
+
                     params,
                     paramsSerializer(params) {
                         return qs.stringify(params, {indices: false});
