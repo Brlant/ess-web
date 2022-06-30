@@ -73,7 +73,6 @@
                                 <el-radio-button label="2">湿度</el-radio-button>
                                 <el-radio-button label="3">电压</el-radio-button>
                             </el-radio-group>
-
                             <el-checkbox-group v-model="coordsVal" size="small" @change="coordsValChangeFn">
                                 <el-checkbox-button label="coords">坐标</el-checkbox-button>
                             </el-checkbox-group>
@@ -198,6 +197,7 @@ export default {
 
             // if (!this.searchCondition.pointIdList.length || !this.searchCondition.valType) return;
             if (!this.searchCondition.pointIdList.length && !this.searchCondition.valType && !this.coordsVal.length ) return;
+            if (this.searchCondition.pointIdList.length && !this.searchCondition.valType && !this.coordsVal.length ) return;
 
             // if( this.searchCondition.pointIdList.length && !this.searchCondition.valType.length &&  !this.coordsVal.length ) return ;
 
@@ -215,6 +215,7 @@ export default {
                 item.pointName = point && point.pointName;
                 return item;
             });
+            
             this.$emit('search', ary, this.coordsVal.length === 0);
         },
         reset() {
@@ -226,6 +227,7 @@ export default {
                 startPrice: '',
                 switch: false
             };
+            this.coordsVal = [] ;
             this.times1 = [this.$moment(this.$moment().format('YYYY-MM-DD')), this.$moment()];
             this.$emit('search', this.searchCondition, true);
         },
@@ -288,6 +290,17 @@ export default {
                 
                 return ;
             }
+
+            if( !valType.length && !this.coordsVal.length ){ // 如果数据类型没有任何一种选择
+
+                this.$message({
+                    message : '请选择至少一种数据类型!',
+                    type : 'warning'
+                }) ;
+                
+                return ;
+            }
+                
             
             let params = {
                 pointIdList: this.searchCondition.pointIdList,
