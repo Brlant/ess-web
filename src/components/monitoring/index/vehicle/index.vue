@@ -15,7 +15,7 @@
                 </el-menu>
             </div>
             <div class="right">
-                <amap-page @elements-change="elementsChange" :modeStyle="modeStyle" :sceneid="currentSceneId" :elementColumn="elementColumn"
+                <amap-page ref="amapPage" @elements-change="elementsChange" :modeStyle="modeStyle" :sceneid="currentSceneId" :elementColumn="elementColumn"
                            :showMarkerIdList="showMarkerIdList" class="amap-container"></amap-page>
                 <div class="tools">
                     <el-button type="info" @click="changeModeStyleFn">深浅切换</el-button>
@@ -58,11 +58,28 @@ export default {
     components: {
         AmapPage
     },
+    destroyed(){
+        window.removeEventListener( 'visibilitychange', this.visiblityChangeFn ) ;
+    },
     mounted() {
         this.getSceneList();
+
+        window.removeEventListener( 'visibilitychange', this.visiblityChangeFn ) ;
+        window.addEventListener( 'visibilitychange', this.visiblityChangeFn, false ) ;
+
     },
     methods: {
-       
+        
+        visiblityChangeFn( e ){
+            if( document.visibilityState === 'visible' ){
+                // DO SOMETHING...
+                this.modeStyle = JSON.parse(localStorage.getItem( 'mapMode' )) ;
+
+                this.$refs.amapPage && this.$refs.amapPage.getElements && this.$refs.amapPage.getElements( this.currentSceneId ) ;
+            } else {
+            }
+        },
+
         changeModeStyleFn(){
             this.modeStyle = !this.modeStyle ;
             localStorage.setItem( 'mapMode', this.modeStyle ) ;
