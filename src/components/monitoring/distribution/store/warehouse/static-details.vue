@@ -4,6 +4,7 @@
             <div class="header">
                 <el-row style="width: 100%;">
                     <el-col :span="22">
+                        <span class="demonstration">滑动调节时间轴</span>
                         <el-slider style="z-index: 9999999;position: relative"
                             v-model="sliderValue"
                             :max="sliderMaxCount"
@@ -12,9 +13,25 @@
                         ></el-slider>
 
                     </el-col>
-                    <el-col :span="2">
-                    <i class="el-icon-error" @click="closeDrawer"></i>
-                    </el-col>
+                    <div class="headerBeforeIcon" style="position: absolute;top: 3px;right: 7px;z-index: 1001;color: gray;cursor: pointer;font-size: 15px;" >
+                        <i
+                            class="el-icon-time"
+                            @click="showDatePickerRange = !showDatePickerRange"
+                        ></i>
+                        <i
+                            class=" el-icon-warning-outline"
+                            @click="clickShowRecored"
+                            style="margin:0 10px;"
+                        ></i>
+                        <i class="el-icon-circle-close" @click="closeDrawer"></i>
+                        <!-- <i class="el-icon-error" @click="closeDrawer"></i> -->
+                    </div>
+                    <!-- 
+                        之前逻辑
+                        <el-col :span="2">
+                            <i class="el-icon-error" @click="closeDrawer"></i>
+                        </el-col> 
+                    -->
                 </el-row>
             </div>   
             <div class="content">
@@ -33,17 +50,21 @@
                     >
                     </e-charts>
                 </div>
-                <div style="position: absolute;top: 3px;right: 7px;z-index: 1001;color: gray;cursor: pointer;font-size: 15px;" >
-                    <i
-                        class="el-icon-time"
-                        @click="showDatePickerRange = !showDatePickerRange"
-                    ></i>
-                    <i
-                        class=" el-icon-warning-outline"
-                        @click="clickShowRecored"
-                        style="margin-left: 10px;"
-                    ></i>
-                </div>
+                
+                <!-- 
+                    之前逻辑
+                    <div style="position: absolute;top: 3px;right: 7px;z-index: 1001;color: gray;cursor: pointer;font-size: 15px;" >
+                        <i
+                            class="el-icon-time"
+                            @click="showDatePickerRange = !showDatePickerRange"
+                        ></i>
+                        <i
+                            class=" el-icon-warning-outline"
+                            @click="clickShowRecored"
+                            style="margin-left: 10px;"
+                        ></i>
+                    </div> 
+                -->
             </div>
 
             <el-date-picker
@@ -193,9 +214,9 @@ export default {
         },
         formatSliderTootip(value) {
             let item = this.ccsScenesElementHistoryData[value];
-            if (item && item.time) {
+            if (item && item.createTime) {
                 return this.$options.filters["time"](
-                    this.ccsScenesElementHistoryData[value].time
+                    this.ccsScenesElementHistoryData[value].createTime
                 );
             }
         },
@@ -621,6 +642,7 @@ export default {
     align-items: center;
     justify-content: center;
     z-index: 999;
+    
 }
 
 .container-box {
@@ -632,19 +654,21 @@ export default {
     box-sizing: border-box;
     position: relative;
     box-shadow: 0 0 10px rgba(255, 255, 255, 1);
+    background:rgba(30, 30, 30, 1) ;
 }
 
 .container-box .header {
     width: 100%;
-    height: 30px;
-    padding: 0px 10px;
+    /* height: 30px; */
+    padding: 0px 5px 0 10px;
     /*background: rgba(0, 0, 0, 0.7);*/
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
+    height:auto;
 }
 
 .container-box .content {
-    background: rgba(0, 0, 0, 0.7);
+    /* background: rgba(0, 0, 0, 0.7); */
     width: 100%;
     /* height: 210px; */
     padding: 10px 20px;
@@ -753,11 +777,13 @@ export default {
 .el-slider /deep/ .el-slider__bar {
     height: 2px;
     color: black;
-    background-color: #eeeeee;
+    /* background-color: #eeeeee; */
+    background:rgba(244, 161, 49, 1) ;
 }
 
 .el-slider /deep/ .el-slider__button {
     border: solid 2px gray;
+    width:14px; height:14px; 
 }
 
 .el-tabs /deep/ .el-tabs__item {
@@ -824,6 +850,11 @@ export default {
         opacity: 1;
     }
 }
+
+.demonstration{ color:white; padding:.5em 0 0; display:block; }
+.headerBeforeIcon{ padding:8px 0 0; }
+.headerBeforeIcon ::before{ color:white; }
+/deep/ .el-slider__button-wrapper{ width:20px; height:20px; top:-9px; }
 </style>
 
 <!--修改body子节点loading样式-->

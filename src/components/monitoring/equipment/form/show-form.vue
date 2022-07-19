@@ -76,7 +76,13 @@
             <h3 :class="{active: pageSets[2].key === currentTab.key}" class="tit f-dib index-tit">
               {{pageSets[2].name}}</h3>
           </div>
-          <rule-notify-scan :unitId="dev.id ? `d,${dev.id}` : ''" perm="ccs-monitordev-rulecfg"></rule-notify-scan>
+
+          <!-- 
+            之前逻辑
+            <rule-notify-scan :unitId="dev.id ? `d,${dev.id}` : ''" perm="ccs-monitordev-rulecfg"></rule-notify-scan> 
+          -->
+          <rule-notify-info :item="form" ref="ruleNotifyInfo"/>
+
         </div>
       </div>
     </template>
@@ -87,6 +93,7 @@
 
     // yxh 引入点位信息组件
     import showPointList from '@/components/monitoring/equipment/showPointList' ;
+    import ruleNotifyInfo from '@/components/common/rule-notify-info';
 
     export default {
         props: ['formItem', 'index'],
@@ -97,7 +104,7 @@
                     {name: '基本信息', key: 0},
                     {name: '点位信息', key: 1},
                     // {name: '温度计信息', key: 1},
-                    // {name: '规则信息', key: 2}
+                    {name: '规则信息', key: 2}
                 ],
                 currentTab: {},
                 form: {
@@ -128,7 +135,7 @@
             },
             
         },
-        components : {showPointList},
+        components : {showPointList, ruleNotifyInfo},
         mounted(){
           this.form = this.formItem;
         },
@@ -157,7 +164,6 @@
             },
 
             openFn( form, type ){
-                console.error(3) ;
                 this.form = Object.assign({}, form);
                 this.type = type;
             },

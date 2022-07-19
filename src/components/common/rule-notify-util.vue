@@ -167,6 +167,7 @@
                 AlarmRuleGroup.get(item.ccsWarnRuleGroupId).then(res => {
                     item.rules = res.data.rules;
                     item.loading = false;
+
                 });
             },
             formatContactWay(item) {

@@ -72,6 +72,7 @@ if (process.env.NODE_ENV === 'production') {
 init(Vue);
 
 
+
 window.$mapInit = function () {
     if (lazyAMapApiLoaderInstance) return;
     VueAMap.initAMapApiLoader({
