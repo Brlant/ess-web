@@ -15,9 +15,10 @@
                 </el-menu>
             </div>
             <div class="right">
-                <amap-page @elements-change="elementsChange" :sceneid="currentSceneId" :elementColumn="elementColumn"
+                <amap-page ref="amapPage" @elements-change="elementsChange" :modeStyle="modeStyle" :sceneid="currentSceneId" :elementColumn="elementColumn"
                            :showMarkerIdList="showMarkerIdList" class="amap-container"></amap-page>
                 <div class="tools">
+                    <el-button type="info" @click="changeModeStyleFn">深浅切换</el-button>
                     <el-button type="info" icon="el-icon-rank" @click="openTab"></el-button>
                 </div>
             </div>
@@ -32,19 +33,23 @@
 import AmapPage from './amap-page'
 import {CcsScene} from "@/resources.js"
 import https from "../../../../https";
+import { mapState } from 'vuex'
+
 
 export default {
     data() {
         return {
+            modeStyle : JSON.parse(localStorage.getItem( 'mapMode' )),
             sceneList: [],  //场景列表
             currentSceneId: '',
             elementColumn: this.$store.state.elementColumn,
             emptyTip: true,
             changeSceneLoading: false,
-            showMarkerIdList: [],
+            showMarkerIdList: []
         };
     },
-    computed: {},
+    computed: {
+    },
     watch: {
         currentSceneId(newValue) {
             this.setElementColumn()
@@ -53,10 +58,32 @@ export default {
     components: {
         AmapPage
     },
+    destroyed(){
+        window.removeEventListener( 'visibilitychange', this.visiblityChangeFn ) ;
+    },
     mounted() {
         this.getSceneList();
+
+        window.removeEventListener( 'visibilitychange', this.visiblityChangeFn ) ;
+        window.addEventListener( 'visibilitychange', this.visiblityChangeFn, false ) ;
+
     },
     methods: {
+        
+        visiblityChangeFn( e ){
+            if( document.visibilityState === 'visible' ){
+                // DO SOMETHING...
+                this.modeStyle = JSON.parse(localStorage.getItem( 'mapMode' )) ;
+
+                this.$refs.amapPage && this.$refs.amapPage.getElements && this.$refs.amapPage.getElements( this.currentSceneId ) ;
+            } else {
+            }
+        },
+
+        changeModeStyleFn(){
+            this.modeStyle = !this.modeStyle ;
+            localStorage.setItem( 'mapMode', this.modeStyle ) ;
+        },
         setElementColumn() {
             //如果localStorage保存过，直接使用localStorage中的数据
             let elementColumn = window.localStorage.getItem('elementColumn-' + this.currentSceneId)

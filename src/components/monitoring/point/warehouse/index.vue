@@ -162,6 +162,9 @@
                     <i class="el-icon-t-search"></i>
                   </span>
                                 <el-button-group>
+                                    <el-button :plain="true" @click="outputDataFn" >
+                                        导出数据
+                                    </el-button>
                                     <el-button :plain="true" @click="editArea" v-has="'ccs-point-warehouse-area-edit'">
                                         编辑
                                     </el-button>
@@ -171,6 +174,12 @@
                                     <el-button :plain="true" @click="ruleAllConfig(currentArea.id)"
                                                v-has="'ccs-point-warehouse-dev-rulecfg'">
                                         配置规则
+                                    </el-button>
+                                    <el-button :plain="true" @click="monitoringControlsFn(1)">
+                                        一键开启监控
+                                    </el-button>
+                                    <el-button :plain="true" @click="monitoringControlsFn(0)">
+                                        一键取消监控
                                     </el-button>
                                 </el-button-group>
                             </el-col>
@@ -276,6 +285,10 @@
             <temp-export :activeId="activeId" :index="showIndex" v-show="showIndex=== 2"/>
             <banding-dev :formItem="tempItem" :action="action" :currentArea='currentArea' :index="showIndex" @refresh="refresh"
                          v-show="showIndex=== 3"/>
+
+            <!-- 新增 - 导出数据组件 -->
+            <export-data :ccsWarehouseId="ccsWarehouseId" :index="showIndex" v-show="showIndex=== 4"/>
+            
         </page-right>
     </div>
 </template>
@@ -283,10 +296,11 @@
 import TempPart from './form/temp';
 import {CcsWarehouse, MonitoringObjGroup, Point} from '@/resources';
 import TempExport from './form/temp-export';
+import exportData from './form/exportData';
 import BandingDev from './form/banding-dev';
 
 export default {
-    components: {BandingDev, TempPart, TempExport},
+    components: {BandingDev, TempPart, TempExport, exportData},
     data: function () {
         return {
             loadingDataWare: false,
@@ -308,7 +322,8 @@ export default {
             activeId: '',
             accordionId: '',
             deleteStore: this.$parent.deleteStore,
-            tempItem: {}
+            tempItem: {},
+            ccsWarehouseId : ''
         };
     },
     computed: {
@@ -343,6 +358,9 @@ export default {
         },
         editArea() {
             this.$emit('open', this.currentArea, '2');
+        },
+        outputDataFn() {
+            this.showIndex = 4;
         },
         addTemp() {
             if (this.currentArea.activeFlag === '0') {
@@ -408,6 +426,7 @@ export default {
             this.queryArea();
         },
         showAreaDetail(item) {
+            this.ccsWarehouseId = item.ccsWarehouseId ;
             this.currentArea = item;
             this.queryTemp(1);
         },
@@ -533,6 +552,32 @@ export default {
         toHistoryFn( item, type ){
             let pointId = item.pointId;
             this.$router.push({path: '/monitoring/point-dev/temp', query: {pointId, type}});
+        },
+
+        monitoringControlsFn( activeFlag ){            
+            let params = {
+                activeFlag,
+                warehouseId : this.ccsWarehouseId
+            } ;
+
+            this.$confirmOpera(`是否一键${ activeFlag ? '开启' : '取消' }监控`, () => {
+                 Point.pointActiveRelations(params).then(res => {
+                    let { status, data } = res ;
+
+                    if( +status === 200 ){
+                        this.queryTemp(1);
+                    }
+
+                    this.$message({
+                        type: +status === 200 ? 'success' : 'warning',
+                        message: +status === 200 ? `${ activeFlag ? '开启' : '取消' }成功` : `${ activeFlag ? '开启' : '取消' }失败`
+                    });
+                });
+                
+            });
+
+
+           
         }
     }
 };

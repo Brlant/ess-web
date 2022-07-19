@@ -214,6 +214,8 @@
                 this.currentItemId = item.id;
                 this.form = item;
                 this.showPart(1);
+                // this.ruleConfig && this.ruleConfig( item.id ) ;
+
             },
             change() {
                 this.resetRightBox();
