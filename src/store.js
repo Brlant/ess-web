@@ -77,7 +77,9 @@ const state = {
         WARNING: '告警',
         OFFLINE: '离线',
         STOP: '停止',
-    }
+    },
+
+    
 
 
 };

@@ -17,6 +17,7 @@ module.exports = {
             '/api': {
                 // target: 'https://test1-mcc.cdcerp.cn/',
                 target: 'https://dev-ess-inner.cdcerp.cn/api',
+                // target: 'https://sh-ess-inner.cdcerp.cn/api',
                 changOrigin: true, 
                 pathRewrite : {
                     '/api' : ''

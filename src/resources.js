@@ -239,6 +239,11 @@ export const Point = resource('/ccs-point', http, {
         return http.get(`mcc-data/ccsDevice/gainPointThingDataList`, {params});
     },
 
+    // 一键开启监控 / 一键取消监控
+    pointActiveRelations(params) {
+        return http.put(`/ccsMonitorRelation/warehouse/activeRelations`, params);
+    },
+
 
 });
 
