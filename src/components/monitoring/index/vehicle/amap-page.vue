@@ -97,7 +97,8 @@ export default {
 
             //时间修改，marker需要重新画线
             let marker = this.markerList[this.currentClickElement.scenesElementId];
-            marker.drawHistoryPolyline()
+            marker.drawHistoryPolyline() ;
+            marker.getScenesElementHistoryLocationFn() ;
         },
         //是否显示所有的marker
         showAllMarker(show, markerid) {
@@ -162,24 +163,32 @@ export default {
 
                     if( res.data ){
                         let list = res.data.filter(item => item.longitude && item.latitude);
-
                         if( filterCarStatus ){
                             let statusCode = filterCarStatus[ sceneId ] ;
 
+                            /**
+                             * 1 ：仓库
+                             * 2 ：单位
+                             * 3 ：车辆
+                             * 4 ：冷柜
+                             * 5 ：订单
+                            */
+
+                            // 只针对车辆筛选, 其它数据类型不动
                             switch( +statusCode ){
                                 case 1 : // 全部
                                     break ;
                                 case 2 : // 监控中车辆
-                                    list = list.filter( item => item.monitorFlag && +item.monitorFlag === 1 ) ;
+                                    list = list.filter( item => ( item.elementType !== 3 ) || ( item.elementType === 3 && item.monitorFlag && +item.monitorFlag === 1 ) ) ;
                                     break ;
                                 case 3 : // 未监控中车辆
-                                    list = list.filter( item => item.monitorFlag && +item.monitorFlag === 0 ) ;
+                                    list = list.filter( item => ( item.elementType !== 3 ) || ( item.elementType === 3 && item.monitorFlag && +item.monitorFlag === 0 ) ) ;
                                     break ;
                             }
                         }
 
                         this.elemens = list.map(item => {
-                            item.points = [ { latitude : item.latitude, longitude : item.longitude } ] ;
+                            item.points = [ { latitude : item.latitude, longitude : item.longitude } ] ; // 之前逻辑
                             return item;
                         });
 
@@ -221,26 +230,27 @@ export default {
                             this.$emit('elements-change', this.elemens);
                         }
                         /*
-                            yxh 之前逻辑
+                            yxh 之前逻辑 */
                             this.elemens = list.map(item => {
                                 if (this.currentClickElement.scenesElementId == item.scenesElementId) {
                                     this.currentClickElement = item
                                 }
-                                console.error( item, 111 ) ;
                                 item.value = item.scenesElementName;
                                 item.points = item.points.map(item2 => {
-                                    item2.devices = item2.devices.filter(item3 => {
-                                        if (item3.id) {
-                                            return item3;
-                                        }
-                                    })
+                                    if( item2.devices ){
+                                        item2.devices = item2.devices.filter(item3 => {
+                                            if (item3.id) {
+                                                return item3;
+                                            }
+                                        })
+                                    }
                                     return item2;
                                 })
                                 return item;
                             });
                             this.drawScenePoint();
                             this.$emit('elements-change', this.elemens);
-                        */
+                       
                     }
                 });
 
@@ -590,7 +600,6 @@ export default {
                             endDate: this.endDate,
                         }
 
-
                         https.get('/ccsScenesElement/getScenesElementHistoryLocation', params).then(res => {
 
                             if ( res && Array.isArray( res ) && res.length > 0) {
@@ -605,6 +614,7 @@ export default {
                                 } ) ;
 
                                 this.moveMarkerPolylineList = tipsArr ;
+                                
 
                                 this.$refs['sceneRightPage'] && this.$refs['sceneRightPage'].setTipsDataList( tipsArr ) ; 
                                 this.$refs['sceneRightPage'] && this.$refs['sceneRightPage'].setSliderMaxCount( tipsArr.length ) ;
