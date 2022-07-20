@@ -409,7 +409,8 @@
                     */
                 });
                 return this.tempList.map((m) => {
-                    if (m.warnFlag) {
+                   
+                    if ( m.warnFlag  || ( m.warnTypes && m.warnTypes.includes( 4 ) ) ) { // 超温 和 离线
                       this.isAlarm = true;
                     } 
 
@@ -460,10 +461,10 @@
                 return [...wSet];
             },
             isAlarming() {
-                return this.tempList.some(s => s.warnFlag);
+                return this.tempList.some(s => ( s.warnFlag ) || ( s.warnTypes && s.warnTypes.includes( 4 ) ) );
             },
             isPlay(){
-                return this.tempList.some( v => this.getColor(v) === '#f00' ) ;
+                return this.tempList.some( v => ( this.getColor(v) === '#f00' ) || ( this.getColor(v) === '#666' ) ) ;
             }
         },
         watch: {
@@ -799,6 +800,8 @@
                       // }
                     
                     this.tempList = list; 
+
+                    console.error( 'list: ', this.tempList, this.isPlay, this.$refs.alarmMusic ) ;
                     
                     // this.count ++ ;
 

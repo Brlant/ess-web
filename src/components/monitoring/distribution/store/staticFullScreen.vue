@@ -110,7 +110,7 @@ export default {
                 */
             });
             return this.tempList.map((m) => {
-                if (m.warnFlag) {
+                if ( m.warnFlag  || ( m.warnTypes && m.warnTypes.includes( 4 ) ) ) { // 超温 和 离线
                     this.isAlarm = true;
                 }
 
@@ -141,7 +141,8 @@ export default {
         },
 
         isPlay(){
-            return this.tempList.some( v => this.getColor(v) === '#f00' ) ;
+            return this.tempList.some( v =>  ( this.getColor(v) === '#f00' ) || ( this.getColor(v) === '#666' ) ) ;
+            // return this.tempList.some( v => this.getColor(v) === '#f00' ) ;
         }
     },
     mounted(){
