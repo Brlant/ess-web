@@ -520,10 +520,10 @@ export default {
 
         let filterCarStatus = JSON.parse( localStorage.getItem( 'filterCarStatus' ) )  ;
         if( filterCarStatus ){
-            this.carStatus = filterCarStatus[ this.sceneid ] ;
-        } else {
-            this.saveCarStatusFn() ;
-        }
+            this.carStatus = filterCarStatus[ this.sceneid ] ? filterCarStatus[ this.sceneid ] : 1 ;
+        } 
+        this.saveCarStatusFn() ;
+       
 
         //如果localStorage保存过，直接使用localStorage中的数据
         let elementColumn = window.localStorage.getItem('elementColumn-' + this.sceneid)
