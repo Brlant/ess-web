@@ -428,7 +428,7 @@ export default {
             showMarkerIdList: [],//需要现实的对象列表
             showUnit:true,//是否显示单位
 
-            carStatus : 0,
+            carStatus : 1,
             carStatusCode : 0,
             modeStyle : JSON.parse(localStorage.getItem( 'mapMode' )),
         }
@@ -521,6 +521,8 @@ export default {
         let filterCarStatus = JSON.parse( localStorage.getItem( 'filterCarStatus' ) )  ;
         if( filterCarStatus ){
             this.carStatus = filterCarStatus[ this.sceneid ] ;
+        } else {
+            this.saveCarStatusFn() ;
         }
 
         //如果localStorage保存过，直接使用localStorage中的数据
@@ -572,6 +574,7 @@ export default {
             }
 
             this.carStatusCode = this.carStatus ;
+            this.dialogVisible = false ;
 
         },
 

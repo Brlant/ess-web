@@ -1,6 +1,7 @@
 <template>
     <search-template :isShow="showSearch" :isShowAdvance="false" @isShow="isShow" @reset="reset" @search="search" >
-        <template slot="title">设备监控查询</template>
+        <!-- <template slot="title">设备监控查询</template> -->
+        <template slot="title">点位设备绑定记录</template>
         <template slot="btn">
             <slot name="btn">
                 <el-button @click="exportData" plain size="small" >
