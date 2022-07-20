@@ -349,7 +349,7 @@
                             </div>
                         </el-card>
                         <div>
-                            <el-checkbox style="margin-left: 20px" v-model="showUnit">显示数据单位</el-checkbox>
+                            <!-- <el-checkbox style="margin-left: 20px" v-model="showUnit">显示数据单位</el-checkbox> -->
                         </div>
                     </div>
                 </el-tab-pane>
