@@ -56,7 +56,8 @@ export default {
     data() {
         return {
             refreshEcharts: false,
-            elemens: [], //对象列表
+            elemens: [], //筛选对象列表
+            elemensAll: [], //全部对象列表
             markerList: {},  //覆盖物列表
             map: null, //地图对象
             AMap: null,
@@ -163,6 +164,7 @@ export default {
 
                     if( res.data ){
                         let list = res.data.filter(item => item.longitude && item.latitude);
+                        let listAll = res.data.filter(item => item.longitude && item.latitude);
                         if( filterCarStatus ){
                             let statusCode = filterCarStatus[ sceneId ] ;
 
@@ -188,6 +190,12 @@ export default {
                         }
 
                         this.elemens = list.map(item => {
+                            item.points = [ { latitude : item.latitude, longitude : item.longitude } ] ; // 之前逻辑
+                            return item;
+                        });
+
+                        // 用于 显示对象配置 中的全部数据列表
+                        this.elemensAll = listAll.map(item => {
                             item.points = [ { latitude : item.latitude, longitude : item.longitude } ] ; // 之前逻辑
                             return item;
                         });
@@ -227,10 +235,12 @@ export default {
 
                         if( this.map ){
                             this.drawScenePoint();
-                            this.$emit('elements-change', this.elemens);
+
+                            // this.$emit('elements-change', this.elemens); // 之前逻辑 筛选过后的对象列表数据
+                            this.$emit('elements-change', this.elemensAll); // 全部的对象列表数据, 用于 显示对象配置 和 筛选条件功能的解藕
                         }
                         /*
-                            yxh 之前逻辑 */
+                            yxh 之前逻辑 
                             this.elemens = list.map(item => {
                                 if (this.currentClickElement.scenesElementId == item.scenesElementId) {
                                     this.currentClickElement = item
@@ -250,6 +260,7 @@ export default {
                             });
                             this.drawScenePoint();
                             this.$emit('elements-change', this.elemens);
+                        */
                        
                     }
                 });
