@@ -1,6 +1,6 @@
 <template>
     <div style="position: relative;display: flex;">
-        <div id="mapContainer" style="flex:1;"></div>
+        <div id="mapContainer" :class="{ modeInfo : modeStyle }" style="flex:1;"></div>
         <scene-right-page
             v-if="drawer"
             ref="sceneRightPage"
@@ -23,6 +23,14 @@ import https from "../../../../https";
 export default {
     name: "amap-page",
     props: {
+        carStatusCode: {
+            type: Number,
+            default: 1
+        },
+        modeStyle: {
+            type: Boolean,
+            default: JSON.parse(localStorage.getItem( 'mapMode' ) )
+        },
         sceneid: {
             type: String,
             default: ''
@@ -48,7 +56,8 @@ export default {
     data() {
         return {
             refreshEcharts: false,
-            elemens: [], //对象列表
+            elemens: [], //筛选对象列表
+            elemensAll: [], //全部对象列表
             markerList: {},  //覆盖物列表
             map: null, //地图对象
             AMap: null,
@@ -66,7 +75,7 @@ export default {
                 2: 995,//单位
                 3: 997,//车辆
                 4: 998,//订单
-            },
+            }
 
         };
     },
@@ -89,7 +98,8 @@ export default {
 
             //时间修改，marker需要重新画线
             let marker = this.markerList[this.currentClickElement.scenesElementId];
-            marker.drawHistoryPolyline()
+            marker.drawHistoryPolyline() ;
+            marker.getScenesElementHistoryLocationFn() ;
         },
         //是否显示所有的marker
         showAllMarker(show, markerid) {
@@ -143,6 +153,8 @@ export default {
             utils.amap().then(AMap => {
                 this.AMap = AMap;
                 CcsPointDeviceInfo.query(sceneId).then(res => {
+                    let filterCarStatus = JSON.parse( localStorage.getItem( 'filterCarStatus' ) )  ;
+
                     if(res.headers && res.headers["iot-token"]){
                         window.localStorage.setItem("token", res.headers["iot-token"]);
                     }
@@ -152,27 +164,96 @@ export default {
 
                     if( res.data ){
                         let list = res.data.filter(item => item.longitude && item.latitude);
+                        let listAll = res.data.filter(item => item.longitude && item.latitude);
+                        if( filterCarStatus ){
+                            let statusCode = filterCarStatus[ sceneId ] ;
+
+                            /**
+                             * 1 ：仓库
+                             * 2 ：单位
+                             * 3 ：车辆
+                             * 4 ：冷柜
+                             * 5 ：订单
+                            */
+
+                            // 只针对车辆筛选, 其它数据类型不动
+                            switch( +statusCode ){
+                                case 1 : // 全部
+                                    break ;
+                                case 2 : // 监控中车辆
+                                    list = list.filter( item => ( item.elementType !== 3 ) || ( item.elementType === 3 && item.monitorFlag && +item.monitorFlag === 1 ) ) ;
+                                    break ;
+                                case 3 : // 未监控中车辆
+                                    list = list.filter( item => ( item.elementType !== 3 ) || ( item.elementType === 3 && item.monitorFlag && +item.monitorFlag === 0 ) ) ;
+                                    break ;
+                            }
+                        }
+
                         this.elemens = list.map(item => {
-                            item.points = [ { latitude : item.latitude, longitude : item.longitude } ] ;
+                            item.points = [ { latitude : item.latitude, longitude : item.longitude } ] ; // 之前逻辑
                             return item;
                         });
 
-                        this.drawScenePoint();
-                        this.$emit('elements-change', this.elemens);
+                        // 用于 显示对象配置 中的全部数据列表
+                        this.elemensAll = listAll.map(item => {
+                            item.points = [ { latitude : item.latitude, longitude : item.longitude } ] ; // 之前逻辑
+                            return item;
+                        });
+
+                        if( !list.length ){ // 如果没有数据, 则在下一次请求的时候清除所有标识信息, 没必要画点和线
+                            if( this.map ){
+
+                                this.isSetFitView = true;//重置地图区域
+                                this.drawer = false;
+                                
+                                //点击地图空白处删除车辆轨迹 【注意: 应该先清除标识线再重置 this.markerList = {} 】
+                                for (let key in this.markerList) {
+                                    this.markerList[key].clearHistoryPolyline();
+                                }
+
+                                this.markerList = {};
+                                //关闭弹窗
+                                // this.drawer = false; // 之前逻辑
+
+                                //移除moveMarker
+                                if (this.moveMarker) {
+                                    this.map.remove(this.moveMarker);
+                                }
+                                this.startDate = '' ;
+                                this.endDate = '' ;
+
+                                this.elemens.forEach((item) => {
+                                    this.map.remove(this.markerList[item.scenesElementId]); // 移除marker
+                                }) ;
+
+                                this.map.clearMap();
+                                this.map.setFitView();
+
+                            }
+                            return ;
+                        }
+
+                        if( this.map ){
+                            this.drawScenePoint();
+
+                            // this.$emit('elements-change', this.elemens); // 之前逻辑 筛选过后的对象列表数据
+                            this.$emit('elements-change', this.elemensAll); // 全部的对象列表数据, 用于 显示对象配置 和 筛选条件功能的解藕
+                        }
                         /*
-                            yxh 之前逻辑
+                            yxh 之前逻辑 
                             this.elemens = list.map(item => {
                                 if (this.currentClickElement.scenesElementId == item.scenesElementId) {
                                     this.currentClickElement = item
                                 }
-                                console.error( item, 111 ) ;
                                 item.value = item.scenesElementName;
                                 item.points = item.points.map(item2 => {
-                                    item2.devices = item2.devices.filter(item3 => {
-                                        if (item3.id) {
-                                            return item3;
-                                        }
-                                    })
+                                    if( item2.devices ){
+                                        item2.devices = item2.devices.filter(item3 => {
+                                            if (item3.id) {
+                                                return item3;
+                                            }
+                                        })
+                                    }
                                     return item2;
                                 })
                                 return item;
@@ -180,6 +261,7 @@ export default {
                             this.drawScenePoint();
                             this.$emit('elements-change', this.elemens);
                         */
+                       
                     }
                 });
 
@@ -226,7 +308,7 @@ export default {
                         marker.buildElementLabel()
                         let angle = marker.calcAngle();
                         let html = [];
-                        html.push('<div style="position: relative;">');
+                        html.push('<div style="position: relative;"  class="markerTxt">');
 
                         let statusMap = this.$store.state.statusMap
                         let showImgSrc = ''
@@ -324,10 +406,14 @@ export default {
 
                         }
 
+                        let mode = JSON.parse(localStorage.getItem( 'mapMode') ) ;
+                        // let styleName = `amap://styles/${ !mode ? 'b1dba72ed6aaf60323637e10e74f5c48' : 'normal' }`;
+
                         humidityTemperatureVoltageStr+=`</div>`
                         html.push('<img src="' + showImgSrc + '" style="width: 30px ;height:30px ;transform:rotate(' + angle + 'deg);"/>')
                         if (marker.item.label) {
-                            html.push('<div style="color: white;position: absolute;top: 4px;left: 30px;min-width: 150px;font-size: 12px;white-space:nowrap;line-height: 13px;">');
+                            html.push(`<div style="color:white;position: absolute;top: 4px;left: 30px;min-width: 150px;font-size: 12px;white-space:nowrap;line-height: 13px;">`);
+                            // html.push(`<div class='markerTxt' style="color:white;position: absolute;top: 4px;left: 30px;min-width: 150px;font-size: 12px;white-space:nowrap;line-height: 13px;">`);
                             html.push(marker.item.label) ;
                             html.push(humidityTemperatureVoltageStr) ;
                             html.push('</div>');
@@ -525,7 +611,6 @@ export default {
                             endDate: this.endDate,
                         }
 
-
                         https.get('/ccsScenesElement/getScenesElementHistoryLocation', params).then(res => {
 
                             if ( res && Array.isArray( res ) && res.length > 0) {
@@ -540,6 +625,7 @@ export default {
                                 } ) ;
 
                                 this.moveMarkerPolylineList = tipsArr ;
+                                
 
                                 this.$refs['sceneRightPage'] && this.$refs['sceneRightPage'].setTipsDataList( tipsArr ) ; 
                                 this.$refs['sceneRightPage'] && this.$refs['sceneRightPage'].setSliderMaxCount( tipsArr.length ) ;
@@ -641,10 +727,9 @@ export default {
                                 marker.setContent(html); // 之前
                             }
 
-
                             // 这里是绘制温湿度数据逻辑, 如果位置没变也重新绘制
                             let html = [];
-                            html.push('<div style="position: relative;">');
+                            html.push('<div style="position: relative;"  class="markerTxt">');
 
                             let statusMap = this.$store.state.statusMap
                             let showImgSrc = ''
@@ -797,9 +882,9 @@ export default {
                 }
             }
         },
-    },
-    watch: {
-        sceneid(newValue, oldValue) {
+
+        changeSceneidFn(){
+            let mode = JSON.parse(localStorage.getItem( 'mapMode') ) ;
             // this.removeMarkerList();//切换场景删除markerlist所有marker
             this.isSetFitView = true;//重置地图区域
             this.drawer = false;
@@ -812,7 +897,7 @@ export default {
                     zoom: 11,
                 });
                 //设置地图主题
-                let styleName = "amap://styles/b1dba72ed6aaf60323637e10e74f5c48";
+                let styleName = `amap://styles/${ !mode ? 'b1dba72ed6aaf60323637e10e74f5c48' : 'normal' }`;
                 this.map.setMapStyle(styleName);
                 this.map.on('click', () => {
                     //点击地图空白处删除车辆轨迹
@@ -820,7 +905,8 @@ export default {
                         this.markerList[key].clearHistoryPolyline();
                     }
                     //关闭弹窗
-                    this.drawer = false;
+                    // this.drawer = false; // 之前逻辑
+
                     //移除moveMarker
                     if (this.moveMarker) {
                         this.map.remove(this.moveMarker);
@@ -830,6 +916,25 @@ export default {
                 });
                 this.getElements(this.sceneid);
             });
+        }
+    },
+    watch: {
+        carStatusCode( n, o ){
+            // this.sceneid && this.getElements(this.sceneid);
+            this.changeSceneidFn() ;
+        },
+        modeStyle( n, o ){
+            if(this.map){
+                let mode = JSON.parse(localStorage.getItem( 'mapMode')) ;
+                let styleName = `amap://styles/${ !mode ? 'b1dba72ed6aaf60323637e10e74f5c48' : 'normal' }`;
+                this.map.setMapStyle(styleName);
+                this.modeStyle = mode ;
+            } else {
+                this.changeSceneidFn() ;
+            }
+        },
+        sceneid(newValue, oldValue) {
+            this.changeSceneidFn() ;
         },
         showmarkerid(newValue, oldValue) {
             if (newValue) {
@@ -870,8 +975,13 @@ export default {
     mounted() {
         //定时任务30秒刷新一次
         this.refreshTask = setInterval(() => {
-            this.getElements(this.sceneid);
+            this.getElements(this.sceneid); 
             this.refreshEcharts = !this.refreshEcharts
+            /*
+                // 之前逻辑
+                this.getElements(this.sceneid); 
+                this.refreshEcharts = !this.refreshEcharts
+            */
         }, 30 * 1000);
     },
     destroyed() {
@@ -887,7 +997,7 @@ export default {
 
 /deep/ .amap-maps{
     /* border:solid 3px red; */
-    background:black;
+    /* background:black; */
 }
 
 /deep/ .amap-copyright {
@@ -897,4 +1007,9 @@ export default {
 /deep/ .amap-mcode {
     display: none !important;
 }
+</style>
+<style>
+    #mapContainer.modeInfo .markerTxt > div{
+        color:black!important;
+    }
 </style>

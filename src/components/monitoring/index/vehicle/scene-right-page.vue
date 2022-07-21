@@ -3,13 +3,29 @@
         <div class="container-box">
             <div class="header">
                 <el-row>
-                    <el-col :span="24">{{ sliderMaxCount }}
+                    <el-col :span="22">
+                        <span class="demonstration">滑动调节时间轴</span>
                         <el-slider
                             v-model="sliderValue"
                             :max="sliderMaxCount"
                             :format-tooltip="formatSliderTootip"
                             @input="sliderChange"
                         ></el-slider>
+                        <div
+                            class="headerBeforeIcon" 
+                            style="position: absolute;top: 3px;right: 7px;z-index: 1001;color: gray;cursor: pointer;font-size: 15px;"
+                        >
+                            <i
+                                class="el-icon-time"
+                                @click="showDatePickerRange = !showDatePickerRange"
+                            ></i>
+                            <i
+                                class=" el-icon-warning-outline"
+                                @click="clickShowRecored"
+                                style="margin:0 10px;"
+                            ></i>
+                            <i class="el-icon-circle-close" @click="closeDrawer"></i>
+                        </div>
                     </el-col>
                 </el-row>
             </div>
@@ -113,19 +129,23 @@
                     >
                     </e-charts>
                 </div>
-                <div
-                    style="position: absolute;top: 3px;right: 7px;z-index: 1001;color: gray;cursor: pointer;font-size: 15px;"
-                >
-                    <i
-                        class="el-icon-time"
-                        @click="showDatePickerRange = !showDatePickerRange"
-                    ></i>
-                    <i
-                        class=" el-icon-warning-outline"
-                        @click="clickShowRecored"
-                        style="margin-left: 10px;"
-                    ></i>
-                </div>
+                
+                <!-- 
+                    之前逻辑
+                    <div
+                        style="position: absolute;top: 3px;right: 7px;z-index: 1001;color: gray;cursor: pointer;font-size: 15px;"
+                    >
+                        <i
+                            class="el-icon-time"
+                            @click="showDatePickerRange = !showDatePickerRange"
+                        ></i>
+                        <i
+                            class=" el-icon-warning-outline"
+                            @click="clickShowRecored"
+                            style="margin-left: 10px;"
+                        ></i>
+                    </div>
+                -->
             </div>
 
             <el-date-picker
@@ -967,6 +987,7 @@ export default {
     box-sizing: border-box;
     position: relative;
     box-shadow: 0 0 10px rgba(255, 255, 255, 1);
+    background:rgba(30, 30, 30, 1) ;
 }
 
 .container-box .header {
@@ -979,7 +1000,7 @@ export default {
 }
 
 .container-box .content {
-    background: rgba(0, 0, 0, 0.7);
+    /* background: rgba(0, 0, 0, 0.7); */
     width: 100%;
     height: 210px;
     padding: 10px 20px;
@@ -1090,7 +1111,8 @@ export default {
 .el-slider /deep/ .el-slider__bar {
     height: 2px;
     color: black;
-    background-color: #eeeeee;
+    /* background-color: #eeeeee; */
+    background:rgba(244, 161, 49, 1) ;
 }
 
 .el-slider /deep/ .el-slider__button {
@@ -1161,6 +1183,12 @@ export default {
         opacity: 1;
     }
 }
+
+.demonstration{ color:white; padding:.5em 0 0; display:block; }
+.headerBeforeIcon{ padding:8px 0 0; }
+.headerBeforeIcon ::before{ color:white; }
+/deep/ .el-slider__button-wrapper{ width:20px; height:20px; top:-9px; }
+
 </style>
 
 <style lang="scss" scoped>

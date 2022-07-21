@@ -115,6 +115,7 @@ export default {
             return time ? this.$moment(time).format(str) : '';
         },
         ruleConfig(item) {
+            console.error(444, item) ;
             this.currentItemId = item;
             this.$store.commit('initUnitId', item);
         }

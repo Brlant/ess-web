@@ -27,23 +27,43 @@
                 </div>
             </div>
         </div>
+        <div class="tools">
+            <el-button type="info" style="position:absolute; z-index:1; right:20px; top:70px; padding:10px" @click="changeModeStyleFn">深浅切换</el-button>
+        </div>
+        
         <amap-page
             class="amap-container"
             :sceneid="sceneid"
+            :modeStyle="modeStyle"
             :elementColumn="elementColumn"
+            :carStatusCode="carStatusCode"
             :showmarkerid="showmarkerid"
             :showMarkerIdList="showMarkerIdList"
             :showUnit="showUnit"
             @elements-change="elementsChange"></amap-page>
 
         <el-dialog :visible.sync="dialogVisible" width="1200px">
-            <div style="position: absolute;top:25px; right: 100px;" v-if=" this.sceneName.indexOf('新冠')!==-1 ">
-                <el-button @click="pullRemoteShowMarkerIdList" :loading="pullLoading" size="mini">
-                    获取监控对象
-                </el-button>
-            </div>
+            <!-- 
+                之前逻辑
+                <div style="position: absolute;top:25px; right: 100px;" v-if=" this.sceneName.indexOf('新冠')!==-1 ">
+                    <el-button @click="pullRemoteShowMarkerIdList" :loading="pullLoading" size="mini">
+                        获取监控对象
+                    </el-button>
+                </div> 
+            -->
             <el-tabs v-model="activeName" type="card">
-                <el-tab-pane label="请选择要显示的对象" name="first">
+                <el-tab-pane label="筛选条件" name="zero">
+                    <p>车辆监控状态：</p>
+                    <el-radio-group v-model="carStatus">
+                        <el-radio :label="1">所有车辆</el-radio>
+                        <el-radio :label="2">监控中车辆</el-radio>
+                        <el-radio :label="3">未监控车辆</el-radio>
+                    </el-radio-group>
+                    <el-row class="carStatusBtnInfo">
+                        <el-button @click="saveCarStatusFn" size="small" type="primary">确定</el-button>
+                    </el-row>
+                </el-tab-pane>
+                <el-tab-pane label="显示对象配置" name="first">
                     <div style="display: flex;">
                         <el-card shadow="never">
                             <el-input placeholder="输入关键字进行过滤" size="small" v-model="depositoryFilterText"></el-input>
@@ -115,7 +135,7 @@
                         </el-card>
                     </div>
                 </el-tab-pane>
-                <el-tab-pane label="请选择对象需要显示的字段" name="second">
+                <el-tab-pane label="显示对象字段配置" name="second">
                     <div style="display: flex;justify-content: center;">
                         <el-card shadow="hover">
                             <div>库区</div>
@@ -329,7 +349,7 @@
                             </div>
                         </el-card>
                         <div>
-                            <el-checkbox style="margin-left: 20px" v-model="showUnit">单位</el-checkbox>
+                            <!-- <el-checkbox style="margin-left: 20px" v-model="showUnit">显示数据单位</el-checkbox> -->
                         </div>
                     </div>
                 </el-tab-pane>
@@ -347,6 +367,7 @@ import {CCsScen} from "@/resources.js"
 import https from "../../../https";
 import AmapPage from '../../monitoring/index/vehicle/amap-page'
 
+
 export default {
     name: "dynamic-fullscreen",
     data() {
@@ -363,7 +384,7 @@ export default {
 
             orderFilterText: '',
             orderTreeData: [],
-            activeName: 'first',
+            activeName: 'zero',
             reservoirOptions:[
                 {label:'请选择',value:''},
                 {label:'名称',value:'scenesElementName'},
@@ -406,6 +427,10 @@ export default {
             showmarkerid: '',//需要显示对象ID
             showMarkerIdList: [],//需要现实的对象列表
             showUnit:true,//是否显示单位
+
+            carStatus : 1,
+            carStatusCode : 0,
+            modeStyle : JSON.parse(localStorage.getItem( 'mapMode' )),
         }
     },
     components: {
@@ -487,10 +512,18 @@ export default {
                 this.saveLocalElementColumn()
             },
             deep: true,
-        }
+        },
     },
     mounted() {
         this.sceneid = this.$route.query.scenesId;
+
+
+        let filterCarStatus = JSON.parse( localStorage.getItem( 'filterCarStatus' ) )  ;
+        if( filterCarStatus ){
+            this.carStatus = filterCarStatus[ this.sceneid ] ? filterCarStatus[ this.sceneid ] : 1 ;
+        } 
+        this.saveCarStatusFn() ;
+       
 
         //如果localStorage保存过，直接使用localStorage中的数据
         let elementColumn = window.localStorage.getItem('elementColumn-' + this.sceneid)
@@ -513,8 +546,38 @@ export default {
 
         //获取设备字段
         // this.getCcsSceneDeviceFields(this.sceneid) // 暂时写死数据, 不需要请求接口
+
+        window.removeEventListener( 'visibilitychange', this.visiblityChangeFn ) ;
+        window.addEventListener( 'visibilitychange', this.visiblityChangeFn, false ) ;
     },
     methods: {
+        visiblityChangeFn(){
+            if( document.visibilityState === 'visible' ){
+                // DO SOMETHING...
+                this.modeStyle = JSON.parse(localStorage.getItem( 'mapMode' )) ;
+            } else {
+            }
+        },
+
+        changeModeStyleFn(){
+            this.modeStyle = !this.modeStyle ;
+            localStorage.setItem( 'mapMode', this.modeStyle ) ;
+        },
+        saveCarStatusFn(){
+            let filterCarStatus = JSON.parse( localStorage.getItem( 'filterCarStatus' ) )  ;
+
+            if( filterCarStatus ){ // 表示已经有车辆筛选存储状态
+                filterCarStatus = { ...filterCarStatus, [ this.sceneid ] : this.carStatus } ;
+                localStorage.setItem( 'filterCarStatus', JSON.stringify( filterCarStatus ) ) ;
+            } else {
+                localStorage.setItem( 'filterCarStatus', JSON.stringify( { [ this.sceneid ] : this.carStatus } ) ) ;
+            }
+
+            this.carStatusCode = this.carStatus ;
+            this.dialogVisible = false ;
+
+        },
+
         pullRemoteShowMarkerIdList() {
             this.pullLoading = true
             let params = {
@@ -703,16 +766,19 @@ export default {
     },
     destroyed() {
         window.clearInterval(this.nowIntervalTask);
+        window.removeEventListener( 'visibilitychange', this.visiblityChangeFn ) ;
     }
 
 }
 </script>
 
 <style scoped>
+
+.carStatusBtnInfo{ padding:200px 0 0; }
 .box {
     width: 100%;
     height: 100%;
-    background:black;
+    background:black; 
 }
 
 .box .header {
