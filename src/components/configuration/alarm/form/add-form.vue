@@ -68,19 +68,19 @@
                         <el-col :span="1"></el-col>
                         <el-col :span="8">
                             <el-form-item :prop="`details.${index}.threshold`"
-                                          :rules="[{ required: true, message: '请输入阀值', trigger: 'blur' }]"
+                                          :rules="[{ required: true, message: '请输入阈值', trigger: 'blur' }]"
                                           label-width="0"
                                           v-show="item.monitorType !== '4'">
-                                <oms-input :disabled="item.thresholdDisabled" placeholder="请输入阀值" type="text"
+                                <oms-input :disabled="item.thresholdDisabled" placeholder="请输入阈值" type="text"
                                            v-model="item.threshold">
                                     <template slot="append" v-if="unitIcon(item)">{{unitIcon(item)}}</template>
                                 </oms-input>
                             </el-form-item>
                             <el-form-item :prop="`details.${index}.threshold`"
-                                          :rules="[{ required: true, message: '请选择阀值', trigger: 'change' }]"
+                                          :rules="[{ required: true, message: '请选择阈值', trigger: 'change' }]"
                                           label-width="0"
                                           v-show="item.monitorType === '4'">
-                                <el-select :disabled="item.thresholdDisabled" placeholder="请输入阀值"
+                                <el-select :disabled="item.thresholdDisabled" placeholder="请输入阈值"
                                            v-model="item.threshold">
                                     <el-option :key="key * 1" :label="item" :value="key * 1"
                                                v-for="(item, key) in offLine"
