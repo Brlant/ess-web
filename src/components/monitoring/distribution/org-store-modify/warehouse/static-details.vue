@@ -612,7 +612,7 @@ export default {
 <style scoped>
 .drawer-box {
     width: 100%;
-    height: 240px;
+    /* height: 240px; */
     bottom: 0px;
     left: 0px;
     box-sizing: border-box;
@@ -626,7 +626,7 @@ export default {
 .container-box {
     min-width: 980px;
     width: 80%;
-    height: 240px;
+    /* height: 240px; */
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     box-sizing: border-box;
@@ -646,7 +646,7 @@ export default {
 .container-box .content {
     background: rgba(0, 0, 0, 0.7);
     width: 100%;
-    height: 210px;
+    /* height: 210px; */
     padding: 10px 20px;
     box-sizing: border-box;
     position: relative;

@@ -633,7 +633,7 @@ export default {
 <style scoped>
 .drawer-box {
     width: 100%;
-    height: 240px;
+    /* height: 240px; */
     bottom: 0px;
     left: 0px;
     box-sizing: border-box;

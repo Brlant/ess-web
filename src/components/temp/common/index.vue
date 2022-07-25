@@ -319,7 +319,6 @@ export default {
         },
 
         downloadFn(){
-            console.error( 8 ) ;
             // window.location.href = 'http://localhost:8006/static/excel/设备批量新增模板.xlsx' ;
             // let el = document.createElement( 'a' ), EXT_NAME = '.xls' ;
 
