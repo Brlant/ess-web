@@ -801,8 +801,6 @@
                     
                     this.tempList = list; 
 
-                    console.error( 'list: ', this.tempList, this.isPlay, this.$refs.alarmMusic ) ;
-                    
                     // this.count ++ ;
 
                     if( this.$refs.alarmMusic ){

@@ -855,7 +855,7 @@ export default {
                 // yxh 所有带 /scenes  改为 /ccsScenes
                 // https.post('/scenes', params).then(res => {
                 https.post('/ccsScenes', params ).then(res => {
-                    console.error( 222, res ) ;
+                    // console.error( 222, res ) ;
                     this.$notify.success({message: '场景添加成功'});
                     this.clearEditContainer();
                     this.refresh();

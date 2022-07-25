@@ -343,7 +343,6 @@ export default {
                     this.doing = true;
                     form.devType = form.devType.productId;
                     form.isLocation = form.isLocation ? 1 : 0;
-                    console.error( 'save: ', form, form.isLocation ) ;
                     this.$httpRequestOpera(PointRelation.save(form), {
                         successTitle: '添加成功',
                         errorTitle: '添加失败',
@@ -363,7 +362,6 @@ export default {
 
         devClassChangeFn( val ){
             this.reqDevTypeFn() ;
-            console.error( val ) ;
         },
 
 
