@@ -4,6 +4,7 @@
             <div class="header">
                 <el-row style="width: 100%;">
                     <el-col :span="22">
+                        <span class="demonstration">滑动调节时间轴</span>
                         <el-slider style="z-index: 9999999;position: relative"
                             v-model="sliderValue"
                             :max="sliderMaxCount"
@@ -218,9 +219,9 @@ export default {
         },
         formatSliderTootip(value) {
             let item = this.ccsScenesElementHistoryData[value];
-            if (item && item.time) {
+            if (item && item.createTime) {
                 return this.$options.filters["time"](
-                    this.ccsScenesElementHistoryData[value].time
+                    this.ccsScenesElementHistoryData[value].createTime
                 );
             }
         },
@@ -492,6 +493,7 @@ export default {
                     formatter: function(params) {
                         let tip = "";
                         if (params != null && params.length > 0) {
+                            
                             for (let i = 0; i < params.length; i++) {
                                 if (i == 0) {
                                     tip += format2(params[i].value[0]) + "<br/>";
@@ -661,11 +663,12 @@ export default {
 
 .container-box .header {
     width: 100%;
-    height: 30px;
-    padding: 0px 10px;
+    /* height: 30px; */
+    padding: 0px 5px 0 10px;
     /*background: rgba(0, 0, 0, 0.7);*/
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
+    height:auto;
 }
 
 .container-box .content {
@@ -777,7 +780,8 @@ export default {
 .el-slider /deep/ .el-slider__bar {
     height: 2px;
     color: black;
-    background-color: #eeeeee;
+    /* background-color: #eeeeee; */
+    background:rgba(244, 161, 49, 1) ;
 }
 
 .el-slider /deep/ .el-slider__button {
@@ -852,6 +856,7 @@ export default {
         opacity: 1;
     }
 }
+.demonstration{ color:white; padding:.5em 0 0; display:block; }
 .headerBeforeIcon{ padding:8px 0 0; }
 .headerBeforeIcon ::before{ color:white; }
 /deep/ .el-slider__button-wrapper{ width:20px; height:20px; top:-9px; }
