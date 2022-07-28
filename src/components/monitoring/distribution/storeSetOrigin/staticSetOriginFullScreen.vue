@@ -142,7 +142,7 @@ export default {
                     color: this.getColorPx(m),
 
                     // fontcolor:m.indoorPositionSceneDTO.fontColor, // 之前逻辑
-                    fontcolor: this.curPos ? this.curPos.indoorPositionSceneDTO.fontColor : '',
+                    fontcolor: this.curPos ? this.curPos.indoorPositionSceneDTO ? this.curPos.indoorPositionSceneDTO.fontColor : '' : '',
 
                     position: {
                         // 原点坐标设置 x 轴： ( 实际坐标 + 偏移量 ) * 坐标缩放比例
