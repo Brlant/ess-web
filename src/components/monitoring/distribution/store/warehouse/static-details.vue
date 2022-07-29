@@ -42,6 +42,28 @@
                  <p class="device-name" >{{"设备Code："+selectDevice.devCode }}</p>
                 </div>
                 <div class="right">
+                    <!-- 
+                        // 解决 echarts 解决 TypeError : axis.getAxesOnZeroOf is not a function 问题, 应该注释此位置的如下代码 :
+                        <e-charts
+                            class="e-charts-box"
+                            :options="options"
+                            ref="chart"
+                            theme="light"
+                        >
+                        </e-charts> 
+                    -->
+                    <!--
+                        // 解决 echarts 解决 TypeError : axis.getAxesOnZeroOf is not a function 问题, 添加此位置的如下代码 :
+                        <e-charts
+                            class="e-charts-box"
+                            :options="options"
+                            ref="chart"
+                            theme="light"
+                            v-if="Object.keys(options).length"
+                        >
+                        </e-charts> 
+                        <div v-else style="color:white; height:100%; display:flex; justify-content:center; align-items:center;"><p>暂无数据</p></div>
+                    -->
                     <e-charts
                         class="e-charts-box"
                         :options="options"
@@ -137,6 +159,24 @@ export default {
             showDatePickerRange: false,
             datePickerRangeValue: "",
             sliderMaxCount: 0,
+            
+            /*
+                // 解决 echarts 解决 TypeError : axis.getAxesOnZeroOf is not a function 问题, 注释掉此位置的如下代码 :
+                options: {
+                    legend : {
+                        data : []
+                    },
+                    xAxis: {
+                        data : []
+                    },
+                    yAxis : [],
+                    series : []
+                },
+            */
+            /*
+                // 解决 echarts 解决 TypeError : axis.getAxesOnZeroOf is not a function 问题, 添加此位置的如下代码 :
+                options: {},
+            */
             options: {
                 legend : {
                     data : []
@@ -147,6 +187,8 @@ export default {
                 yAxis : [],
                 series : []
             },
+
+
             selectDevice:{
                 ccsDevId:'',
                 devCode:''
@@ -277,12 +319,25 @@ export default {
                 background: "rgba(0, 0, 0, 0.3)"
             });
 
+            /*
+                // 解决 echarts 解决 TypeError : axis.getAxesOnZeroOf is not a function 问题 应该注释掉此位置的如下代码 : 
+
+                this.options = this.getOptions();
+
+                this.options.legend.data = [];
+                this.options.xAxis.data = [];
+                this.options.yAxis = [];
+                this.options.series = [];
+            */
+
+
             this.options = this.getOptions();
 
             this.options.legend.data = [];
             this.options.xAxis.data = [];
             this.options.yAxis = [];
             this.options.series = [];
+
             let list = [];
 
             https.get("/mcc-data/ccsDevice/point/getPointAllData",params)
@@ -291,6 +346,21 @@ export default {
                     list=res.ccsDevDataList;
                     let devices=res.deviceInfoList;
                     this.devicesInfo=devices;
+
+                    /*
+                        解决 echarts 解决 TypeError : axis.getAxesOnZeroOf is not a function 问题, 应添加此位置如下代码 : 
+                        if( list.length ){ // 如果有数据则进行渲染
+                            this.options = this.getOptions();
+
+                            this.options.legend.data = [];
+                            this.options.xAxis.data = [];
+                            this.options.yAxis = [];
+                            this.options.series = [];
+                        } else { // 如果没有数据则设置空对象 options, 不用渲染 echarts 做多余的操作
+                            this.options = {} ;
+                            return ;
+                        }
+                    */
 
                     //重新排序
                     list.sort(function(a, b) {
@@ -488,6 +558,18 @@ export default {
                     formatter: function(params) {
                         let tip = "";
                         if (params != null && params.length > 0) {
+                            /*
+                                // 多条重复数据处理逻辑, 请放开此处代码
+                                let obj  = {} ;
+                                params.filter( v => {
+                                    obj[v.seriesName] = v ;
+                                } ) ;
+                                let paramArr =  [] ;
+                                for( let a in obj ){
+                                    paramArr.push( obj[a] ) ;
+                                }
+                                params = paramArr ;
+                            */
                             for (let i = 0; i < params.length; i++) {
                                 if (i == 0) {
                                     tip += format2(params[i].value[0]) + "<br/>";
@@ -604,7 +686,15 @@ export default {
 
     },
     mounted() {
+        
+
+        /*
+            // 解决 echarts 解决 TypeError : axis.getAxesOnZeroOf is not a function 问题, 注释掉此位置的如下代码 :
+            this.options = this.getOptions();
+        */
+
         this.options = this.getOptions();
+
         this.resetDialogContent(0);
         this.ponitId = this.element.scenesElementId
         this.selectDevice={
