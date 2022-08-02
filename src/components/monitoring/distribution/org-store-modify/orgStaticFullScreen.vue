@@ -103,7 +103,7 @@ export default {
                 */
             });
             return this.tempList.map((m) => {
-                if (m.warnFlag) {
+                if (m.warnFlag || ( m.warnTypes && m.warnTypes.includes( 4 ) ) ) { // 超温 和 离线
                     this.isAlarm = true;
                 }
 
@@ -137,7 +137,8 @@ export default {
         },
 
         isPlay(){
-            return this.tempList.some( v => this.getColor(v) === '#f00' ) ;
+            // return this.tempList.some( v => this.getColor(v) === '#f00' ) ;
+            return this.tempList.some( v => ( this.getColor(v) === '#f00' ) || ( this.getColor(v) === '#666' ) ) ;
         }
     },
     mounted(){
@@ -279,7 +280,7 @@ export default {
 
                 // // 如果有告警产生, 则播放告警音, 否则不播放告警音 
                 if( this.$refs.alarmMusic ){
-                    this.isPlay ? this.$refs.alarmMusic.play() : this.$refs.alarmMusic.pause();
+                    this.isPlay ? this.$refs.alarmMusic.play() : this.$refs.alarmMusic.pause() ;   
                 }
 
                 // 默认如果是摄像头类型
