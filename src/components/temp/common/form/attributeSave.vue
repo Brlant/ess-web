@@ -2,7 +2,7 @@
   <el-dialog class="app-container" width="50%" :title="dialogTitle"
     :visible.sync="propsDialogShow" :close-on-click-modal="false" :close-on-press-escape="false"
     @closed="dialogClose('','0')">
-    <el-form ref="thingsForm" :model="operationModel"  label-width="150px">
+    <el-form ref="thingsForm" :model="operationModel" :rules="rules" label-width="150px">
       <!-- <el-row :v-if="transParams.type == 'UPDATE'">
         <el-col :span="16">
           <el-form-item label="属性标识" prop="prop">
@@ -26,7 +26,11 @@
       </el-row>
       <el-row>
         <el-col :span="16">
-          <el-form-item label="属性类型" prop="readType">
+          <!-- 
+            之前逻辑
+            <el-form-item label="属性类型" prop="readType"> 
+          -->
+          <el-form-item label="属性类型" prop="thingPropertyType">
               <el-select v-model="operationModel.thingPropertyType" placeholder style="display: unset;">
                 <!-- <el-option key="" label="" value=""></el-option> -->
                 <el-option v-for="item in codeList(thingPropertyType)"
@@ -178,12 +182,25 @@ export default {
             // objectModelId: '',
             /** 属性名称 */
             thingPropertyName: '',
+            /** 属性字段 */
+            thingPropertyValue: '',
             /** 属性类型 */
             thingPropertyType: '',
             /** 属性单位 */
             thingPropertyUnit: '',
             /** 单位名称 */
             unitName: ''
+        },
+        rules: {
+            thingPropertyName: [
+                {required: true, message: '请输入属性名称', trigger: 'change'}
+            ],
+            thingPropertyValue: [
+                {required: true, message: '请输入属性字段', trigger: 'change'}
+            ],
+            thingPropertyType: [
+                {required: true, message: '请选择属性类型', trigger: 'change'}
+            ]
         },
       //  表单title(从外部参数接收)
       dialogTitle: "",
@@ -326,11 +343,29 @@ export default {
     },
     /** 模态窗口[确定] 按钮点击保存 */
     commitMethod(){
-      if(this.transParams.type == "UPDATE"){
-        this.updateModele();
-      }else{
-        this.addModel();
-      }
+
+      // 添加必填项判断
+      this.$refs['thingsForm'].validate((valid) => {
+        if ( valid ) {
+          if(this.transParams.type == "UPDATE"){
+            this.updateModele();
+          }else{
+            this.addModel();
+          }
+        }
+      }) ; 
+      
+
+      /**
+        之前逻辑
+
+        if(this.transParams.type == "UPDATE"){
+          this.updateModele();
+        }else{
+          this.addModel();
+        }
+
+      */
     }
   }
 };
