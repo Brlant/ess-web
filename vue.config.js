@@ -18,7 +18,7 @@ module.exports = {
                 // target: 'https://test1-mcc.cdcerp.cn/',
 
                 // target: 'https://dev-ess-inner.cdcerp.cn/api', // 原开发服务地址
-                target: 'http://192.168.1.112:8080/api', // 现在 开发环境 地址
+                target: 'http://192.168.1.101:8085/api', // 现在 开发环境 地址
                 // target: 'https://sh-ess-inner.cdcerp.cn/api',
                 
                 changOrigin: true, 
