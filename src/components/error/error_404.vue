@@ -17,6 +17,7 @@ export default {
     mounted() {
         Auth.checkLogin().then(() => {
             this.$router.replace('/');
+            // this.$router.replace('/configInfo'); // 登录后界面跳转配置信息路由, 此路由为 dashboard 拷贝的静态路由, 【 解决一直 userinfo 接口来回跳转问题, 路由添加进去~ 但界面跳转空白 】
         }).catch(() => {
             // yxh 修改退出逻辑
             window.localStorage.removeItem('user') ; 
