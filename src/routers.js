@@ -7,6 +7,7 @@ export const routes = [
   {
     path: '/',
     component: () => import('./components/layout/index.vue'),
+    // redirect : '/dashboard', 【 解决一直 userinfo 接口来回跳转问题, 路由添加进去~ 但界面跳转空白 】
     children: [
       {
         path: '/dashboard',
@@ -410,7 +411,19 @@ export const basicRoutes = [
   { path: '/500', component: () => import('./components/error/error_500.vue') },
   { path: '/login', component: () => import('./components/login/login.vue') },
   { path: '/forget', component: () => import('./components/login/forget.vue') },
-  { path: '/code/:id', component: () => import('./components/login/resetpwd.vue') }
+  { path: '/code/:id', component: () => import('./components/login/resetpwd.vue') },
+
+  /*
+    // 登录后界面跳转配置信息路由, 此路由为 dashboard 拷贝的静态路由, 【 解决一直 userinfo 接口来回跳转问题, 路由添加进去~ 但界面跳转空白 】
+    {
+      path: '/configInfo',
+      component: () => import('./components/layout/index.vue'),
+      // meta: { moduleId: 'configinfo', title: '配置信息', icon: 'el-icon-s-home', perm: 'ccs-index-scan' }, // 参考
+      // meta: { moduleId: 'configinfo', title: '配置信息' },
+      children: []
+    },
+  */
+
 ];
 
 export const ErrorPage = [
@@ -430,7 +443,7 @@ router.beforeEach((to, from, next) => {
   let val = localStorage.getItem( 'user' ) ;
 
   if( !val ){ // 如果没有登录 
-    if( to.path !== '/login' ){ // 如果没有登录你还想访问其它的界面, 你必须先登录, 回登录界面去吧！~ 
+    if( to.path !== '/login' ){ // 如果没有登录你还想访问其它的界面, 你必须先登录, 回登录界面！~ 
 
       //【 注意: 没有登录时可以访问 2 个界面, 一个是登录界面, 一个是忘记密码界面 】 所以这里要做判定
       if( ~to.path.toLowerCase().indexOf( 'forget' ) ){ // 如果是忘记密码界面, 则正常走流程
@@ -443,7 +456,7 @@ router.beforeEach((to, from, next) => {
       next() ; // 其它没有登录的情况正常执行.
     }
   } else { // 如果已经有登录信息
-    if( to.path === '/login' ){ // 如果已经有登录信息, 这个时候你来访问登录界面~ 你是不能访问的，先回首界面看看吧!
+    if( to.path === '/login' ){ // 如果已经有登录信息, 这个时候你来访问登录界面~ 你是不能访问的，回首界面!
       next( { path : '/' } ) ; // 回首界面
     } else { // 否则登录的其它情况
       next() ; // 其它登录的情况正常执行 .
