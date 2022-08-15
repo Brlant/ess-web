@@ -182,10 +182,22 @@ export default {
     watch: {},
     methods: {},
     mounted: function () {
-        //如果是首页跳转到 /dashboard
+          //如果是首页跳转到 /dashboard
         if (this.$route.path === '/') {
-            this.$router.push('/dashboard')
-            this.defaultActive = '/dashboard'
+            // 此处增加判断，此人是否有首页的权限
+            let promiseTemp = deepCopy(this.$store.state.permissions)
+            let isDashboard1 = promiseTemp.some((item)=>{return item=='ccs-index'})
+            let isDashboard2 = promiseTemp.some((item)=>{return item=='ccs-index-scan'})
+            // 如果我没有在权限内找到了 首页的perm
+            if(!isDashboard1||!isDashboard2){
+                // 则跳转到 路由的第一层第一个子集
+                // console.log(this.$parent.$parent.$parent.$parent.menuData[0].children[0].path) // 第一个菜单的第一个子集
+                this.$router.push(this.$parent.$parent.$parent.$parent.menuData[0].children[0].path)
+            }
+            else{
+                this.$router.push('/dashboard')
+                this.defaultActive = '/dashboard'
+            }
         } else if (this.$route.path.includes('monitoring/waybill/')) {
             this.defaultActive = '/monitoring/waybill/:id'
         } else {
