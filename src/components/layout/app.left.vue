@@ -164,6 +164,7 @@ $menuHoverBg: #f1f1f1;
 <script>
 import logo_pic from '@/assets/img/logo_pic.png';
 import logo_pic_new from '@/assets/img/logo.png';
+import { deepCopy } from '../../../../acs-web/src/tools/utils';
 
 export default {
     data() {
