@@ -164,7 +164,8 @@ $menuHoverBg: #f1f1f1;
 <script>
 import logo_pic from '@/assets/img/logo_pic.png';
 import logo_pic_new from '@/assets/img/logo.png';
-import { deepCopy } from '../../../../acs-web/src/tools/utils';
+import utils, {deepCopy} from '@/tools/utils';
+ 
 
 export default {
     data() {
@@ -186,7 +187,7 @@ export default {
           //如果是首页跳转到 /dashboard
         if (this.$route.path === '/') {
             // 此处增加判断，此人是否有首页的权限
-            let promiseTemp = deepCopy(this.$store.state.permissions)
+            let promiseTemp =  deepCopy(this.$store.state.permissions)
             let isDashboard1 = promiseTemp.some((item)=>{return item=='ccs-index'})
             let isDashboard2 = promiseTemp.some((item)=>{return item=='ccs-index-scan'})
             // 如果我没有在权限内找到了 首页的perm
