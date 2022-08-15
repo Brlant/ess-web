@@ -16,15 +16,15 @@ module.exports = {
         proxy: {
             '/api': {
                 // target: 'https://test1-mcc.cdcerp.cn/',
-
                 // target: 'https://dev-ess-inner.cdcerp.cn/api', // 原开发服务地址
-                target: 'http://192.168.1.101:8110/api', // 现在 开发环境 地址
-                // target: 'https://sh-ess-inner.cdcerp.cn/api',
+                // target: 'http://192.168.1.101:8110/api', // 现在 开发环境 地址
+                target: 'https://sh-ess-inner.cdcerp.cn/api',
                 logLevel: "debug", // cmd 控制台可以看到具体的代理地址
                 changOrigin: true, 
                 pathRewrite : {
                     '/api' : ''
                 }
+ 
             }
         }
     },
