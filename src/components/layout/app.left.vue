@@ -136,6 +136,7 @@ $menuHoverBg: #f1f1f1;
                     :collapse="isCollapse"
                     :unique-opened="true"
                     :show-timeout="1000"
+                    :default-openeds="defalutOpeneds"
                 >
                     <div v-for="(item,i1) in menu" :key="i1">
                         <el-submenu :index="i1+''" v-if="item.children.length>0">
@@ -171,6 +172,7 @@ export default {
     data() {
         return {
             defaultActive: "",
+            defalutOpeneds:[],
             isCollapse: false,
             logo_pic: logo_pic,
             logo_pic_new: logo_pic_new,
@@ -195,7 +197,10 @@ export default {
                 // 则跳转到 路由的第一层第一个子集
                 // console.log(this.$parent.$parent.$parent.$parent.menuData[0].children[0].path) // 第一个菜单的第一个子集
                 this.$router.push(this.$parent.$parent.$parent.$parent.menuData[0].children[0].path)
-            }
+                let firstRoute = (this.$parent.$parent.$parent.$parent.menuData[0].children[0].path).toString()
+                this.defaultActive = firstRoute
+                this.defalutOpeneds = ['0']
+            }   
             else{
                 this.$router.push('/dashboard')
                 this.defaultActive = '/dashboard'
