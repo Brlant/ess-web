@@ -1,5 +1,5 @@
 <template>
-  <dialog-template :pageSets="pageSets" @selectTab="selectTab">
+  <dialog-template :pageSets="pageSets" @selectTab="selectTab" ref="selectDialog">
     <template slot="title">告警事件</template>
     <template slot="btn">
       <el-button @click="close" plain>关闭</el-button>
@@ -234,6 +234,7 @@
                  ccsWarnRecordId:this.formItem.id,
                  explainContent:'',
              };
+             this.$refs['selectDialog'].setShowFormScrollTop()
             },
             onSubmitExplain(){
                 this.$refs.form.validate((valid, obj) => {
