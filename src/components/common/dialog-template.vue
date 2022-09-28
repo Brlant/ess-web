@@ -169,6 +169,16 @@
                 if (!titleAry[index]) return;
                 let otp = titleAry[index].parentNode.parentNode.offsetTop - 65;
                 dialogWarp && (dialogWarp.scrollTop = scrollTop > otp ? otp : scrollTop);
+            },
+            setShowFormScrollTop(){
+                this.setTitleAry();
+                this.getDialogWarp();
+                let {dialogWarp} = this;
+                if (!dialogWarp) return;
+                this.$nextTick(()=>{
+                    let scrollTop = dialogWarp.scrollHeight - dialogWarp.clientHeight;
+                    dialogWarp && (dialogWarp.scrollTop = scrollTop);
+                })
             }
         }
     };

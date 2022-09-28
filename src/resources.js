@@ -37,7 +37,7 @@ http.interceptors.request.use(function (config) {
 });
 
 http.interceptors.response.use(response => {
-    
+
     if (isNewReturnType(response.data)) {
         switch (response.data.code) {
             case 200 :
@@ -63,7 +63,7 @@ http.interceptors.response.use(response => {
         return response;
     }
 
-    
+
 }, error => {
   let noticeTipKey = 'noticeError';
   let notice = window.localStorage.getItem(noticeTipKey);
@@ -149,6 +149,19 @@ export const WarnRecord = resource('/ccsWarnRecord', http, {
   }
 });
 
+
+//告警事件说明
+export const warnExplain = resource('/warn', http, {
+    //查询
+    getWarnExplain(Id) {
+        return http.get('/warn/explain/list/all?ccsWarnRecordId='+Id);
+    },
+    //新增
+    addWarnExplain(obj) {
+        return http.post('/warn/explain', obj);
+    }
+});
+
 export const OrgUser = resource('/oms/user/org', http, {
   queryOrgInfo: (id, params) => {
     return http.get('/oms/user/org/' + id, {params});
@@ -187,7 +200,7 @@ export const MonitoringObjGroup = resource('/ccsMonitorRelation', http, {
   getMonitorRelationList: (params) => {
     return http.get('/ccsMonitorRelation/getMonitorRelationList', {params});
   },
-  
+
   // yxh 添加货主热点监控
   bindCcsMonitorRelationsPoint: (params) => {
     return http.post('/ccsMonitorRelation/bindCcsMonitorRelationsPoint', params);
@@ -291,15 +304,15 @@ export const TempDev = resource('/ccsDevice', http, {
     exportDevInfo(params) {
       return http.get('/ccsDevice/export-dev', {params});
     },
-    
+
     reqAllDevListByDevType(params) {
       return http.get('/ccsDevice/type/list', {params});
     },
-    
+
     gainDeviceThingDataList(params) {
       return http.get('mcc-data/ccsDevice/gainDeviceThingDataList', {params});
     },
-    
+
     findAllDevListFuzzy(params) {
         return http.get('/ccsDevice/findAllDevListFuzzy', {params});
     },
