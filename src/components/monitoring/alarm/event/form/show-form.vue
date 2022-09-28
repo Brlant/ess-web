@@ -84,7 +84,8 @@
                           <el-table
                               :data="tableData"
                               border
-                              max-height="500px"
+                              ref="tableRef"
+                              max-height="450px"
                               style="width: 100%">
                               <el-table-column
                                   type="index"
@@ -223,9 +224,13 @@
                     valType: getValType(warnTypes)
                 };
             },
-            queryTableData(){
+            queryTableData(type){
                 warnExplain.getWarnExplain(this.formItem.id).then(res => {
                   this.tableData=res.data.resultList||[];
+                  if(type=='scroll'){
+                      this.$refs['selectDialog'].setShowFormScrollTop()
+                      this.setTableRefScrollTop();
+                  }
                 });
             },
             onAddExplain(){
@@ -243,7 +248,7 @@
                         successTitle: '添加成功',
                         errorTitle: '添加失败',
                         success: res => {
-                            this.queryTableData();
+                            this.queryTableData('scroll');
                             this.resetExplain();
                         },
                         error: () => {
@@ -257,6 +262,13 @@
                     explainContent:'',
                 };
                 this.isShowExplain=false;
+            },
+            setTableRefScrollTop(){
+                let tabelContainer=this.$refs.tableRef.bodyWrapper;
+                if (!tabelContainer) return;
+                this.$nextTick(()=>{
+                    tabelContainer&&(tabelContainer.scrollTop =tabelContainer.scrollHeight)
+                })
             }
         }
     };
