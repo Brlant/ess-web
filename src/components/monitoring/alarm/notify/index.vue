@@ -6,9 +6,10 @@
       <el-row class="order-list-header">
         <el-col :span="6">通知时间</el-col>
         <el-col :span="6">设备名称</el-col>
-        <el-col :span="4">通知类型</el-col>
-        <el-col :span="4">消息类型</el-col>
-        <el-col :span="4">发送状态</el-col>
+        <el-col :span="3">通知类型</el-col>
+        <el-col :span="3">通知人员</el-col>
+        <el-col :span="3">消息类型</el-col>
+        <el-col :span="3">发送状态</el-col>
       </el-row>
       <el-row v-if="loadingData">
         <el-col :span="24">
@@ -29,9 +30,10 @@
           <el-row>
             <el-col :span="6">{{item.createTime | time}}</el-col>
             <el-col :span="6">{{item.devName}}</el-col>
-            <el-col :span="4">{{checkList[Number(item.notifyType) - 1].label}}</el-col>
-            <el-col :span="4">{{item.recordType === '0' ? '告警' : '恢复'}}</el-col>
-            <el-col :span="4">
+            <el-col :span="3">{{checkList[Number(item.notifyType) - 1].label}}</el-col>
+            <el-col :span="3">{{ item.userName }}</el-col>
+            <el-col :span="3">{{item.recordType === '0' ? '告警' : '恢复'}}</el-col>
+            <el-col :span="3">
                 {{item.sendStatus === '1' ? '成功' : item.sendStatus === '0' ? '失败' : item.sendStatus === '2' ? '发送中': item.sendStatus}}
             </el-col>
           </el-row>

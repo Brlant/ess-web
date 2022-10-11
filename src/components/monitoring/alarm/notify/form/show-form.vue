@@ -23,6 +23,7 @@
               {{checkList[Number(detail.notifyType) - 1].label }}
             </oms-col>
             <oms-col :isShow="true" :rowSpan="rowSpan" label="设备编号/编码">{{detail.devNo}}/{{detail.devCode}}</oms-col>
+            <oms-col :isShow="true" :rowSpan="rowSpan" label="通知人员">{{ detail.userName }}</oms-col>
             <oms-col :isShow="true" :rowSpan="rowSpan" label="通知对象">{{detail.targetStr}}</oms-col>
             <oms-col :isShow="true" :rowSpan="rowSpan" label="消息类型">{{detail.recordType === '0' ? '告警' : '恢复'}}
             </oms-col>
