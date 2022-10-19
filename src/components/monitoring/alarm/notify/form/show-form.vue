@@ -26,12 +26,13 @@
             <oms-col :isShow="true" :rowSpan="rowSpan" label="通知对象">{{detail.targetStr}}</oms-col>
             <oms-col :isShow="true" :rowSpan="rowSpan" label="消息类型">{{detail.recordType === '0' ? '告警' : '恢复'}}
             </oms-col>
-            <oms-col :isShow="true" :rowSpan="rowSpan" label="发送状态">
-                {{detail.sendStatus === '1' ? '成功' : detail.sendStatus === '0' ? '失败' : detail.sendStatus === '2' ?
-                '发送中': detail.sendStatus}}
-            </oms-col>
+            <oms-col :isShow="true" :rowSpan="rowSpan" label="通知人员">{{ detail.userName }}</oms-col>
               <oms-col :isShow="true" :rowSpan="rowSpan" label="失败原因" v-show="formItem.sendStatus === '0'">{{formItem.sendResult}}</oms-col>
               <oms-col :isShow="true" :rowSpan="rowSpan" label="通知内容">{{detail.warnHisInfo}}</oms-col>
+              <oms-col :isShow="true" :rowSpan="rowSpan" label="发送状态">
+                  {{detail.sendStatus === '1' ? '成功' : detail.sendStatus === '0' ? '失败' : detail.sendStatus === '2' ?
+                  '发送中': detail.sendStatus}}
+              </oms-col>
           </div>
         </div>
       </div>
