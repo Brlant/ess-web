@@ -79,7 +79,7 @@ export const routes = [
                 }
               ]
             },
-         
+
           /*
            yxh 隐藏查询历史数据路由
               {
@@ -153,7 +153,7 @@ export const routes = [
               component: () => import('./components/monitoring/distribution/org-store-modify/index.vue'),
               meta: { moduleId: 'monitoring', title: '单位点位分布', perm: 'ccs-org-devmap-scan', subMenuId: 'org-distribution' }
             },
-         
+
 
           /*
              // yxh 屏蔽原 车辆分布路由 替换为 动态场景
@@ -220,6 +220,18 @@ export const routes = [
           }
         ]
       },
+      {
+            path: '/statistics',
+            component: () => import('./components/common/parent-route'),
+            meta: { moduleId: 'statistics', title: '统计中心', icon: 'el-icon-bell', perm: 'ccs-warn-center' },
+            children: [
+                {
+                    path: '/statistics/warehouseTemp',
+                    component: () => import('./components/statistics/warehouseTemp/index.vue'),
+                    meta: { moduleId: 'statistics', title: '库内温度巡检', perm: 'ccs-warn-record-scan' }
+                },
+            ]
+        },
       {
         path: '/temp',
         component: () => import('./components/common/parent-route'),
@@ -438,12 +450,12 @@ const router = new VueRouter({
   base: '/'
 });
 
-// yxh 添加全局守卫逻辑 针对 user 
+// yxh 添加全局守卫逻辑 针对 user
 router.beforeEach((to, from, next) => {
   let val = localStorage.getItem( 'user' ) ;
 
-  if( !val ){ // 如果没有登录 
-    if( to.path !== '/login' ){ // 如果没有登录你还想访问其它的界面, 你必须先登录, 回登录界面！~ 
+  if( !val ){ // 如果没有登录
+    if( to.path !== '/login' ){ // 如果没有登录你还想访问其它的界面, 你必须先登录, 回登录界面！~
 
       //【 注意: 没有登录时可以访问 2 个界面, 一个是登录界面, 一个是忘记密码界面 】 所以这里要做判定
       if( ~to.path.toLowerCase().indexOf( 'forget' ) ){ // 如果是忘记密码界面, 则正常走流程
