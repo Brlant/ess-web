@@ -50,16 +50,21 @@
             </el-pagination>
         </div>
 
+        <page-right :css="{'width':'900px','padding':0}" :show="showTask" @right-close="resetRightBox">
+            <taskSetForm ref="taskSetFormRef" @right-close="resetRightBox"/>
+        </page-right>
+
     </div>
 </template>
 
 <script>
 import SearchPart from './search';
 
+import taskSetForm from './form/taskSetForm.vue';
 import CommonMixin from '@/mixins/commonMixin';
 export default {
     components: {
-        SearchPart
+        SearchPart,taskSetForm
     },
     name: "index",
     mixins: [CommonMixin],
@@ -80,12 +85,10 @@ export default {
         searchResult: function (search) {
             this.filters = Object.assign({}, this.filters, search);
         },
-        change() {
-            this.resetRightBox();
-        },
         resetRightBox() {
             this.showEdit=false;
             this.showTask=false;
+            this.$refs.taskSetFormRef.isShow=false;
         },
         handleCurrentChange(){
 

@@ -13,7 +13,7 @@
                                        clearable filterable
                                        placeholder="请输入任务名称" popper-class="selects--custom" remote reserve-keyword
                                        v-model="searchCondition.devId">
-                                <el-option :key="item.id" :label="item.devName" :value="item.id"
+                                <el-option :key="item.id" :label="item.configName" :value="item.id"
                                            v-for="(item, index) in taskNameList">
                                     <dev-option-info :item="item"/>
                                 </el-option>
@@ -74,17 +74,12 @@ export default {
             },
             showSearch: false,
             taskNameList:[],
-            times: [
-                new Date() - 30 * 24 * 60 * 60 * 1000,
-                new Date()
-            ]
+            times: []
         };
     },
     methods: {
         search() {
             const parent = this.$parent;
-            this.searchCondition.notifyBegin = parent.formatTimeAry(this.times, 0);
-            this.searchCondition.notifyEnd = parent.formatTimeAry(this.times, 1);
             this.$emit('search', this.searchCondition);
         },
         reset() {
