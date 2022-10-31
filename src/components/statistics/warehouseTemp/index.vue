@@ -35,7 +35,15 @@
             <div class="order-list-body flex-list-dom" v-else>
                 <div class="order-list-item no-pointer order-list-item-bg" v-for="item in tableData">
                     <el-row>
-
+                        <el-col :span="4">{{item.time}} </el-col>
+                        <el-col :span="6">{{item.configName}}</el-col>
+                        <el-col :span="3">{{item.creator}}</el-col>
+                        <el-col :span="4">{{item.configName}}</el-col>
+                        <el-col :span="3">{{item.configName}}</el-col>
+                        <el-col :span="4">
+                            <des-btn @click="handleShowDetail(item)" icon="detail" v-has="'show'">查看</des-btn>
+                            <a @click="handleRefersh(item)" style="margin-left: 10px">刷新</a>
+                        </el-col>
                     </el-row>
                 </div>
             </div>
@@ -50,21 +58,23 @@
             </el-pagination>
         </div>
 
+        <page-right :css="{'width':'900px','padding':0}" :show="showEdit" @right-close="resetRightBox">
+            <editForm ref="taskSetFormRef" @right-close="resetRightBox"/>
+        </page-right>
         <page-right :css="{'width':'900px','padding':0}" :show="showTask" @right-close="resetRightBox">
             <taskSetForm ref="taskSetFormRef" @right-close="resetRightBox"/>
         </page-right>
-
     </div>
 </template>
 
 <script>
 import SearchPart from './search';
-
+import editForm from './form/editForm.vue';
 import taskSetForm from './form/taskSetForm.vue';
 import CommonMixin from '@/mixins/commonMixin';
 export default {
     components: {
-        SearchPart,taskSetForm
+        SearchPart,taskSetForm,editForm
     },
     name: "index",
     mixins: [CommonMixin],
@@ -80,6 +90,7 @@ export default {
         }
     },
     created() {
+        this.tableData=[{configName:'ceshi',id:1}]
     },
     methods: {
         searchResult: function (search) {
@@ -89,6 +100,12 @@ export default {
             this.showEdit=false;
             this.showTask=false;
             this.$refs.taskSetFormRef.isShow=false;
+        },
+        handleShowDetail(item){
+            this.$router.push({name:'warehouseTempDetail',params:{id:item.id}})
+        },
+        handleRefersh(item){
+
         },
         handleCurrentChange(){
 
@@ -101,5 +118,10 @@ export default {
 </script>
 
 <style scoped>
-
+  a{
+      color:  rgba(0, 0, 0, 0.65);
+  }
+  a:hover {
+      color: #40a9ff;
+  }
 </style>

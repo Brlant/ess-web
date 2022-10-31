@@ -230,6 +230,7 @@ export const routes = [
                     component: () => import('./components/statistics/warehouseTemp/index.vue'),
                     meta: { moduleId: 'statistics', title: '库内温度巡检', perm: 'ccs-warn-record-scan' }
                 },
+
             ]
         },
       {
@@ -391,6 +392,14 @@ export const routes = [
       }
     ]
   },
+
+
+    {
+        path: '/warehouseTemp/detail',
+        name:'warehouseTempDetail',
+        component: () => import('./components/statistics/warehouseTemp/detail/index'),
+        meta: { moduleId: 'statistics', title: '库内温度巡检详情', perm: '',breadcrumb: false }
+    },
 
   // yxh 添加动态场景全屏组件路由
   {path: '/fullscreen', name: 'fullscreen', component: () => import('./components/common/icon-map/fullscreen')},
