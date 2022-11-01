@@ -21,8 +21,8 @@
             <div class="text-center" v-show="(tableAllData.length || pager.currentPage !== 1) && !tableAllLoad">
                 <el-pagination :current-page="pagerTable.currentPage" :page-size="pagerTable.pageSize"
                                :page-sizes="[5,10,20,50,100]"
-                               :total="pagerTable.count" @current-change="handleCurrentChange"
-                               @size-change="handleSizeChange"
+                               :total="pagerTable.count" @current-change="handleTableCurrentChange"
+                               @size-change="handleTableSizeChange"
                                layout="total, sizes, prev, pager, next, jumper">
                 </el-pagination>
             </div>
@@ -78,6 +78,12 @@ export default {
         },
         handleReturn() {
             this.$router.push('/statistics/warehouseTemp')
+        },
+        handleTableCurrentChange() {
+
+        },
+        handleTableSizeChange() {
+
         },
         handleCurrentChange() {
 

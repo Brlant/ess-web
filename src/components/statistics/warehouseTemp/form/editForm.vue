@@ -90,14 +90,13 @@ export default {
                 param.detailList = detailList
                 delete param.creator;
                 delete param.configWarehouseIds;
-                console.log(param,'param');
-                // WarehouseTemp.addConfig(param).then(res => {
-                //     this.$message.success('保存成功')
-                //     this.doing = false
-                // }).catch(err => {
-                //     this.$message.error('保存失败' + err.msg)
-                //     this.doing = false
-                // })
+                WarehouseTemp.addTask(param).then(res => {
+                    this.$message.success('保存成功')
+                    this.doing = false
+                }).catch(err => {
+                    this.$message.error('保存失败' + err.msg)
+                    this.doing = false
+                })
 
             })
         }

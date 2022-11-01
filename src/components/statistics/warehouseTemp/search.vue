@@ -9,21 +9,13 @@
                 <el-row>
                     <el-col :span="6">
                         <oms-form-row :span="6" label="任务名称">
-                            <el-select :remote-method="queryName" @change="search"
-                                       clearable filterable
-                                       placeholder="请输入任务名称" popper-class="selects--custom" remote reserve-keyword
-                                       v-model="searchCondition.devId">
-                                <el-option :key="item.id" :label="item.configName" :value="item.id"
-                                           v-for="(item, index) in taskNameList">
-                                    <dev-option-info :item="item"/>
-                                </el-option>
-                            </el-select>
+                            <el-input v-model="searchCondition.taskName"></el-input>
                         </oms-form-row>
                     </el-col>
                     <el-col :span="9">
                         <oms-form-row :span="6" label="添加时间">
                             <el-date-picker :default-time="['00:00:00', '23:59:59']" class="el-date-picker--mini"
-                                            placeholder="请选择" type="datetimerange" v-model="times"/>
+                                            placeholder="请选择" type="datetimerange" v-model="addTimes"/>
                         </oms-form-row>
                     </el-col>
                     <el-col :span="9">
@@ -37,17 +29,17 @@
                 <el-row>
                     <el-col :span="6">
                         <oms-form-row :span="6" label="状态">
-                            <el-radio-group @change="search" size="small" v-model="searchCondition.recordType">
-                                <el-radio-button :label="0">查询中</el-radio-button>
-                                <el-radio-button :label="1">完成</el-radio-button>
+                            <el-radio-group @change="search" size="small" v-model="searchCondition.taskStatus">
+                                <el-radio-button :label="1">查询中</el-radio-button>
+                                <el-radio-button :label="2">完成</el-radio-button>
                             </el-radio-group>
                         </oms-form-row>
                     </el-col>
                     <el-col :span="9">
                         <oms-form-row :span="6" label="任务状态">
-                            <el-radio-group @change="search" size="small" v-model="searchCondition.sendStatus">
-                                <el-radio-button label="1">普通任务</el-radio-button>
-                                <el-radio-button label="0">自动任务</el-radio-button>
+                            <el-radio-group @change="search" size="small" v-model="searchCondition.taskType">
+                                <el-radio-button label="2">普通任务</el-radio-button>
+                                <el-radio-button label="1">自动任务</el-radio-button>
                             </el-radio-group>
                         </oms-form-row>
                     </el-col>
@@ -64,45 +56,45 @@ export default {
     data: function () {
         return {
             searchCondition: {
-                notifyBegin: '',
-                notifyEnd: '',
-                devName: '',
-                recordType: '',
-                notifyType: '',
-                sendStatus: '',
-                devId: ''
+                taskStatus: '',
+                taskType: '',
+                startCreateTime: '',
+                endCreateTime: '',
+                startQueryTime: '',
+                endQueryTime: '',
+                taskName: ''
             },
             showSearch: false,
-            taskNameList:[],
-            times: []
+            times: [],
+            addTimes: [],
         };
     },
     methods: {
         search() {
             const parent = this.$parent;
+            this.searchCondition.startQueryTime = parent.formatTimeAry(this.times, 0);
+            this.searchCondition.endQueryTime = parent.formatTimeAry(this.times, 1);
+            this.searchCondition.startCreateTime = parent.formatTimeAry(this.addTimes, 0);
+            this.searchCondition.endCreateTime = parent.formatTimeAry(this.addTimes, 1);
             this.$emit('search', this.searchCondition);
         },
         reset() {
             this.searchCondition = {
-                notifyBegin: '',
-                notifyEnd: '',
-                devName: '',
-                recordType: '',
-                notifyType: '',
-                sendStatus: ''
+                taskStatus: '',
+                taskType: '',
+                startCreateTime: '',
+                endCreateTime: '',
+                startQueryTime: '',
+                endQueryTime: '',
+                taskName: ''
             };
             this.times = [];
+            this.addTimes=[];
             this.$emit('search', this.searchCondition);
         },
         isShow(val) {
             this.showSearch = val;
         },
-        queryName(val) {
-
-        },
-        exportSearchFile() {
-
-        }
     }
 };
 </script>

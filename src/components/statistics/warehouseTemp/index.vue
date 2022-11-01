@@ -35,14 +35,14 @@
             <div class="order-list-body flex-list-dom" v-else>
                 <div class="order-list-item no-pointer order-list-item-bg" v-for="item in tableData">
                     <el-row>
-                        <el-col :span="4">{{item.time}} </el-col>
-                        <el-col :span="6">{{item.configName}}</el-col>
+                        <el-col :span="4">{{item.createTime}} </el-col>
+                        <el-col :span="6">{{item.taskName}}</el-col>
                         <el-col :span="3">{{item.creator}}</el-col>
-                        <el-col :span="4">{{item.configName}}</el-col>
-                        <el-col :span="3">{{item.configName}}</el-col>
+                        <el-col :span="4">{{item.queryTime}}</el-col>
+                        <el-col :span="3">{{item.taskStatus}}</el-col>
                         <el-col :span="4">
                             <des-btn @click="handleShowDetail(item)" icon="detail" v-has="'show'">查看</des-btn>
-                            <a @click="handleRefersh(item)" style="margin-left: 10px">刷新</a>
+                            <a v-if="item.taskStatus=='2'" @click="handleRefresh(item)" style="margin-left: 10px">刷新</a>
                         </el-col>
                     </el-row>
                 </div>
@@ -59,7 +59,7 @@
         </div>
 
         <page-right :css="{'width':'900px','padding':0}" :show="showEdit" @right-close="resetRightBox">
-            <editForm ref="taskSetFormRef" @right-close="resetRightBox"/>
+            <editForm ref="taskSetFormRef" @change="editChange" @right-close="resetRightBox"/>
         </page-right>
         <page-right :css="{'width':'900px','padding':0}" :show="showTask" @right-close="resetRightBox">
             <taskSetForm ref="taskSetFormRef" @right-close="resetRightBox"/>
@@ -71,6 +71,7 @@
 import SearchPart from './search';
 import editForm from './form/editForm.vue';
 import taskSetForm from './form/taskSetForm.vue';
+import {WarehouseTemp} from '@/resources';
 import CommonMixin from '@/mixins/commonMixin';
 export default {
     components: {
@@ -80,9 +81,7 @@ export default {
     mixins: [CommonMixin],
     data() {
         return {
-            filters: {
-                status: '0'
-            },
+            filters: {},
             showEdit:false,
             showTask:false,
             tableData: [],
@@ -94,7 +93,22 @@ export default {
     },
     methods: {
         searchResult: function (search) {
-            this.filters = Object.assign({}, this.filters, search);
+            this.filters = Object.assign({},{
+                pageNo: this.pager.pageNo,
+                pageSize: this.pager.pageSize
+            } ,this.filters, search);
+            this.queryList(1)
+        },
+        queryList(pageNo){
+            // this.loadingData=true;
+            this.filters.pageNo=pageNo;
+            console.log(this.filters,'111115555555')
+            // WarehouseTemp.getTask(this.filters).then(res=>{
+            //
+            //     this.loadingData=false;
+            // }).catch(err=>{
+            //     this.loadingData=false;
+            // })
         },
         resetRightBox() {
             this.showEdit=false;
@@ -104,14 +118,30 @@ export default {
         handleShowDetail(item){
             this.$router.push({name:'warehouseTempDetail',params:{id:item.id}})
         },
-        handleRefersh(item){
+        handleRefresh(item){
+            this.$httpRequestOpera(WarehouseTemp.updateTask(item.id), {
+                successTitle: '刷新成功',
+                errorTitle: '刷新失败',
+                success: res => {
+                    this.queryList(1)
+                },
+                error: () => {
+
+                }
+            });
 
         },
-        handleCurrentChange(){
-
+        handleSizeChange(val) {
+            this.pager.pageSize = val;
+            window.localStorage.setItem('currentPageSize', val);
+            this.searchResult(this.filters);
+            console.log(val,'handleSizeChange')
         },
-        handleSizeChange(){
-
+        handleCurrentChange(val) {
+            this.queryList(val);
+        },
+        editChange(){
+            this.queryList(1)
         }
     }
 }

@@ -661,7 +661,6 @@ export const WarehouseTemp = resource('/auto', http, {
     gainWarehouseWithChildList: () => {
         return http.get('/ccsWarehouse/gainWarehouseWithChildList');
     },
-
     // 查询自动巡检任务
     queryConfigById: (id) => {
         return http.get('auto/check/config/' + id);
@@ -682,9 +681,18 @@ export const WarehouseTemp = resource('/auto', http, {
     deleteConfig: (id) => {
         return http.delete('auto/check/config/' + id);
     },
-
-
-
+    // 添加任务
+    addTask: (obj) => {
+        return http.post('/auto/check/task', obj);
+    },
+    // 添加任务
+    updateTask: (id) => {
+        return http.put('/auto/check/task/' + id);
+    },
+    // 添加任务
+    getTask: (param) => {
+        return http.post('/autocheck/task/list',param);
+    },
 
 });
 
