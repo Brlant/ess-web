@@ -43,9 +43,9 @@
                         <el-col :span="4">{{item.taskDate}}</el-col>
                         <el-col :span="3">{{item.taskStatus==1?'查询中':item.taskStatus==2?'完成':''}}</el-col>
                         <el-col :span="3">
-                            <el-button type="text" size="small"   v-if="item.taskStatus=='2'"  class="text-button" @click="handleShowDetail(item)" icon="detail"  v-has="'ccs-check-result'">查看</el-button>
-                            <el-popconfirm  title="是否刷新该任务查询结果？"  v-if="item.taskStatus=='2'"   @confirm="handleRefresh(item)" >
-                                <el-button type="text" size="small"  class="text-button" slot="reference" v-has="'ccs-check-task-refresh'">刷新</el-button>
+                            <des-btn v-if="item.taskStatus=='2'"   @click="handleShowDetail(item)" icon="detail" v-has="'ccs-check-result'" style="margin-right: 5px">查看</des-btn>
+                            <el-popconfirm  title="是否刷新该任务查询结果？"  v-if="item.taskStatus=='2'" @confirm="handleRefresh(item)" >
+                                <des-btn  icon="reset"  slot="reference" v-has="'ccs-check-task-refresh'">刷新</des-btn>
                             </el-popconfirm>
 
                         </el-col>
