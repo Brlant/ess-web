@@ -223,12 +223,12 @@ export const routes = [
       {
             path: '/statistics',
             component: () => import('./components/common/parent-route'),
-            meta: { moduleId: 'statistics', title: '统计中心', icon: 'el-icon-bell', perm: 'ccs-warn-center' },
+            meta: { moduleId: 'statistics', title: '统计中心', icon: 'el-icon-tickets',  perm: 'report-center' },
             children: [
                 {
                     path: '/statistics/warehouseTemp',
                     component: () => import('./components/statistics/warehouseTemp/index.vue'),
-                    meta: { moduleId: 'statistics', title: '库内温度巡检', perm: 'ccs-warn-record-scan' }
+                    meta: { moduleId: 'statistics', title: '库内温度巡检', perm: 'ccs-check-task' }
                 },
 
             ]

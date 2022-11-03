@@ -4,7 +4,7 @@
         <template slot="content">
             <div v-show="!isShow">
                 <el-row style="margin-bottom: 10px;text-align: end">
-                    <el-button @click="handleAddClick()" plain type="primary" size="small">添加</el-button>
+                    <el-button @click="handleAddClick()"  plain type="primary" v-has="'ccs-auto-check-config-add'" size="small">添加</el-button>
                 </el-row>
                 <el-table  :data="tableData" v-loading="tableLoad"  border  style="width: 100%">
                     <el-table-column    label="添加时间"    width="150">
@@ -16,8 +16,8 @@
                     <el-table-column   prop="creator"     label="添加人" width="120"/>
                     <el-table-column  label="操作"  width="160">
                         <template slot-scope="scope">
-                            <el-button @click="handleEditClick(scope.row)" type="text" size="small">编辑</el-button>
-                            <el-popconfirm title="确定删除该条任务吗？"  @confirm="deleteConfirm(scope.row)" >
+                            <el-button @click="handleEditClick(scope.row)" type="text" size="small"  v-has="'ccs-auto-check-config-edit'">编辑</el-button>
+                            <el-popconfirm title="确定删除该条任务吗？"  @confirm="deleteConfirm(scope.row)" v-has="'ccs-auto-check-config-del'">
                                 <el-button type="text" size="small" slot="reference">删除</el-button>
                             </el-popconfirm>
                         </template>

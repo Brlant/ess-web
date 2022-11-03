@@ -872,10 +872,83 @@ export default [
         'leaf': false
     },
     {
+        'id': 'report-center',
+        'parentId': null,
+        'label': '统计中心',
+        'sort': 4,
+        'children': [
+            {
+                'id': 'ccs-check-task',
+                'parentId': 'report-center',
+                'label': '库内温度巡检',
+                'sort': 1,
+                'children': [{
+                    'id': 'ccs-check-task-list',
+                    'parentId': 'ccs-check-task',
+                    'label': '库内温度巡检列表查询',
+                    'sort': null,
+                    'children': null,
+                    'leaf': true
+                }, {
+                    'id': 'ccs-check-task-add',
+                    'parentId': 'ccs-check-task',
+                    'label': '库内温度巡检添加按钮',
+                    'sort': null,
+                    'children': null,
+                    'leaf': true
+                }, {
+                    'id': 'ccs-check-task-refresh',
+                    'parentId': 'ccs-check-task',
+                    'label': '库内温度巡检刷新按钮',
+                    'sort': null,
+                    'children': null,
+                    'leaf': true
+                }, {
+                    'id': 'ccs-check-result',
+                    'parentId': 'ccs-check-task',
+                    'label': '库内温度巡检结果查看按钮',
+                    'sort': null,
+                    'children': null,
+                    'leaf': true
+                }, {
+                    'id': 'ccs-auto-check-config',
+                    'parentId': 'ccs-check-task',
+                    'label': '库内温度巡检自动任务配置按钮',
+                    'sort': null,
+                    'children': null,
+                    'leaf': true
+                }, {
+                    'id': 'ccs-auto-check-config-add',
+                    'parentId': 'ccs-check-task',
+                    'label': '库内温度巡检自动任务配置添加按钮',
+                    'sort': null,
+                    'children': null,
+                    'leaf': true
+                }, {
+                    'id': 'ccs-auto-check-config-edit',
+                    'parentId': 'ccs-check-task',
+                    'label': '库内温度巡检自动任务配置修改按钮',
+                    'sort': null,
+                    'children': null,
+                    'leaf': true
+                }, {
+                    'id': 'ccs-auto-check-config-del',
+                    'parentId': 'ccs-check-task',
+                    'label': '库内温度巡检自动任务配置删除按钮',
+                    'sort': null,
+                    'children': null,
+                    'leaf': true
+                }
+                ],
+                'leaf': false
+            }],
+        'leaf': false
+    },
+    {
         'id': 'ccs-dev-center',
         'parentId': null,
         'label': '设备资产',
-        'sort': 4,
+        'sort': 5,
         'children': [
             {
                 'id': 'ccs-wired-dev-export',
@@ -1104,7 +1177,7 @@ export default [
         'id': 'ccs-config-center',
         'parentId': null,
         'label': '配置中心',
-        'sort': 5,
+        'sort': 6,
         'children': [{
             'id': 'ccs-warn-rule-group-manager',
             'parentId': 'ccs-config-center',
@@ -1217,7 +1290,7 @@ export default [
         'id': 'system-config',
         'parentId': null,
         'label': '系统设置',
-        'sort': 6,
+        'sort': 7,
         'children': [{
             'id': 'ccs-system-log',
             'parentId': 'ccs-system-config',

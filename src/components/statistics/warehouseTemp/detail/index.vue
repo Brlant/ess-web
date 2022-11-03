@@ -10,7 +10,7 @@
                 <span style="margin-left: 20px">缺失点位数量：{{infoTotal.defectCount}}  </span>
                 <span style="margin-left: 20px">累计缺失点位数量：{{infoTotal.defectSum}} </span>
             </el-row>
-            <el-table :data="tableAllData" v-loading="tableAllLoad" border style="width: 100%">
+            <el-table :data="tableAllData" v-loading="tableAllLoad" max-height="400px"  border style="width: 100%">
                 <el-table-column type="index" label="序号" width="60"/>
                 <el-table-column prop="pointName" label="点位名称" width="150"/>
                 <el-table-column  label="设备名称/编码" width="150">
@@ -46,7 +46,7 @@
         </div>
         <div>
             <h1>明细</h1>
-            <el-table :data="tableData" v-loading="tableLoad" border style="width: 100%">
+            <el-table :data="tableData" v-loading="tableLoad" border  max-height="500px" style="width: 100%">
                 <el-table-column type="index" label="序号" width="60"/>
                 <el-table-column prop="pointName" label="点位名称" width="150"/>
                 <el-table-column  label="设备名称/编码" width="150">

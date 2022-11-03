@@ -2,10 +2,10 @@
     <div class="order-page">
         <search-part @search="searchResult">
             <template slot="btn">
-                    <el-button @click="handleShowTask()" plain size="small">
+                    <el-button @click="handleShowTask()" v-has="'ccs-auto-check-config'" plain size="small">
                         自动任务设置
                     </el-button>
-                    <el-button @click="showEdit=true" plain size="small">
+                    <el-button @click="showEdit=true" plain size="small" v-has="'ccs-check-task-add'">
                         添加任务
                     </el-button>
             </template>
@@ -43,9 +43,9 @@
                         <el-col :span="4">{{item.taskDate}}</el-col>
                         <el-col :span="3">{{item.taskStatus==1?'查询中':item.taskStatus==2?'完成':''}}</el-col>
                         <el-col :span="3">
-                            <des-btn v-if="item.taskStatus=='2'"   @click="handleShowDetail(item)" icon="detail" v-has="'show'">查看</des-btn>
+                            <el-button type="text" size="small"   v-if="item.taskStatus=='2'"  class="text-button" @click="handleShowDetail(item)" icon="detail"  v-has="'ccs-check-result'">查看</el-button>
                             <el-popconfirm  title="是否刷新该任务查询结果？"  v-if="item.taskStatus=='2'"   @confirm="handleRefresh(item)" >
-                                <el-button type="text" size="small"  class="text-button" slot="reference">刷新</el-button>
+                                <el-button type="text" size="small"  class="text-button" slot="reference" v-has="'ccs-check-task-refresh'">刷新</el-button>
                             </el-popconfirm>
 
                         </el-col>
@@ -167,10 +167,6 @@ export default {
 
 <style scoped>
   .text-button{
-      color:  rgba(0, 0, 0, 0.65);
       font-size: 14px;
-  }
-  .text-button:hover {
-      color: #40a9ff;
   }
 </style>
