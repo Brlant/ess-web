@@ -9,7 +9,7 @@
                 <el-row>
                     <el-col :span="6">
                         <oms-form-row :span="6" label="任务名称">
-                            <el-input v-model="searchCondition.taskName"></el-input>
+                            <el-input v-model="searchCondition.taskName" clearable></el-input>
                         </oms-form-row>
                     </el-col>
                     <el-col :span="9">
@@ -60,8 +60,8 @@ export default {
                 taskType: '',
                 startCreateTime: '',
                 endCreateTime: '',
-                startQueryTime: '',
-                endQueryTime: '',
+                startTaskDate: '',
+                endTaskDate: '',
                 taskName: ''
             },
             showSearch: false,
@@ -72,8 +72,8 @@ export default {
     methods: {
         search() {
             const parent = this.$parent;
-            this.searchCondition.startQueryTime = parent.formatTimeAry(this.times, 0);
-            this.searchCondition.endQueryTime = parent.formatTimeAry(this.times, 1);
+            this.searchCondition.startTaskDate = parent.formatTimeAry(this.times, 0);
+            this.searchCondition.endTaskDate = parent.formatTimeAry(this.times, 1);
             this.searchCondition.startCreateTime = parent.formatTimeAry(this.addTimes, 0);
             this.searchCondition.endCreateTime = parent.formatTimeAry(this.addTimes, 1);
             this.$emit('search', this.searchCondition);
@@ -84,8 +84,8 @@ export default {
                 taskType: '',
                 startCreateTime: '',
                 endCreateTime: '',
-                startQueryTime: '',
-                endQueryTime: '',
+                startTaskDate: '',
+                endTaskDate: '',
                 taskName: ''
             };
             this.times = [];

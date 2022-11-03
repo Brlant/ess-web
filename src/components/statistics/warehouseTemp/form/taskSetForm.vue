@@ -7,12 +7,16 @@
                     <el-button @click="handleAddClick()" plain type="primary" size="small">添加</el-button>
                 </el-row>
                 <el-table  :data="tableData" v-loading="tableLoad"  border  style="width: 100%">
-                    <el-table-column   prop="createTime"  label="添加时间"    width="150"/>
+                    <el-table-column    label="添加时间"    width="150">
+                        <template slot-scope="{row}">
+                            <span>{{formatMsToTime(row.createTime)}}</span>
+                        </template>
+                    </el-table-column >
                     <el-table-column   prop="configName"  label="定时任务名称"   />
                     <el-table-column   prop="creator"     label="添加人" width="120"/>
                     <el-table-column  label="操作"  width="160">
                         <template slot-scope="scope">
-                            <el-button @click="handleEidtClick(scope.row)" type="text" size="small">编辑</el-button>
+                            <el-button @click="handleEditClick(scope.row)" type="text" size="small">编辑</el-button>
                             <el-popconfirm title="确定删除该条任务吗？"  @confirm="deleteConfirm(scope.row)" >
                                 <el-button type="text" size="small" slot="reference">删除</el-button>
                             </el-popconfirm>
@@ -32,7 +36,7 @@
                         <span>{{form.creator}}</span>
                     </el-form-item>
                     <el-form-item label="库区范围" prop="configWarehouseIds">
-                        <el-cascader  style="width: 100%" popper-class="warePopperClass"  v-model="form.configWarehouseIds"  @change="changeWare" :options="options" :props="wareProp" clearable>
+                        <el-cascader  style="width: 100%" collapse-tags ref="refWare"  filterable popper-class="warePopperClass"  v-model="form.configWarehouseIds"  :options="options" :props="wareProp" clearable>
                         </el-cascader>
                     </el-form-item>
                     <el-form-item label="查询时间" prop="configTime">
@@ -56,6 +60,12 @@
 import {WarehouseTemp} from '@/resources';
 export default {
     name: "taskSetForm",
+    props:{
+        options:{
+            type:Array,
+            require:true,
+        }
+    },
     data() {
         return {
             isEdit:false,
@@ -70,13 +80,11 @@ export default {
                 configWarehouseIds:[]
             },
             tableData: [],
-            options: [],
             wareProp: {
                 value: 'warehouseId',
                 label: 'warehouseCode',
                 children: 'childWarehouseList',
-                multiple: true,
-                checkStrictly: true
+                multiple: true
             },
             formRules:{
                 configName: [{required: true,message:'请输入自动巡检任务配置名称', trigger: 'blur'}],
@@ -88,11 +96,6 @@ export default {
     mounted() {
         this.initConfig();
     },
-    created() {
-        WarehouseTemp.gainWarehouseWithChildList().then(res=>{
-            this.options=res.data['warehouseList']
-        })
-    },
     methods: {
         initConfig(){
             this.tableLoad=true;
@@ -103,7 +106,7 @@ export default {
                 this.tableLoad=false;
             })
         },
-        handleEidtClick(val) {
+        handleEditClick(val) {
             this.isEdit=true;
             WarehouseTemp.queryConfigById(val.id).then(res=>{
                 let info=res.data;
@@ -141,7 +144,7 @@ export default {
                if(!validate) return
                this.isBthDisabled=true;
                let param=this.form;
-               this.form.configTime=this.$moment(this.form.configTime).format('YYYY-MM-DD HH:mm:ss')
+               this.form.configTime=this.formatMsToTime(this.form.configTime)
                param.configTime=this.form.configTime.slice(10,this.form.configTime.length-3)
                let detailList = [];
                this.form.configWarehouseIds.forEach(item => {
@@ -162,8 +165,8 @@ export default {
                if(this.isEdit){
                    WarehouseTemp.editConfig(param).then(res=>{
                        this.restForm();
-                       this.$message.success('修改成功')
                        this.initConfig();
+                       this.$message.success('修改成功')
                    }).catch(err=>{
                        this.$message.error('修改失败'+err.msg)
                        this.isBthDisabled=false
@@ -171,14 +174,17 @@ export default {
                }else{
                    WarehouseTemp.addConfig(param).then(res=>{
                        this.restForm();
-                       this.$message.success('保存成功')
                        this.initConfig();
+                       this.$message.success('保存成功')
                    }).catch(err=>{
                        this.$message.error('保存失败'+err.msg)
                        this.isBthDisabled=false
                    })
                }
            })
+        },
+        formatMsToTime(val){
+            return val==''?val:this.$moment(val).format('YYYY-MM-DD HH:mm:ss')
         },
         deleteConfirm(item){
            if(item.id){
@@ -190,10 +196,6 @@ export default {
                })
            }
         },
-        changeWare(val){
-            this.$set(this.form,'configWarehouseIds',val);
-            console.log(this.form,'this.form.111');
-        },
         restForm(){
             this.form={
                 configName:'',
@@ -203,6 +205,7 @@ export default {
             }
             this.isBthDisabled=false
             this.isShow=false;
+            this.tableData=[];
             this.$nextTick(()=>{
                 if(this.$refs.tempForm){
                     this.$refs['tempForm'].resetFields();

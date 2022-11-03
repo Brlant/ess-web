@@ -683,17 +683,28 @@ export const WarehouseTemp = resource('/auto', http, {
     },
     // 添加任务
     addTask: (obj) => {
-        return http.post('/auto/check/task', obj);
+        return http.post('/check/task', obj);
     },
     // 添加任务
     updateTask: (id) => {
-        return http.put('/auto/check/task/' + id);
+        return http.put('/check/task/' + id);
     },
     // 添加任务
-    getTask: (param) => {
-        return http.post('/autocheck/task/list',param);
+    getTask: (query) => {
+        return http.get('/check/task/list', {params:query});
     },
-
+    // 分页查询巡检结果统计列表
+    getResultTask: (query) => {
+        return http.get('/check/result/count/list', {params:query});
+    },
+    // 分页查询巡检结果统计列表
+    getResultDetailTask: (query) => {
+        return http.get('check/result/detail/list', {params:query});
+    },
+    //查询巡检任务巡检点位总数接口
+    getTaskCount: (id) => {
+        return http.get('/check/task/count?taskId='+id);
+    },
 });
 
 /**
