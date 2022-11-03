@@ -129,7 +129,7 @@ export default {
             this.$refs.editFormRef.resetForm();
         },
         handleShowDetail(item){
-            this.$router.push({name:'warehouseTempDetail',params:{id:item.id}})
+            this.$router.push({name:'warehouseTempDetail',query:{id:item.id}})
         },
         handleRefresh(item){
             this.$httpRequestOpera(WarehouseTemp.updateTask(item.id), {

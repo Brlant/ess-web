@@ -110,7 +110,7 @@ export default {
         }
     },
     mounted(){
-        this.taskId=this.$route.params.id;
+        this.taskId=this.$route.query.id;
         if(this.taskId==undefined) return
         this.queryTable();
         this.queryList();
