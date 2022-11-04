@@ -120,10 +120,14 @@ export default {
                 pageSize: this.pagerTable.pageSize
             }
             this.tableAllLoad = true
+            this.pagerTable.count =0
+            this.tableAllData =[];
+            this.infoTotal.defectCount=0;
             WarehouseTemp.getResultTask(param).then(res => {
                 this.tableAllData = res.data.currentList;
                 this.infoTotal.defectCount = res.data.count
-                this.pagerTable.count = this.tableAllData.length;
+                this.pagerTable.count = res.data.count;
+                this.infoTotal.count=0;
                 WarehouseTemp.getTaskCount(this.taskId).then(res1 => {
                     this.infoTotal.count = res1.data
                 })
@@ -139,10 +143,13 @@ export default {
                 pageSize: this.pager.pageSize
             }
             this.tableLoad = true;
+            this.pager.count =0
+            this.tableData =[];
+            this.infoTotal.defectSum=0;
             WarehouseTemp.getResultDetailTask(param).then(res => {
                 this.tableData = res.data.currentList;
                 this.infoTotal.defectSum = res.data.count
-                this.pager.count = this.tableData.length;
+                this.pager.count =res.data.count;
                 this.tableLoad = false;
             }).catch(() => {
                 this.tableLoad = false;
