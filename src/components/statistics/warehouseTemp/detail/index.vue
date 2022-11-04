@@ -67,10 +67,10 @@
                 </el-table-column>
                 <el-table-column prop="loseTime" label="缺失时间" width="150"/>
             </el-table>
-            <div class="text-center" v-show="(tableData.length || pagerTable.currentPage !== 1) && !tableLoad">
-                <el-pagination :current-page="pager.currentPage" :page-size="pager.pageSize"
+            <div class="text-center" v-show="(tableData.length || pagerDetailTable.currentPage !== 1) && !tableLoad">
+                <el-pagination :current-page="pagerDetailTable.currentPage" :page-size="pagerDetailTable.pageSize"
                                :page-sizes="[10,20,50,100]"
-                               :total="pager.count" @current-change="handleCurrentChange"
+                               :total="pagerDetailTable.count" @current-change="handleCurrentChange"
                                @size-change="handleSizeChange"
                                layout="total, sizes, prev, pager, next, jumper">
                 </el-pagination>
@@ -103,6 +103,11 @@ export default {
                 currentPage: 1,
                 count: 0,
             },
+            pagerDetailTable: {
+                pageSize: parseInt(window.localStorage.getItem('currentPageSize')) || 10,
+                currentPage: 1,
+                count: 0,
+            },
             taskId: ''
         }
     },
@@ -120,7 +125,6 @@ export default {
                 pageSize: this.pagerTable.pageSize
             }
             this.tableAllLoad = true
-            this.pagerTable.count =0
             this.tableAllData =[];
             this.infoTotal.defectCount=0;
             WarehouseTemp.getResultTask(param).then(res => {
@@ -133,25 +137,26 @@ export default {
                 })
                 this.tableAllLoad = false;
             }).catch(() => {
+                this.pagerTable.count =0
                 this.tableAllLoad = false;
             })
         },
         queryList() {
             let param = {
                 taskId: this.taskId,
-                pageNo: this.pager.currentPage,
-                pageSize: this.pager.pageSize
+                pageNo: this.pagerDetailTable.currentPage,
+                pageSize: this.pagerDetailTable.pageSize
             }
             this.tableLoad = true;
-            this.pager.count =0
             this.tableData =[];
             this.infoTotal.defectSum=0;
             WarehouseTemp.getResultDetailTask(param).then(res => {
                 this.tableData = res.data.currentList;
                 this.infoTotal.defectSum = res.data.count
-                this.pager.count =res.data.count;
+                this.pagerDetailTable.count =res.data.count;
                 this.tableLoad = false;
             }).catch(() => {
+                this.pagerDetailTable.count =0
                 this.tableLoad = false;
             })
         },
@@ -169,11 +174,11 @@ export default {
             this.queryTable();
         },
         handleCurrentChange(val) {
-            this.pager.pageNo = val;
+            this.pagerDetailTable.pageNo = val;
             this.queryList();
         },
         handleSizeChange(val) {
-            this.pager.pageSize = val;
+            this.pagerDetailTable.pageSize = val;
             window.localStorage.setItem('currentPageSize', val);
             this.queryList();
         }
