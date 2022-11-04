@@ -112,7 +112,7 @@ export default {
                 let info=res.data;
                 this.form=info;
                 if(info.configTime){
-                    let time = this.$moment().format('YYYY-MM-DD' + this.form.configTime)
+                    let time = this.$moment().format('YYYY-MM-DD ' + this.form.configTime)
                     this.form.configTime = time
                 }
                 if(info.detailList&&info.detailList.length>0){
@@ -145,7 +145,7 @@ export default {
                this.isBthDisabled=true;
                let param=this.form;
                this.form.configTime=this.formatMsToTime(this.form.configTime)
-               param.configTime=this.form.configTime.slice(10,this.form.configTime.length-3)
+               param.configTime=this.form.configTime.slice(11,this.form.configTime.length-3)
                let detailList = [];
                this.form.configWarehouseIds.forEach(item => {
                    let detailInfo = {};
