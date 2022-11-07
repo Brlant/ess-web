@@ -45,7 +45,7 @@
         <div>
             <h1>明细</h1>
             <el-table :data="tableData" v-loading="tableLoad" border max-height="500px" style="width: 100%">
-                <el-table-column type="index" label="序号" width="60"/>
+                <el-table-column type="index" label="序号" width="60" :index="hIndex"/>
                 <el-table-column prop="pointName" label="点位名称" />
                 <el-table-column label="设备名称/编码" >
                     <template slot-scope="{row}">
@@ -125,19 +125,19 @@ export default {
                 pageSize: this.pagerTable.pageSize
             }
             this.tableAllLoad = true
-            this.tableAllData =[];
-            this.infoTotal.defectCount=0;
+            this.tableAllData = [];
+            this.infoTotal.defectCount = 0;
             WarehouseTemp.getResultTask(param).then(res => {
                 this.tableAllData = res.data.currentList;
                 this.infoTotal.defectCount = res.data.count
                 this.pagerTable.count = res.data.count;
-                this.infoTotal.count=0;
+                this.infoTotal.count = 0;
                 WarehouseTemp.getTaskCount(this.taskId).then(res1 => {
                     this.infoTotal.count = res1.data
                 })
                 this.tableAllLoad = false;
             }).catch(() => {
-                this.pagerTable.count =0
+                this.pagerTable.count = 0
                 this.tableAllLoad = false;
             })
         },
@@ -148,15 +148,15 @@ export default {
                 pageSize: this.pagerDetailTable.pageSize
             }
             this.tableLoad = true;
-            this.tableData =[];
-            this.infoTotal.defectSum=0;
+            this.tableData = [];
+            this.infoTotal.defectSum = 0;
             WarehouseTemp.getResultDetailTask(param).then(res => {
                 this.tableData = res.data.currentList;
                 this.infoTotal.defectSum = res.data.count
-                this.pagerDetailTable.count =res.data.count;
+                this.pagerDetailTable.count = res.data.count;
                 this.tableLoad = false;
             }).catch(() => {
-                this.pagerDetailTable.count =0
+                this.pagerDetailTable.count = 0
                 this.tableLoad = false;
             })
         },
@@ -174,13 +174,25 @@ export default {
             this.queryTable();
         },
         handleCurrentChange(val) {
-            this.pagerDetailTable.pageNo = val;
+            this.pagerDetailTable.currentPage = val;
             this.queryList();
         },
         handleSizeChange(val) {
             this.pagerDetailTable.pageSize = val;
             window.localStorage.setItem('currentPageSize', val);
             this.queryList();
+        },
+        hIndex(index) {
+            // index索引从零开始，index +1即为当前数据序号
+            this.pagerDetailTable.currentPage <= 0 ? this.pagerDetailTable.currentPage = 1 : this.pagerDetailTable.currentPage
+            // 如果当前不是第一页数据
+            if (this.pagerDetailTable.currentPage != 1) {
+                // index + 1 + (( 当前页 - 1) * 每页展示条数)
+                // 比如是第二页数据 1 + ((2 - 1)*5) = 6,第二页数据也就是从序号6开始
+                return index + 1 + ((this.pagerDetailTable.currentPage - 1) * this.pagerDetailTable.pageSize)
+            }
+            // 否则直接返回索引+1作为序号
+            return index + 1
         }
     }
 }
