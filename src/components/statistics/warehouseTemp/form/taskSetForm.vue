@@ -89,7 +89,7 @@ export default {
             formRules:{
                 configName: [{required: true,message:'请输入自动巡检任务配置名称', trigger: 'blur'}],
                 configTime: [{required: true,message:'请输入查询时间', trigger: 'change'}],
-                configWarehouseIds: [{ type: 'array', required: true,message:'请选择对应的库区范围', trigger: 'blur'}],
+                configWarehouseIds: [{ type: 'array', required: true,message:'请选择对应的库区范围', trigger: ['blur','change']}],
             }
         }
     },

@@ -36,7 +36,7 @@
                         </oms-form-row>
                     </el-col>
                     <el-col :span="9">
-                        <oms-form-row :span="6" label="任务状态">
+                        <oms-form-row :span="6" label="任务类型">
                             <el-radio-group @change="search" size="small" v-model="searchCondition.taskType">
                                 <el-radio-button label="2">普通任务</el-radio-button>
                                 <el-radio-button label="1">自动任务</el-radio-button>
