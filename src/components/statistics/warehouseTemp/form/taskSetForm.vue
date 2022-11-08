@@ -136,7 +136,7 @@ export default {
                 configWarehouseIds:[],
                 configTime:time
             }
-            this.form.creator=window.localStorage.getItem('user') ? JSON.parse(window.localStorage.getItem('user')).userAccount : '';
+            this.form.creator=window.localStorage.getItem('user') ? JSON.parse(window.localStorage.getItem('user')).userName : '';
             this.isShow=true;
         },
         handleSave(){

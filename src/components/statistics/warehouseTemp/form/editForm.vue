@@ -73,7 +73,7 @@ export default {
         }
     },
     created() {
-        this.userName = window.localStorage.getItem('user') ? JSON.parse(window.localStorage.getItem('user')).userAccount : '';
+        this.userName = window.localStorage.getItem('user') ? JSON.parse(window.localStorage.getItem('user')).userName : '';
         this.form.creator = this.userName;
 
     },
