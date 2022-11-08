@@ -155,7 +155,6 @@ export default {
             }
             this.tableLoad = true;
             this.tableData = [];
-            this.infoTotal.defectSum = 0;
             WarehouseTemp.getResultDetailTask(param).then(res => {
                 this.tableData = res.data.currentList;
                 this.infoTotal.defectSum = res.data.count
@@ -163,6 +162,7 @@ export default {
                 this.tableLoad = false;
             }).catch(() => {
                 this.pagerDetailTable.count = 0
+                this.infoTotal.defectSum = 0;
                 this.tableLoad = false;
             })
         },
