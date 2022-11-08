@@ -25,8 +25,8 @@
                 </el-table>
             </div>
             <div v-show="isShow">
-                <el-form :model="form" label-width="100px" ref="tempForm" :rules="formRules">
-                    <el-form-item label="任务名称" prop="configName">
+                <el-form :model="form" label-width="150px" ref="tempForm" :rules="formRules">
+                    <el-form-item label="定时任务名称" prop="configName">
                         <oms-input placeholder="请输入任务名称" type="input" v-model="form.configName"/>
                     </el-form-item>
                     <el-form-item label="添加时间规则">
@@ -39,7 +39,7 @@
                         <el-cascader  style="width: 100%" collapse-tags ref="refWare"  filterable popper-class="warePopperClass"  v-model="form.configWarehouseIds"  :options="options" :props="wareProp" clearable>
                         </el-cascader>
                     </el-form-item>
-                    <el-form-item label="查询时间" prop="configTime">
+                    <el-form-item label="自动任务启动时间" prop="configTime">
                         <el-time-picker
                             v-model="form.configTime"
                             format="HH:mm"
