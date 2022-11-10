@@ -655,6 +655,58 @@ export const BaseInfo = resource('/orgs', http, {
 
 });
 
+//统计-库内温度巡检
+export const WarehouseTemp = resource('/auto', http, {
+    // 查询自动巡检任务
+    gainWarehouseWithChildList: () => {
+        return http.get('/ccsWarehouse/gainWarehouseWithChildList');
+    },
+    // 查询自动巡检任务
+    queryConfigById: (id) => {
+        return http.get('auto/check/config/' + id);
+    },
+    // 查询自动巡检任务
+    queryConfigAll: () => {
+        return http.get('auto/check/config');
+    },
+    // 修改自动任务
+    addConfig: (obj) => {
+        return http.post('/auto/check/config', obj);
+    },
+    // 修改自动任务
+    editConfig: (obj) => {
+        return http.put('/auto/check/config', obj);
+    },
+    // 删除自动巡检任
+    deleteConfig: (id) => {
+        return http.delete('auto/check/config/' + id);
+    },
+    // 添加任务
+    addTask: (obj) => {
+        return http.post('/check/task', obj);
+    },
+    // 添加任务
+    updateTask: (id) => {
+        return http.put('/check/task/' + id);
+    },
+    // 添加任务
+    getTask: (query) => {
+        return http.get('/check/task/list', {params:query});
+    },
+    // 分页查询巡检结果统计列表
+    getResultTask: (query) => {
+        return http.get('/check/result/count/list', {params:query});
+    },
+    // 分页查询巡检结果统计列表
+    getResultDetailTask: (query) => {
+        return http.get('check/result/detail/list', {params:query});
+    },
+    //查询巡检任务巡检点位总数接口
+    getTaskCount: (id) => {
+        return http.get('/check/task/count?taskId='+id);
+    },
+});
+
 /**
  * create vue-resource's resource like object
  *
