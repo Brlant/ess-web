@@ -1,89 +1,193 @@
-<style lang="scss">
-
+<style lang="scss" scoped>
+::v-deep {
+    .notify-radio-group {
+        .el-radio-button--mini {
+            .el-radio-button__inner {
+                padding: 6px 8px;
+            }
+        }
+    }
+}
+.form-table{
+    margin-bottom: 20px;
+}
 </style>
 <template>
-  <dialog-template :btnSavePosition="100">
-    <template slot="title">{{actionType}}通知列表</template>
-    <template slot="btnSave">
-      <el-button :disabled="doing" @click="save('tempForm')" plain type="primary">保存</el-button>
-    </template>
-    <template slot="content">
-      <el-form :model="form" :rules="rules" label-width="100px" ref="tempForm">
-        <el-form-item label="名称" prop="notifyListName">
-          <oms-input placeholder="请输入名称" type="text" v-model="form.notifyListName"></oms-input>
-        </el-form-item>
-        <el-form-item>
-          <des-btn @click="addRule('0')" icon="plus" v-has="'show'">添加系统联系人</des-btn>
-          <des-btn @click="addRule('1')" icon="plus" v-has="'show'">添加外部联系人</des-btn>
-        </el-form-item>
-        <div :key="index" class="part-border-box" v-for="(item, index) in form.details">
-          <label class="title">{{item.memberSource === '0' ? '系统联系人' : '外部联系人'}}</label>
-          <des-btn @click="deleteRule(item)" class="btn-modify" icon="delete" v-has="'show'"/>
-          <div>
-            <el-row>
-              <el-col :span="8">
-                <el-form-item :prop="`details.${index}.targetStr`"
-                              :rules="[{ required: true, message: '请选择系统用户', trigger: 'change' }]" label-width="0"
-                              v-if="item.memberSource === '0'">
-                  <el-select :remote-method="queryUserList" @change="userChange(item)"
-                             @click.native.once="queryUserList('')"
-                             clearable filterable placeholder="请选择系统用户" remote
-                             v-model="item.targetStr">
-                    <el-option :key="item.id" :label="item.name" :value="item.id"
-                               v-for="item in userList"></el-option>
-                  </el-select>
+    <dialog-template :btnSavePosition="100">
+        <template slot="title">{{ actionType }}通知列表</template>
+        <template slot="btnSave">
+            <el-button :disabled="doing" @click="save('tempForm')" plain type="primary">保存</el-button>
+        </template>
+        <template slot="content">
+            <el-form :model="form" :rules="rules" label-width="100px" ref="tempForm">
+                <el-form-item label="名称" prop="notifyListName">
+                    <oms-input placeholder="请输入名称" type="text" v-model="form.notifyListName"></oms-input>
                 </el-form-item>
-                <el-form-item :prop="`details.${index}.notifyType`"
-                              :rules="[{ required: true, message: '请选择通知类型', trigger: 'change' }]" label-width="0"
-                              v-if="item.memberSource === '1'">
-                  <!--<el-select placeholder="请选择通知类型" v-model="item.notifyType" @change="checkChange(item)">-->
-                  <!--<el-option :label="item.label" :value="item.key" :key="item.key"-->
-                  <!--v-for="item in checkList"></el-option>-->
-                  <!--</el-select>-->
-                  <el-radio-group @change="checkChange(item)" size="small" v-model="item.notifyType">
-                    <el-radio-button :key="item.key" :label="item.key" v-for="item in checkList">{{item.label}}
-                    </el-radio-button>
-                  </el-radio-group>
+                <el-form-item>
+                    <el-button type="primary" @click="addRule" v-has="'show'">添加联系人</el-button>
+                    <!--            <des-btn @click="addRule('0')" icon="plus" v-has="'show'">添加系统联系人</des-btn>-->
+                    <!--            <des-btn @click="addRule('1')" icon="plus" v-has="'show'">添加外部联系人</des-btn>-->
                 </el-form-item>
-              </el-col>
-              <el-col :span="1"></el-col>
-              <el-col :span="7">
-                <el-form-item :prop="`details.${index}.notifyType`"
-                              :rules="[{ required: true, message: '请选择通知类型', trigger: 'change' }]" label-width="0"
-                              v-if="item.memberSource === '0'">
-                  <!--<el-select placeholder="请选择通知类型" v-model="item.notifyType" @change="checkChange(item)">-->
-                  <!--<el-option :label="item.label" :value="item.key" :key="item.key"-->
-                  <!--v-for="item in checkList"></el-option>-->
-                  <!--</el-select>-->
-                  <el-radio-group @change="checkChange(item)" size="small" v-model="item.notifyType">
-                    <el-radio-button :key="item.key" :label="item.key" v-for="item in checkList">{{item.label}}
-                    </el-radio-button>
-                  </el-radio-group>
-                </el-form-item>
-                <el-form-item :prop="`details.${index}.targetStr`"
-                              :rules="{validator: promptMsg(item).validator, trigger: 'blur'}"
-                              label-width="0"
-                              v-if="item.memberSource === '1' && item.notifyType !== '3'">
-                  <oms-input :placeholder="promptMsg(item).placeholder" type="text"
-                             v-model="item.targetStr"></oms-input>
-                </el-form-item>
-                <el-form-item label-width="0" v-if="item.memberSource === '1' && item.notifyType === '3'">
-                  <oms-input placeholder="请输入备注" type="text" v-model="item.comment"></oms-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="1"></el-col>
-              <el-col :span="7">
-                <el-form-item label-width="0"
-                              v-if="item.memberSource !== '1'||item.memberSource === '1' && item.notifyType !== '3'">
-                  <oms-input placeholder="请输入备注" type="text" v-model="item.comment"></oms-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </div>
-        </div>
-      </el-form>
-    </template>
-  </dialog-template>
+                <el-table :data="form.details" border class="form-table">
+                    <el-table-column type="index" label="NO" width="45"></el-table-column>
+                    <el-table-column
+                        label="联系人类型"
+                        min-width="140"
+                    >
+                        <template slot-scope="{row,$index}">
+                            <el-form-item :prop="'details.' + $index + '.memberSource'"
+                                          :rules="[{ required: true, message: '请选择联系人类型', trigger: 'change' }]"
+                                          label-width="0"
+                            >
+                                <el-select @change="userTypeChange($event,$index)"
+                                           clearable filterable placeholder="请选择联系人类型"
+                                           v-model="row.memberSource"
+                                           :disabled="actionType == '编辑' && row.hasOwnProperty('id')">
+                                    <el-option :key="item.value" :label="item.label" :value="item.value"
+                                               v-for="item in userTypeList"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                        label="联系人"
+                        min-width="120"
+                    >
+                        <template slot-scope="{row,$index}">
+                            <el-form-item v-if="row.memberSource === '0'"
+                                          :prop="'details.' + $index + '.targetStr'"
+                                          :rules="[{ required: true, message: '请选择联系人', trigger: 'change' }]"
+                                          label-width="0"
+                            >
+                                <el-select :remote-method="queryUserList" @change="userChange(row)"
+                                           @click.native.once="queryUserList('')"
+                                           clearable filterable placeholder="请选择联系人" remote
+                                           v-model="row.targetStr"
+                                           :disabled="actionType === '编辑' && row.hasOwnProperty('id')">
+                                    <el-option :key="item.id" :label="item.name" :value="item.id"
+                                               v-for="item in userList"></el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item v-else-if="row.memberSource === '1'"
+                                          :prop="'details.' + $index + '.targetStr'"
+                                          :rules="[{ required: true, message: '请输入外部联系人', trigger: 'blur' }]"
+                                          label-width="0"
+                            >
+                                <oms-input v-model="row.targetStr"></oms-input>
+                            </el-form-item>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                        label="部门"
+                        min-width="85"
+                    >
+                        <template slot-scope="{row,$index}">
+                            <el-form-item v-if="row.memberSource === '1'"
+                                          :prop="'details.' + $index + '.department'"
+                                          :rules="[{ required: true, message: '请输入部门', trigger: 'blur' }]"
+                                          label-width="0"
+                            >
+                                <oms-input v-model="row.department"></oms-input>
+                            </el-form-item>
+                            <span v-else>{{ row.department }}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                        label="角色"
+                        min-width="85"
+                    >
+                        <template slot-scope="{row,$index}">
+                            <el-form-item v-if="row.memberSource === '1'"
+                                          :prop="'details.' + $index + '.role'"
+                                          :rules="[{ required: true, message: '请输入角色', trigger: 'blur' }]"
+                                          label-width="0"
+                            >
+                                <oms-input v-model="row.role"></oms-input>
+                            </el-form-item>
+                            <span v-else>{{ row.role }}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                        label="通知方式选择"
+                        min-width="145"
+                    >
+                        <template slot-scope="{row,$index}">
+                            <el-form-item :prop="'details.' + $index + '.notifyType'"
+                                          :rules="[{ required: true, message: '请选择通知方式', trigger: 'change' }]"
+                                          label-width="0"
+                            >
+                                <el-radio-group class="notify-radio-group" @change="checkChange(row)" size="mini"
+                                                v-model="row.notifyType">
+                                    <el-radio-button :key="item.key" :label="item.key" v-for="item in checkList">
+                                        {{ item.label }}
+                                    </el-radio-button>
+                                </el-radio-group>
+                            </el-form-item>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                        label="TEL/微信号/邮箱"
+                        min-width="210"
+                    >
+                        <template slot-scope="{row,$index}">
+                            <el-form-item v-if="row.memberSource === '1' || (row.memberSource === '0' && row.notifyType === '3')"
+                                          :prop="(row.notifyType === '1' || row.notifyType === '3') ? 'details.' + $index + '.phone' :
+                                          row.notifyType === '2' ? 'details.' + $index + '.email' : ''"
+                                          :rules="row.notifyType === '1' ? [{ required: true, message: '请输入手机号', trigger: 'blur' }] :
+                                          row.notifyType === '2' ? [{ required: true, message: '请输入邮箱', trigger: 'blur' }] :
+                                          row.notifyType === '3' ? [{ required: true, message: '请输入手机号(因为无法获取微信号)', trigger: 'blur' }] : []"
+                                          label-width="0"
+                            >
+                                <oms-input v-model="row.phone"></oms-input>
+                            </el-form-item>
+                            <span v-else>{{ row.notifyType === '1' ? row.phone : row.notifyType === '2' ? row.email : '' }}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                        label="备注"
+                        min-width="130"
+                    >
+                        <template slot-scope="{row,$index}">
+                            <oms-input placeholder="请输入备注" type="text" v-model="row.comment"></oms-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                        label="通知状态"
+                        min-width="140"
+                    >
+                        <template slot-scope="{row,$index}">
+                            <el-switch
+                                active-text="启用"
+                                active-value="1"
+                                inactive-text="停用"
+                                inactive-value="0"
+                                v-model="row.activeFlag"
+                            ></el-switch>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                        v-if="actionType === '添加'"
+                        label="操作"
+                        min-width="100"
+                    >
+                        <template slot-scope="{row,$index}">
+                            <el-button type="text" class="delete" @click="addDeleteRule(row)">删除</el-button>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                        v-if="actionType === '编辑'"
+                        label="操作"
+                        v-has="'show'"
+                        min-width="100"
+                    >
+                        <template slot-scope="{row,$index}">
+                            <el-button type="text" class="delete" @click="editDeleteRule(row)">删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-form>
+        </template>
+    </dialog-template>
 </template>
 <script>
     import {Department, NotifyRule, User} from '@/resources';
@@ -99,7 +203,12 @@
                     memberSource: '',
                     notifyType: '1',
                     comment: '',
-                    targetStr: ''
+                    targetStr: '',
+                    department: '',
+                    role: '',
+                    phone: '',
+                    email: '',
+                    activeFlag: '1'
                 },
                 form: {},
                 doing: false,
@@ -118,7 +227,11 @@
                     {label: '系统', key: '0'},
                     {label: '手动添加', key: '1'}
                 ],
-                userList: []
+                userList: [],
+                userTypeList: [
+                    {label: '内部联系人', value: '0'},
+                    {label: '外部联系人', value: '1'},
+                ]
             };
         },
         computed: {},
@@ -162,13 +275,43 @@
                 }
             },
             addRule(type) {
-                this.form.details && this.form.details.splice(0, 0, Object.assign({}, this.ruleModel, {memberSource: type}));
+                // this.form.details && this.form.details.splice(0, 0, Object.assign({}, this.ruleModel, {memberSource: type}));
+                this.form.details && this.form.details.push({...this.ruleModel});
                 this.$refs.tempForm.clearValidate();
             },
-            deleteRule(item) {
+            // 新增时的删除
+            addDeleteRule(item) {
                 let index = this.form.details.indexOf(item);
                 index !== -1 && this.form.details.splice(index, 1);
                 this.$refs.tempForm.clearValidate();
+            },
+            // 编辑时的删除
+            editDeleteRule(item) {
+                if (item.id) {
+                    this.$confirmOpera(`是否删除联系人"${item.name}"`, () => {
+                        let index = this.form.details.indexOf(item);
+                        index !== -1 && this.form.details.splice(index, 1);
+                        this.$refs.tempForm.clearValidate();
+                    }).catch(() => {
+                    });
+                    return
+                }
+                let index = this.form.details.indexOf(item);
+                index !== -1 && this.form.details.splice(index, 1);
+                this.$refs.tempForm.clearValidate();
+            },
+            userTypeChange(val,index) {
+                this.$set(this.form.details, index, {
+                    memberSource: val,
+                    notifyType: '1',
+                    comment: '',
+                    targetStr: '',
+                    department: '',
+                    role: '',
+                    phone: '',
+                    email: '',
+                    activeFlag: '1'
+                })
             },
             promptMsg(item) {
                 let ary = this.checkList.filter(f => f.key === item.notifyType);
@@ -178,8 +321,14 @@
                 };
             },
             userChange(item) {
+                let obj = this.userList.find(f => f.id === item.targetStr)
                 // 修改联系人时，清空对应的openId
                 item.openId = '';
+                item.department = obj.companyDepartmentName;
+                item.role = obj['list'][0].title;
+                item.roleId = obj['list'][0].roleId;
+                item.phone = obj.phone;
+                item.email = obj.email;
                 this.checkContactWay(item);
                 // 校验微信模式
                 this.queryWeChart(item);
@@ -187,7 +336,7 @@
             },
             checkChange(item) {
                 item.openId = '';
-                item.memberSource === '1' && (item.targetStr = '');
+                // item.memberSource === '1' && (item.targetStr = '');
                 item.memberSource === '0' && this.checkContactWay(item);
                 // 校验微信模式
                 this.queryWeChart(item);
