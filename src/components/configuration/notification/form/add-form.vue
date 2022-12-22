@@ -11,6 +11,9 @@
 .form-table{
     margin-bottom: 20px;
 }
+.delete{
+    color: #D8001B;
+}
 </style>
 <template>
     <dialog-template :btnSavePosition="100">
@@ -89,7 +92,9 @@
                             >
                                 <oms-input v-model="row.department"></oms-input>
                             </el-form-item>
-                            <span v-else>{{ row.department }}</span>
+                            <el-form-item v-else>
+                                <span>{{ row.department }}</span>
+                            </el-form-item>
                         </template>
                     </el-table-column>
                     <el-table-column
@@ -104,7 +109,9 @@
                             >
                                 <oms-input v-model="row.role"></oms-input>
                             </el-form-item>
-                            <span v-else>{{ row.role }}</span>
+                            <el-form-item v-else>
+                                <span>{{ row.role }}</span>
+                            </el-form-item>
                         </template>
                     </el-table-column>
                     <el-table-column
@@ -140,7 +147,9 @@
                             >
                                 <oms-input v-model="row.phone"></oms-input>
                             </el-form-item>
-                            <span v-else>{{ row.notifyType === '1' ? row.phone : row.notifyType === '2' ? row.email : '' }}</span>
+                            <el-form-item v-else>
+                                <span>{{ row.notifyType === '1' ? row.phone : row.notifyType === '2' ? row.email : '' }}</span>
+                            </el-form-item>
                         </template>
                     </el-table-column>
                     <el-table-column
@@ -148,7 +157,11 @@
                         min-width="130"
                     >
                         <template slot-scope="{row,$index}">
-                            <oms-input placeholder="请输入备注" type="text" v-model="row.comment"></oms-input>
+                            <el-form-item :prop="'details.' + $index + '.comment'"
+                                          label-width="0"
+                            >
+                                <oms-input placeholder="请输入备注" type="text" v-model="row.comment"></oms-input>
+                            </el-form-item>
                         </template>
                     </el-table-column>
                     <el-table-column
@@ -156,13 +169,18 @@
                         min-width="140"
                     >
                         <template slot-scope="{row,$index}">
-                            <el-switch
-                                active-text="启用"
-                                active-value="1"
-                                inactive-text="停用"
-                                inactive-value="0"
-                                v-model="row.activeFlag"
-                            ></el-switch>
+                            <el-form-item :prop="'details.' + $index + '.notifyStatus'"
+                                          :rules="[{ required: true, message: '请选择通知状态', trigger: 'change' }]"
+                                          label-width="0"
+                            >
+                                <el-switch
+                                    active-text="启用"
+                                    active-value="1"
+                                    inactive-text="停用"
+                                    inactive-value="0"
+                                    v-model="row.notifyStatus"
+                                ></el-switch>
+                            </el-form-item>
                         </template>
                     </el-table-column>
                     <el-table-column
@@ -171,7 +189,9 @@
                         min-width="100"
                     >
                         <template slot-scope="{row,$index}">
-                            <el-button type="text" class="delete" @click="addDeleteRule(row)">删除</el-button>
+                            <el-form-item label-width="0">
+                                <el-button type="text" class="delete" @click="addDeleteRule(row)">删除</el-button>
+                            </el-form-item>
                         </template>
                     </el-table-column>
                     <el-table-column
@@ -181,7 +201,9 @@
                         min-width="100"
                     >
                         <template slot-scope="{row,$index}">
-                            <el-button type="text" class="delete" @click="editDeleteRule(row)">删除</el-button>
+                            <el-form-item label-width="0">
+                                <el-button type="text" class="delete" @click="editDeleteRule(row)">删除</el-button>
+                            </el-form-item>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -208,7 +230,7 @@
                     role: '',
                     phone: '',
                     email: '',
-                    activeFlag: '1'
+                    notifyStatus: '1'
                 },
                 form: {},
                 doing: false,
@@ -310,7 +332,7 @@
                     role: '',
                     phone: '',
                     email: '',
-                    activeFlag: '1'
+                    notifyStatus: '1'
                 })
             },
             promptMsg(item) {

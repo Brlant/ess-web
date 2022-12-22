@@ -29,7 +29,98 @@
               {{pageSets[1].name}}</h3>
           </div>
           <div class="content">
-            <div class="order-list clearfix" style="padding-top: 10px">
+              <el-row>
+                  <el-col class="text-right mb-10">
+                      <el-button @click="exportPdf">导出PDF</el-button>
+                      <el-button @click="exportWord">导出word</el-button>
+                  </el-col>
+              </el-row>
+              <el-table :data="notify.details" border>
+                  <el-table-column type="index" label="NO" width="45"></el-table-column>
+                  <el-table-column
+                      label="联系人类型"
+                      min-width="140"
+                  >
+                      <template slot-scope="{row,$index}">
+                          <span>{{typeList[row.memberSource].label}}</span>
+                      </template>
+                  </el-table-column>
+                  <el-table-column
+                      label="联系人"
+                      min-width="120"
+                  >
+                      <template slot-scope="{row,$index}">
+                          <span class="R" v-show="row.memberSource === '1' ">{{row.targetStr}}</span>
+                          <span v-show="row.memberSource === '0' ">
+                            {{row.name}}
+                            <span v-show="row.notifyType !== '3'">({{row.targetStr}})</span>
+                          </span>
+                      </template>
+                  </el-table-column>
+                  <el-table-column
+                      label="通知类型"
+                      min-width="145"
+                  >
+                      <template slot-scope="{row,$index}">
+                          <span>{{checkList[row.notifyType-1].label}}</span>
+                      </template>
+                  </el-table-column>
+                  <el-table-column
+                      label="TEL/微信号/邮箱"
+                      min-width="210"
+                  >
+                      <template slot-scope="{row,$index}">
+                          <span>{{ (row.notifyType === '1' || row.notifyType === '3') ? row.phone : row.notifyType === '2' ? row.email : '' }}</span>
+                      </template>
+                  </el-table-column>
+                  <el-table-column
+                      label="部门"
+                      min-width="85"
+                  >
+                      <template slot-scope="{row,$index}">
+                          <span>{{ row.department }}</span>
+                      </template>
+                  </el-table-column>
+                  <el-table-column
+                      label="角色"
+                      min-width="85"
+                  >
+                      <template slot-scope="{row,$index}">
+                          <span>{{ row.role }}</span>
+                      </template>
+                  </el-table-column>
+
+                  <el-table-column
+                      label="备注"
+                      min-width="130"
+                  >
+                      <template slot-scope="{row,$index}">
+                          <span>{{row.comment}}</span>
+                      </template>
+                  </el-table-column>
+                  <el-table-column
+                      label="通知状态"
+                  >
+                      <template slot-scope="{row,$index}">
+                          <span>{{row.notifyStatus ? notifyStatusList[row.notifyStatus].label : ''}}</span>
+                      </template>
+                  </el-table-column>
+                  <el-table-column
+                      label="维护时间"
+                  >
+                      <template slot-scope="{row,$index}">
+                          <span>{{ }}</span>
+                      </template>
+                  </el-table-column>
+                  <el-table-column
+                      label="操作人"
+                  >
+                      <template slot-scope="{row,$index}">
+                          <span>{{ }}</span>
+                      </template>
+                  </el-table-column>
+              </el-table>
+<!--            <div class="order-list clearfix" style="padding-top: 10px">
               <el-row class="order-list-header">
                 <el-col :span="4">人员类型</el-col>
                 <el-col :span="4">通知类型</el-col>
@@ -56,16 +147,100 @@
                   </el-row>
                 </div>
               </div>
+            </div>-->
+          </div>
+          <div class="hr mb-10"></div>
+        </div>
+        <!--     操作日志     -->
+        <div class="form-header-part">
+            <div class="header">
+                <div class="sign f-dib"></div>
+                <h3 :class="{active: pageSets[2].key === currentTab.key}" class="tit f-dib index-tit">
+                    {{pageSets[2].name}}</h3>
+            </div>
+            <div class="content">
+                <el-row>
+                    <el-col class="text-right mb-10">
+                        <el-button @click="exportExcel">导出Excel</el-button>
+                    </el-col>
+                </el-row>
+<!--                <el-table :data="operationList" border>-->
+                <el-table :data="notify.details">
+                <el-table-column type="index" label="NO" width="45"></el-table-column>
+                    <el-table-column
+                        label="操作人"
+                    >
+                        <template slot-scope="{row,$index}">
+                            <span>{{ }}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                        label="操作时间"
+                    >
+                        <template slot-scope="{row,$index}">
+                            <span>{{ }}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                        label="操作类型"
+                    >
+                        <template slot-scope="{row,$index}">
+                            <span>{{ }}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column type="expand">
+                        <template slot-scope="props">
+                            <el-table :data="notify.details" border>
+                                <el-table-column type="index" label="NO" width="45"></el-table-column>
+                                <el-table-column
+                                    label="联系人类型"
+                                >
+                                    <template slot-scope="{row,$index}">
+                                        <span>{{ }}</span>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                    label="联系人"
+                                >
+                                    <template slot-scope="{row,$index}">
+                                        <span>{{ }}</span>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                    label="字段"
+                                >
+                                    <template slot-scope="{row,$index}">
+                                        <span>{{ }}</span>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                    label="新值"
+                                >
+                                    <template slot-scope="{row,$index}">
+                                        <span>{{ }}</span>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                    label="旧值"
+                                >
+                                    <template slot-scope="{row,$index}">
+                                        <span>{{ }}</span>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </template>
+                    </el-table-column>
+                </el-table>
             </div>
           </div>
-          <!--<div class="hr mb-10"></div>-->
-        </div>
       </div>
     </template>
   </dialog-template>
 </template>
 <script>
     import {NotifyRule, User} from '@/resources';
+    import utils from '@/tools/utils';
+    import qs from "qs";
 
     export default {
         props: ['formItem', 'index'],
@@ -74,7 +249,8 @@
                 loading: false,
                 pageSets: [
                     {name: '基本信息', key: 0},
-                    {name: '通知方式', key: 1}
+                    {name: '通知方式', key: 1},
+                    {name: '操作日志', key: 2},
                 ],
                 currentTab: {},
                 notify: {},
@@ -86,7 +262,13 @@
                 typeList: [
                     {label: '系统联系人', key: '0'},
                     {label: '外部联系人', key: '1'}
-                ]
+                ],
+                notifyStatusList: [
+                    {label: '停用', key: '0'},
+                    {label: '启用', key: '1'}
+                ],
+                doing: false,
+                operationList: []
             };
         },
         watch: {
@@ -119,6 +301,72 @@
                     this.notify = res.data;
                     this.loading = false;
                 });
+            },
+            // 导出PDF
+            exportPdf() {
+                let params = {};
+                /*this.doing = true;
+                this.$httpRequestOpera(this.$http({
+                    url: '',
+                    params,
+                    paramsSerializer(params) {
+                        return qs.stringify(params, {indices: false});
+                    }
+                }), {
+                    successTitle: '导出成功',
+                    errorTitle: '导出失败',
+                    success: res => {
+                        this.doing = false;
+                        utils.download(res.data.path);
+                    },
+                    error: () => {
+                        this.doing = false;
+                    }
+                });*/
+            },
+            // 导出word
+            exportWord() {
+                let params = {};
+                /*this.doing = true;
+                this.$httpRequestOpera(this.$http({
+                    url: '',
+                    params,
+                    paramsSerializer(params) {
+                        return qs.stringify(params, {indices: false});
+                    }
+                }), {
+                    successTitle: '导出成功',
+                    errorTitle: '导出失败',
+                    success: res => {
+                        this.doing = false;
+                        utils.download(res.data.path);
+                    },
+                    error: () => {
+                        this.doing = false;
+                    }
+                });*/
+            },
+            // 导出Excel
+            exportExcel() {
+                let params = {};
+                /*this.doing = true;
+                this.$httpRequestOpera(this.$http({
+                    url: '',
+                    params,
+                    paramsSerializer(params) {
+                        return qs.stringify(params, {indices: false});
+                    }
+                }), {
+                    successTitle: '导出成功',
+                    errorTitle: '导出失败',
+                    success: res => {
+                        this.doing = false;
+                        utils.download(res.data.path);
+                    },
+                    error: () => {
+                        this.doing = false;
+                    }
+                });*/
             }
         }
     };
