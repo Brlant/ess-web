@@ -72,11 +72,11 @@
                                 </el-select>
                             </el-form-item>
                             <el-form-item v-else-if="row.memberSource === '1'"
-                                          :prop="'details.' + $index + '.targetStr'"
+                                          :prop="'details.' + $index + '.notifyUser'"
                                           :rules="[{ required: true, message: '请输入外部联系人', trigger: 'blur' }]"
                                           label-width="0"
                             >
-                                <oms-input v-model="row.targetStr"></oms-input>
+                                <oms-input v-model="row.notifyUser" :disabled="actionType === '编辑' && row.hasOwnProperty('id')"></oms-input>
                             </el-form-item>
                         </template>
                     </el-table-column>
@@ -86,14 +86,18 @@
                     >
                         <template slot-scope="{row,$index}">
                             <el-form-item v-if="row.memberSource === '1'"
-                                          :prop="'details.' + $index + '.department'"
+                                          :prop="'details.' + $index + '.orgName'"
                                           :rules="[{ required: true, message: '请输入部门', trigger: 'blur' }]"
                                           label-width="0"
                             >
-                                <oms-input v-model="row.department"></oms-input>
+                                <oms-input v-model="row.orgName"></oms-input>
                             </el-form-item>
-                            <el-form-item v-else>
-                                <span>{{ row.department }}</span>
+                            <el-form-item v-else
+                                          :prop="'details.' + $index + '.orgName'"
+                                          :rules="[{ required: false }]"
+                                          label-width="0"
+                            >
+                                <span>{{ row.orgName }}</span>
                             </el-form-item>
                         </template>
                     </el-table-column>
@@ -103,14 +107,18 @@
                     >
                         <template slot-scope="{row,$index}">
                             <el-form-item v-if="row.memberSource === '1'"
-                                          :prop="'details.' + $index + '.role'"
+                                          :prop="'details.' + $index + '.roleName'"
                                           :rules="[{ required: true, message: '请输入角色', trigger: 'blur' }]"
                                           label-width="0"
                             >
-                                <oms-input v-model="row.role"></oms-input>
+                                <oms-input v-model="row.roleName"></oms-input>
                             </el-form-item>
-                            <el-form-item v-else>
-                                <span>{{ row.role }}</span>
+                            <el-form-item v-else
+                                          :prop="'details.' + $index + '.roleName'"
+                                          :rules="[{ required: false }]"
+                                          label-width="0"
+                            >
+                                <span>{{ row.roleName }}</span>
                             </el-form-item>
                         </template>
                     </el-table-column>
@@ -140,14 +148,20 @@
                             <el-form-item v-if="row.memberSource === '1' || (row.memberSource === '0' && row.notifyType === '3')"
                                           :prop="(row.notifyType === '1' || row.notifyType === '3') ? 'details.' + $index + '.phone' :
                                           row.notifyType === '2' ? 'details.' + $index + '.email' : ''"
-                                          :rules="row.notifyType === '1' ? [{ required: true, message: '请输入手机号', trigger: 'blur' }] :
-                                          row.notifyType === '2' ? [{ required: true, message: '请输入邮箱', trigger: 'blur' }] :
-                                          row.notifyType === '3' ? [{ required: true, message: '请输入手机号(因为无法获取微信号)', trigger: 'blur' }] : []"
+                                          :rules="row.notifyType === '1' ? [{ required: true, message: '请输入手机号', trigger: 'blur' }, { required: true, validator: checkPhone, trigger: 'blur' }] :
+                                          row.notifyType === '2' ? [{ required: true, message: '请输入邮箱',  trigger: 'blur' }, { required: true, validator: checkEmail, trigger: 'blur' }] :
+                                          row.notifyType === '3' ? [{ required: true, message: '请输入手机号(因为无法获取微信号)',  trigger: 'blur' }, { required: true, validator: checkPhone, trigger: 'blur' }] : []"
                                           label-width="0"
                             >
-                                <oms-input v-model="row.phone"></oms-input>
+                                <oms-input v-if="row.notifyType === '1' || row.notifyType === '3'" v-model="row.phone"></oms-input>
+                                <oms-input v-if="row.notifyType === '2'" v-model="row.email"></oms-input>
                             </el-form-item>
-                            <el-form-item v-else>
+                            <el-form-item v-else
+                                          :prop="(row.notifyType === '1' || row.notifyType === '3') ? 'details.' + $index + '.phone' :
+                                          row.notifyType === '2' ? 'details.' + $index + '.email' : ''"
+                                          :rules="[{ required: false }]"
+                                          label-width="0"
+                            >
                                 <span>{{ row.notifyType === '1' ? row.phone : row.notifyType === '2' ? row.email : '' }}</span>
                             </el-form-item>
                         </template>
@@ -226,8 +240,9 @@
                     notifyType: '1',
                     comment: '',
                     targetStr: '',
-                    department: '',
-                    role: '',
+                    notifyUser: '',
+                    orgName: '',
+                    roleName: '',
                     phone: '',
                     email: '',
                     notifyStatus: '1'
@@ -328,12 +343,14 @@
                     notifyType: '1',
                     comment: '',
                     targetStr: '',
-                    department: '',
-                    role: '',
+                    notifyUser: '',
+                    orgName: '',
+                    roleName: '',
                     phone: '',
                     email: '',
                     notifyStatus: '1'
                 })
+                this.$refs.tempForm.clearValidate();
             },
             promptMsg(item) {
                 let ary = this.checkList.filter(f => f.key === item.notifyType);
@@ -346,9 +363,11 @@
                 let obj = this.userList.find(f => f.id === item.targetStr)
                 // 修改联系人时，清空对应的openId
                 item.openId = '';
-                item.department = obj.companyDepartmentName;
-                item.role = obj['list'][0].title;
-                item.roleId = obj['list'][0].roleId;
+                item.orgName = obj.companyDepartmentName;
+                let roleName = obj.list.map(o=> {
+                    return o.title
+                })
+                item.roleName = roleName.toString();
                 item.phone = obj.phone;
                 item.email = obj.email;
                 this.checkContactWay(item);
@@ -392,7 +411,7 @@
                 if (item.notifyType !== '3') return;
                 this.userList.forEach(i => {
                     if (i.id === item.targetStr) {
-                        item.name = i.name;
+                        item.notifyUser = i.name;
                     }
                 });
                 if (item.memberSource === '0') {

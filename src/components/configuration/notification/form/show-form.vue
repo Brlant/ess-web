@@ -50,11 +50,7 @@
                       min-width="120"
                   >
                       <template slot-scope="{row,$index}">
-                          <span class="R" v-show="row.memberSource === '1' ">{{row.targetStr}}</span>
-                          <span v-show="row.memberSource === '0' ">
-                            {{row.name}}
-                            <span v-show="row.notifyType !== '3'">({{row.targetStr}})</span>
-                          </span>
+                          <span>{{ row.notifyUser }}</span>
                       </template>
                   </el-table-column>
                   <el-table-column
@@ -78,7 +74,7 @@
                       min-width="85"
                   >
                       <template slot-scope="{row,$index}">
-                          <span>{{ row.department }}</span>
+                          <span>{{ row.orgName }}</span>
                       </template>
                   </el-table-column>
                   <el-table-column
@@ -86,7 +82,7 @@
                       min-width="85"
                   >
                       <template slot-scope="{row,$index}">
-                          <span>{{ row.role }}</span>
+                          <span>{{ row.roleName }}</span>
                       </template>
                   </el-table-column>
 
@@ -109,14 +105,14 @@
                       label="维护时间"
                   >
                       <template slot-scope="{row,$index}">
-                          <span>{{ }}</span>
+                          <span>{{ row.operationTime }}</span>
                       </template>
                   </el-table-column>
                   <el-table-column
                       label="操作人"
                   >
                       <template slot-scope="{row,$index}">
-                          <span>{{ }}</span>
+                          <span>{{ row.operatorName }}</span>
                       </template>
                   </el-table-column>
               </el-table>
@@ -171,14 +167,14 @@
                         label="操作人"
                     >
                         <template slot-scope="{row,$index}">
-                            <span>{{ }}</span>
+                            <span>{{ row.operatorName }}</span>
                         </template>
                     </el-table-column>
                     <el-table-column
                         label="操作时间"
                     >
                         <template slot-scope="{row,$index}">
-                            <span>{{ }}</span>
+                            <span>{{ row.operationTime }}</span>
                         </template>
                     </el-table-column>
                     <el-table-column
