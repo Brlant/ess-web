@@ -160,7 +160,7 @@
                         <el-button @click="exportExcel">导出Excel</el-button>
                     </el-col>
                 </el-row>
-<!--                <el-table :data="operationList" border>-->
+<!--                <el-table :data="operationList">-->
                 <el-table :data="notify.details">
                 <el-table-column type="index" label="NO" width="45"></el-table-column>
                     <el-table-column
@@ -182,6 +182,20 @@
                     >
                         <template slot-scope="{row,$index}">
                             <span>{{ }}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                        label="备注"
+                    >
+                        <template slot-scope="{row,$index}">
+                            <span>{{ row.comment }}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                        label="操作"
+                    >
+                        <template slot-scope="{row,$index}">
+                            <el-button type="text" @click="onEditComment(row)">编辑备注</el-button>
                         </template>
                     </el-table-column>
                     <el-table-column type="expand">
@@ -230,6 +244,23 @@
             </div>
           </div>
       </div>
+      <el-dialog
+        title="编辑备注"
+        v-if="editCommentDialogVisible"
+        :visible.sync="editCommentDialogVisible"
+        width="30%"
+        :close-on-click-modal="false"
+        append-to-body>
+          <el-form ref="editCommentForm" :model="editCommentForm">
+            <el-form-item label="" prop="comment">
+                <el-input type="textarea" v-model="editCommentForm.comment" placeholder="请输入备注"></el-input>
+            </el-form-item>
+          </el-form>
+          <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="onSaveComment">保存</el-button>
+            <el-button @click="editCommentDialogVisible = false">取消</el-button>
+          </span>
+        </el-dialog>
     </template>
   </dialog-template>
 </template>
@@ -264,13 +295,18 @@
                     {label: '启用', key: '1'}
                 ],
                 doing: false,
-                operationList: []
+                operationList: [],
+                editCommentDialogVisible: false, //  编辑备注弹框
+                editCommentForm: {
+                    comment: ''
+                },
             };
         },
         watch: {
             index: function (val) {
                 if (val !== 1) return;
                 this.queryDetail();
+                this.queryOperationList();
             }
         },
         methods: {
@@ -287,6 +323,7 @@
             close() {
                 this.$emit('right-close');
             },
+            // 查询通知方式列表
             queryDetail() {
                 this.notify = {};
                 this.loading = true;
@@ -297,6 +334,29 @@
                     this.notify = res.data;
                     this.loading = false;
                 });
+            },
+            // 查询操作日志列表
+            queryOperationList() {
+                this.operationList = [];
+                this.loading = true;
+                /*NotifyRule.get(this.formItem.id).then(res => {
+                    res.data.details.forEach(i => {
+                        this.formatContactWay(i);
+                    });
+                    this.notify = res.data;
+                    this.loading = false;
+                });*/
+            },
+            // 编辑备注
+            onEditComment(item) {
+                this.editCommentDialogVisible = true;
+                this.editCommentForm.comment = item.comment;
+            },
+            // 保存编辑备注
+            onSaveComment() {
+                // 调用保存备注接口 .then =>
+                this.editCommentDialogVisible = false;
+                // this.queryOperationList()
             },
             // 导出PDF
             exportPdf() {
