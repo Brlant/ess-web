@@ -66,7 +66,7 @@
                       min-width="210"
                   >
                       <template slot-scope="{row,$index}">
-                          <span>{{ (row.notifyType === '1' || row.notifyType === '3') ? row.phone : row.notifyType === '2' ? row.email : '' }}</span>
+                          <span>{{ row.contactInfo }}</span>
                       </template>
                   </el-table-column>
                   <el-table-column
@@ -98,14 +98,14 @@
                       label="通知状态"
                   >
                       <template slot-scope="{row,$index}">
-                          <span>{{row.notifyStatus ? notifyStatusList[row.notifyStatus].label : ''}}</span>
+                          <span>{{ notifyStatusList[row.notifyStatus].label }}</span>
                       </template>
                   </el-table-column>
                   <el-table-column
                       label="维护时间"
                   >
                       <template slot-scope="{row,$index}">
-                          <span>{{ row.operationTime }}</span>
+                          <span>{{ row.operationTime | time }}</span>
                       </template>
                   </el-table-column>
                   <el-table-column
@@ -160,8 +160,7 @@
                         <el-button @click="exportExcel">导出Excel</el-button>
                     </el-col>
                 </el-row>
-<!--                <el-table :data="operationList">-->
-                <el-table :data="notify.details">
+                <el-table :data="operationList">
                 <el-table-column type="index" label="NO" width="45"></el-table-column>
                     <el-table-column
                         label="操作人"
@@ -174,14 +173,14 @@
                         label="操作时间"
                     >
                         <template slot-scope="{row,$index}">
-                            <span>{{ row.operationTime }}</span>
+                            <span>{{ row.operationTime | time }}</span>
                         </template>
                     </el-table-column>
                     <el-table-column
                         label="操作类型"
                     >
                         <template slot-scope="{row,$index}">
-                            <span>{{ }}</span>
+                            <span>{{ row.operationType ? operationTypeList[row.operationType-1].label : '' }}</span>
                         </template>
                     </el-table-column>
                     <el-table-column
@@ -200,41 +199,41 @@
                     </el-table-column>
                     <el-table-column type="expand">
                         <template slot-scope="props">
-                            <el-table :data="notify.details" border>
+                            <el-table :data="props.row.details" border>
                                 <el-table-column type="index" label="NO" width="45"></el-table-column>
                                 <el-table-column
                                     label="联系人类型"
                                 >
                                     <template slot-scope="{row,$index}">
-                                        <span>{{ }}</span>
+                                        <span>{{ typeList[row.memberSource].label }}</span>
                                     </template>
                                 </el-table-column>
                                 <el-table-column
                                     label="联系人"
                                 >
                                     <template slot-scope="{row,$index}">
-                                        <span>{{ }}</span>
+                                        <span>{{ row.notifyUser }}</span>
                                     </template>
                                 </el-table-column>
                                 <el-table-column
                                     label="字段"
                                 >
                                     <template slot-scope="{row,$index}">
-                                        <span>{{ }}</span>
+                                        <span>{{ row.changeField }}</span>
                                     </template>
                                 </el-table-column>
                                 <el-table-column
                                     label="新值"
                                 >
                                     <template slot-scope="{row,$index}">
-                                        <span>{{ }}</span>
+                                        <span>{{ row.newValue }}</span>
                                     </template>
                                 </el-table-column>
                                 <el-table-column
                                     label="旧值"
                                 >
                                     <template slot-scope="{row,$index}">
-                                        <span>{{ }}</span>
+                                        <span>{{ row.oldValue }}</span>
                                     </template>
                                 </el-table-column>
                             </el-table>
@@ -265,7 +264,7 @@
   </dialog-template>
 </template>
 <script>
-    import {NotifyRule, User} from '@/resources';
+    import {NotifyRule, User, NotifyLog} from '@/resources';
     import utils from '@/tools/utils';
     import qs from "qs";
 
@@ -293,6 +292,11 @@
                 notifyStatusList: [
                     {label: '停用', key: '0'},
                     {label: '启用', key: '1'}
+                ],
+                operationTypeList: [
+                    {label: '新增', key: '1'},
+                    {label: '修改', key: '2'},
+                    {label: '删除', key: '3'},
                 ],
                 doing: false,
                 operationList: [],
@@ -339,13 +343,10 @@
             queryOperationList() {
                 this.operationList = [];
                 this.loading = true;
-                /*NotifyRule.get(this.formItem.id).then(res => {
-                    res.data.details.forEach(i => {
-                        this.formatContactWay(i);
-                    });
-                    this.notify = res.data;
+                NotifyLog.get(this.formItem.id).then(res => {
+                    this.operationList = res.data.list;
                     this.loading = false;
-                });*/
+                });
             },
             // 编辑备注
             onEditComment(item) {

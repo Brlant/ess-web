@@ -189,9 +189,9 @@
                             >
                                 <el-switch
                                     active-text="启用"
-                                    active-value="1"
+                                    :active-value="1"
                                     inactive-text="停用"
-                                    inactive-value="0"
+                                    :inactive-value="0"
                                     v-model="row.notifyStatus"
                                 ></el-switch>
                             </el-form-item>
@@ -245,7 +245,8 @@
                     roleName: '',
                     phone: '',
                     email: '',
-                    notifyStatus: '1'
+                    contactInfo: '',
+                    notifyStatus: 1
                 },
                 form: {},
                 doing: false,
@@ -325,12 +326,11 @@
             // 编辑时的删除
             editDeleteRule(item) {
                 if (item.id) {
-                    this.$confirmOpera(`是否删除联系人"${item.name}"`, () => {
+                    this.$confirmOpera(`是否删除联系人"${item.notifyUser}"`, () => {
                         let index = this.form.details.indexOf(item);
                         index !== -1 && this.form.details.splice(index, 1);
                         this.$refs.tempForm.clearValidate();
-                    }).catch(() => {
-                    });
+                    })
                     return
                 }
                 let index = this.form.details.indexOf(item);
@@ -348,7 +348,8 @@
                     roleName: '',
                     phone: '',
                     email: '',
-                    notifyStatus: '1'
+                    contactInfo: '',
+                    notifyStatus: 1
                 })
                 this.$refs.tempForm.clearValidate();
             },
@@ -377,6 +378,8 @@
             },
             checkChange(item) {
                 item.openId = '';
+                item.phone = '';
+                item.email = '';
                 // item.memberSource === '1' && (item.targetStr = '');
                 item.memberSource === '0' && this.checkContactWay(item);
                 // 校验微信模式
@@ -411,6 +414,7 @@
                 if (item.notifyType !== '3') return;
                 this.userList.forEach(i => {
                     if (i.id === item.targetStr) {
+                        item.name = i.name;
                         item.notifyUser = i.name;
                     }
                 });
@@ -473,6 +477,8 @@
                 NotifyRule.get(this.formItem.id).then(res => {
                     res.data.details.forEach(i => {
                         i.openId = i.targetStr;
+                        i.phone = (i.notifyType === '1' || i.notifyType === '3') ? i.contactInfo : '';
+                        i.email = i.notifyType === '2' ? i.contactInfo : '';
                         this.formatContactWay(i);
                     });
                     this.form = res.data;
@@ -547,6 +553,7 @@
                             i.openId = undefined;
                             i.time = undefined;
                             i.checkPass = undefined;
+                            i.contactInfo = i.phone ? i.phone : i.email ? i.email : '';
                         });
                         if (!this.form.id) {
                             this.doing = true;

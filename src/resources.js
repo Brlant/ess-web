@@ -220,6 +220,10 @@ export const DevMonitoring = resource('/ccsMonitordev', http, {
 // 通知规则对象
 export const NotifyRule = resource('/ccsNotifyList', http, {});
 
+// 通知列表-操作日志
+export const NotifyLog = resource('/ccsNotifyList/log', http, {});
+
+
 // 告警规则组对象
 export const AlarmRuleGroup = resource('/ccsWarnRuleGroup', http, {});
 
