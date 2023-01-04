@@ -216,7 +216,8 @@
                     >
                         <template slot-scope="{row,$index}">
                             <el-form-item label-width="0">
-                                <el-button type="text" class="delete" @click="editDeleteRule(row)">删除</el-button>
+                                <el-button v-if="row.hasOwnProperty('id')" v-has="'ccs-notify-notifyUser-del'" type="text" class="delete" @click="editDeleteRule(row)">删除</el-button>
+                                <el-button v-else type="text" class="delete" @click="editDeleteRule(row)">删除</el-button>
                             </el-form-item>
                         </template>
                     </el-table-column>
@@ -569,6 +570,7 @@
                                 }
                             });
                         } else {
+                            this.doing = true;
                             this.$httpRequestOpera(NotifyRule.update(this.form.id, form), {
                                 successTitle: '修改成功',
                                 errorTitle: '修改失败',

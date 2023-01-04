@@ -81,7 +81,16 @@ export const DevMonitoring = resource('/ccsMonitordev', http, {
 export const NotifyRule = resource('/ccsNotifyList', http, {});
 
 // 通知列表-操作日志
-export const NotifyLog = resource('/ccsNotifyList/log', http, {});
+export const NotifyLog = resource('/ccsNotifyList/log', http, {
+    // 查询操作日志列表
+    queryNotifyLog(id) {
+        return http.get(`/ccsNotifyList/log/${id}`);
+    },
+    // 编辑备注
+    editComment: (id, params) => {
+        return http.put('/ccsNotifyList/log/' + id, {params});
+    }
+});
 
 // 告警规则组对象
 export const AlarmRuleGroup = resource('/ccsWarnRuleGroup', http, {});

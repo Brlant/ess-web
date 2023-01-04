@@ -1,3 +1,10 @@
+<style lang="scss" scoped>
+::v-deep {
+    .p0.el-button {
+        padding: 0;
+    }
+}
+</style>
 <template>
   <dialog-template :pageSets="pageSets" @selectTab="selectTab">
     <template slot="title">通知列表</template>
@@ -31,8 +38,8 @@
           <div class="content">
               <el-row>
                   <el-col class="text-right mb-10">
-                      <el-button @click="exportPdf">导出PDF</el-button>
-                      <el-button @click="exportWord">导出word</el-button>
+                      <el-button v-has="'ccs-notify-export-pdf'" @click="exportPdf">导出PDF</el-button>
+                      <el-button v-has="'ccs-notify-export-word'" @click="exportWord">导出word</el-button>
                   </el-col>
               </el-row>
               <el-table :data="notify.details" border>
@@ -55,7 +62,7 @@
                   </el-table-column>
                   <el-table-column
                       label="通知类型"
-                      min-width="145"
+                      min-width="80"
                   >
                       <template slot-scope="{row,$index}">
                           <span>{{checkList[row.notifyType-1].label}}</span>
@@ -63,7 +70,7 @@
                   </el-table-column>
                   <el-table-column
                       label="TEL/微信号/邮箱"
-                      min-width="210"
+                      min-width="180"
                   >
                       <template slot-scope="{row,$index}">
                           <span>{{ row.contactInfo }}</span>
@@ -103,6 +110,7 @@
                   </el-table-column>
                   <el-table-column
                       label="维护时间"
+                      min-width="150"
                   >
                       <template slot-scope="{row,$index}">
                           <span>{{ row.operationTime | time }}</span>
@@ -110,6 +118,7 @@
                   </el-table-column>
                   <el-table-column
                       label="操作人"
+                      min-width="95"
                   >
                       <template slot-scope="{row,$index}">
                           <span>{{ row.operatorName }}</span>
@@ -157,7 +166,7 @@
             <div class="content">
                 <el-row>
                     <el-col class="text-right mb-10">
-                        <el-button @click="exportExcel">导出Excel</el-button>
+                        <el-button v-has="'ccs-notify-export-excel'" @click="exportExcel">导出Excel</el-button>
                     </el-col>
                 </el-row>
                 <el-table :data="operationList">
@@ -171,6 +180,7 @@
                     </el-table-column>
                     <el-table-column
                         label="操作时间"
+                        min-width="135"
                     >
                         <template slot-scope="{row,$index}">
                             <span>{{ row.operationTime | time }}</span>
@@ -185,6 +195,7 @@
                     </el-table-column>
                     <el-table-column
                         label="备注"
+                        min-width="130"
                     >
                         <template slot-scope="{row,$index}">
                             <span>{{ row.comment }}</span>
@@ -194,12 +205,12 @@
                         label="操作"
                     >
                         <template slot-scope="{row,$index}">
-                            <el-button type="text" @click="onEditComment(row)">编辑备注</el-button>
+                            <el-button type="text" class="p0" @click="onEditComment(row)">编辑备注</el-button>
                         </template>
                     </el-table-column>
                     <el-table-column type="expand">
                         <template slot-scope="props">
-                            <el-table :data="props.row.details" border>
+                            <el-table :data="props.row.details" border class="mt-10 mb-10">
                                 <el-table-column type="index" label="NO" width="45"></el-table-column>
                                 <el-table-column
                                     label="联系人类型"
@@ -256,7 +267,7 @@
             </el-form-item>
           </el-form>
           <span slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="onSaveComment">保存</el-button>
+            <el-button type="primary" :disabled="doing" @click="onSaveComment">保存</el-button>
             <el-button @click="editCommentDialogVisible = false">取消</el-button>
           </span>
         </el-dialog>
@@ -302,6 +313,7 @@
                 operationList: [],
                 editCommentDialogVisible: false, //  编辑备注弹框
                 editCommentForm: {
+                    id: '',
                     comment: ''
                 },
             };
@@ -343,7 +355,7 @@
             queryOperationList() {
                 this.operationList = [];
                 this.loading = true;
-                NotifyLog.get(this.formItem.id).then(res => {
+                NotifyLog.queryNotifyLog(this.formItem.id).then(res => {
                     this.operationList = res.data.list;
                     this.loading = false;
                 });
@@ -351,13 +363,29 @@
             // 编辑备注
             onEditComment(item) {
                 this.editCommentDialogVisible = true;
+                this.editCommentForm.id = item.notifyLogId;
                 this.editCommentForm.comment = item.comment;
             },
             // 保存编辑备注
             onSaveComment() {
-                // 调用保存备注接口 .then =>
-                this.editCommentDialogVisible = false;
-                // this.queryOperationList()
+                // 调用保存备注接口
+                let params = {
+                    comment: this.editCommentForm.comment
+                }
+                this.doing = true;
+                NotifyLog.editComment(this.editCommentForm.id, params).then(res=>{
+                    this.$notify.success({
+                        message: '编辑备注成功'
+                    });
+                    this.doing = false;
+                    this.editCommentDialogVisible = false;
+                    this.queryOperationList();
+                }).catch(error => {
+                    this.$notify.error({
+                        message: error.response && error.response.data && error.response.data.msg || '编辑备注失败'
+                    });
+                    this.doing = false;
+                });
             },
             // 导出PDF
             exportPdf() {
@@ -384,9 +412,9 @@
             // 导出word
             exportWord() {
                 let params = {};
-                /*this.doing = true;
+                this.doing = true;
                 this.$httpRequestOpera(this.$http({
-                    url: '',
+                    url: `/ccsNotifyList/export/word/${this.formItem.id}`,
                     params,
                     paramsSerializer(params) {
                         return qs.stringify(params, {indices: false});
@@ -401,14 +429,14 @@
                     error: () => {
                         this.doing = false;
                     }
-                });*/
+                });
             },
             // 导出Excel
             exportExcel() {
                 let params = {};
-                /*this.doing = true;
+                this.doing = true;
                 this.$httpRequestOpera(this.$http({
-                    url: '',
+                    url: `/ccsNotifyList/export/log/${this.formItem.id}`,
                     params,
                     paramsSerializer(params) {
                         return qs.stringify(params, {indices: false});
@@ -423,7 +451,7 @@
                     error: () => {
                         this.doing = false;
                     }
-                });*/
+                });
             }
         }
     };

@@ -1281,6 +1281,34 @@ export default [
                 'sort': null,
                 'children': null,
                 'leaf': true
+            }, {
+                'id': 'ccs-notify-export-pdf',
+                'parentId': 'ccs-notify-manager',
+                'label': '通知列表导出pdf',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-notify-export-word',
+                'parentId': 'ccs-notify-manager',
+                'label': '通知列表导出word',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-notify-export-excel',
+                'parentId': 'ccs-notify-manager',
+                'label': '通知列表导出excel',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-notify-notifyUser-del',
+                'parentId': 'ccs-notify-manager',
+                'label': '删除通知列表联系人',
+                'sort': null,
+                'children': null,
+                'leaf': true
             }],
             'leaf': false
         }],
