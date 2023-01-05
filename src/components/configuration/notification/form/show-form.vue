@@ -38,8 +38,8 @@
           <div class="content">
               <el-row>
                   <el-col class="text-right mb-10">
-                      <el-button v-has="'ccs-notify-export-pdf'" @click="exportPdf">导出PDF</el-button>
-                      <el-button v-has="'ccs-notify-export-word'" @click="exportWord">导出word</el-button>
+                      <el-button v-has="'ccs-notify-export-pdf'" :disabled="pdfDoing" @click="exportPdf">导出PDF</el-button>
+                      <el-button v-has="'ccs-notify-export-word'" :disabled="wordDoing" @click="exportWord">导出word</el-button>
                   </el-col>
               </el-row>
               <el-table :data="notify.details" border>
@@ -166,7 +166,7 @@
             <div class="content">
                 <el-row>
                     <el-col class="text-right mb-10">
-                        <el-button v-has="'ccs-notify-export-excel'" @click="exportExcel">导出Excel</el-button>
+                        <el-button v-has="'ccs-notify-export-excel'" :disabled="excelDoing" @click="exportExcel">导出Excel</el-button>
                     </el-col>
                 </el-row>
                 <el-table :data="operationList">
@@ -316,6 +316,9 @@
                     id: '',
                     comment: ''
                 },
+                pdfDoing: false,
+                wordDoing: false,
+                excelDoing: false,
             };
         },
         watch: {
@@ -390,9 +393,9 @@
             // 导出PDF
             exportPdf() {
                 let params = {};
-                /*this.doing = true;
+                this.pdfDoing = true;
                 this.$httpRequestOpera(this.$http({
-                    url: '',
+                    url: `/ccsNotifyList/export/pdf/${this.formItem.id}`,
                     params,
                     paramsSerializer(params) {
                         return qs.stringify(params, {indices: false});
@@ -401,18 +404,19 @@
                     successTitle: '导出成功',
                     errorTitle: '导出失败',
                     success: res => {
-                        this.doing = false;
-                        utils.download(res.data.path);
+                        this.pdfDoing = false;
+                        window.open(res.data.path)
+                        // utils.download(res.data.path);
                     },
                     error: () => {
-                        this.doing = false;
+                        this.pdfDoing = false;
                     }
-                });*/
+                });
             },
             // 导出word
             exportWord() {
                 let params = {};
-                this.doing = true;
+                this.wordDoing = true;
                 this.$httpRequestOpera(this.$http({
                     url: `/ccsNotifyList/export/word/${this.formItem.id}`,
                     params,
@@ -423,18 +427,18 @@
                     successTitle: '导出成功',
                     errorTitle: '导出失败',
                     success: res => {
-                        this.doing = false;
+                        this.wordDoing = false;
                         utils.download(res.data.path);
                     },
                     error: () => {
-                        this.doing = false;
+                        this.wordDoing = false;
                     }
                 });
             },
             // 导出Excel
             exportExcel() {
                 let params = {};
-                this.doing = true;
+                this.excelDoing = true;
                 this.$httpRequestOpera(this.$http({
                     url: `/ccsNotifyList/export/log/${this.formItem.id}`,
                     params,
@@ -445,11 +449,11 @@
                     successTitle: '导出成功',
                     errorTitle: '导出失败',
                     success: res => {
-                        this.doing = false;
+                        this.excelDoing = false;
                         utils.download(res.data.path);
                     },
                     error: () => {
-                        this.doing = false;
+                        this.excelDoing = false;
                     }
                 });
             }
