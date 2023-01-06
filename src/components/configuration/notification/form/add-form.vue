@@ -372,6 +372,7 @@
                 item.roleName = roleName.toString();
                 item.phone = obj.phone;
                 item.email = obj.email;
+                item.notifyUser = obj.name;
                 this.checkContactWay(item);
                 // 校验微信模式
                 this.queryWeChart(item);
