@@ -492,6 +492,7 @@
                     let isHas = this.userList.some(s => s.id === item.targetStr);
                     if (!isHas) {
                         item.name = res.data.name;
+                        item.notifyUser = res.data.name;
                         this.userList.push({
                             id: item.targetStr,
                             name: res.data.name,
