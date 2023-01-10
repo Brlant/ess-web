@@ -380,8 +380,15 @@
             },
             checkChange(item) {
                 item.openId = '';
-                item.phone = '';
-                item.email = '';
+                if (item.memberSource === '0') {
+                    let obj = this.userList.find(f => f.id === item.targetStr)
+                    item.phone = obj.phone;
+                    item.email = obj.email;
+                }
+                if (item.memberSource === '1') {
+                    item.phone = '';
+                    item.email = '';
+                }
                 // item.memberSource === '1' && (item.targetStr = '');
                 item.memberSource === '0' && this.checkContactWay(item);
                 // 校验微信模式
