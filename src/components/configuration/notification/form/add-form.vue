@@ -563,7 +563,7 @@
                             i.openId = undefined;
                             i.time = undefined;
                             i.checkPass = undefined;
-                            i.contactInfo = i.phone ? i.phone : i.email ? i.email : '';
+                            i.contactInfo = (i.notifyType === '1' || i.notifyType === '3') ? i.phone : i.notifyType === '2' ? i.email : '';
                         });
                         if (!this.form.id) {
                             this.doing = true;
