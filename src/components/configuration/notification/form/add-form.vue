@@ -557,7 +557,11 @@
                         form.details.forEach(i => {
                             i.name = undefined;
                             i.loading = undefined;
-                            if (i.memberSource === '1' && i.notifyType === '3') {
+                            if (i.memberSource === '1' && i.notifyType === '1') {
+                                i.targetStr = i.phone;
+                            } else if (i.memberSource === '1' && i.notifyType === '2') {
+                                i.targetStr = i.email;
+                            } else if (i.memberSource === '1' && i.notifyType === '3') {
                                 i.targetStr = i.openId;
                             }
                             i.openId = undefined;
