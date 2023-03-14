@@ -1,29 +1,34 @@
 <template>
         <!-- <div :style="svgFrameStyle" class='boxContainerItem'> -->
         <div class='boxContainerItem' ref="svgPart">
-            <img :src='imgUrl' :style="{ width : imgWidth + 'px', height : imgHeight + 'px' }" />
-            <VueDraggableResizable
-                :x="v.x"
-                :y="v.y"
-                :w="v.width"
-                :h="v.height"
-                :min-width="106"
-                :min-height="60"
-                :parent="true"
-                ref="dragVideo"
-                class="dragContainer"
-                @resizing="(x, y, width, height) => { resize( x, y, width, height, v ) }"
-                @dragging="(x, y) => { drag( x, y, v ) }"
-                @activated="onActivated( v )"
-                @deactivated="onDeactivated( v )"
-                @resizestop="( x, y, width, height ) => { onResizstop( v, x, y, width, height ) }"
-                v-for="( v, n ) in playObj"
-                :key="v.pointId"
-            >
-                <h3 class="titleTxt">{{ v.pointName }}{{ v.isActived }}<span @click="closeAlertFn( v.ccsDevId )">&times;</span></h3>
-                <div class="containMark" v-if="isActived"></div>
-                <iframe data-v-5a9dd0f5="" class="myiframe" ref="myiframe" :src="v.src" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen"></iframe>
-            </VueDraggableResizable>
+            <!--  把监控视频定位到图片上   -->
+            <div :style="{ width : imgWidth + 'px', height : imgHeight + 'px' }" >
+                <VueDraggableResizable
+                    :x="v.x"
+                    :y="v.y"
+                    :w="v.width"
+                    :h="v.height"
+                    :min-width="106"
+                    :min-height="60"
+                    :parent="true"
+                    ref="dragVideo"
+                    class="dragContainer"
+                    @resizing="(x, y, width, height) => { resize( x, y, width, height, v ) }"
+                    @dragging="(x, y) => { drag( x, y, v ) }"
+                    @activated="onActivated( v )"
+                    @deactivated="onDeactivated( v )"
+                    @resizestop="( x, y, width, height ) => { onResizstop( v, x, y, width, height ) }"
+                    v-for="( v, n ) in playObj"
+                    :key="v.pointId"
+                >
+                    <h3 class="titleTxt">{{ v.pointName }}{{ v.isActived }}<span @click="closeAlertFn( v.ccsDevId )">&times;</span></h3>
+                    <div class="containMark" v-if="isActived"></div>
+                    <iframe data-v-5a9dd0f5="" class="myiframe" ref="myiframe" :src="v.src" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen"></iframe>
+                </VueDraggableResizable>
+                <img :src='imgUrl' :style="{ width : imgWidth + 'px', height : imgHeight + 'px' }" />
+            </div>
+
+
 
             <audio hidden loop ref="alarmMusic" src="@/../static/audio/alarm.mp3"></audio>
 

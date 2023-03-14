@@ -413,7 +413,7 @@
                             <!-- <div class="content clearfix applyFlex flexDis flexDirV flexWStatic"> -->
                             <div class="content clearfix">
 
-                                <VueDraggableResizable
+<!--                <VueDraggableResizable
                                     :x="v.x"
                                     :y="v.y"
                                     :w="v.width"
@@ -436,7 +436,7 @@
                                     <div class="containMark" v-if="isActived"></div>
                                     <iframe data-v-5a9dd0f5="" class="myiframe" ref="myiframe" :src="v.src"
                                             allowfullscreen="allowfullscreen" allow="autoplay; fullscreen"></iframe>
-                                </VueDraggableResizable>
+               </VueDraggableResizable>-->
 
                                 <!-- 之前逻辑
                                   <div :style="svgFrameStyle" id="svgPart" ref="svgPart" class="svgPart applyFlex" >
@@ -477,9 +477,42 @@
                                            style="font-size:28px; color:red; font-weight:bold;"></i>
                                     </tmconfig>
 
-                                    <img :src="imgUrl" @mousemove="() => null"
-                                         style="user-select:none; pointer-events:none; z-index:-1;"
-                                         :style="{ width : imgWidth + 'px', height : imgHeight + 'px' }"/>
+<!--                  <img :src="imgUrl" @mousemove="() => null" style="user-select:none; pointer-events:none; z-index:-1;" :style="{ width : imgWidth + 'px', height : imgHeight + 'px' }" />-->
+
+                      <!--  把监控视频定位到图片上   -->
+                      <div :style="{ width : imgWidth + 'px', height : imgHeight + 'px' }">
+                          <VueDraggableResizable
+                              :x="v.x"
+                              :y="v.y"
+                              :w="v.width"
+                              :h="v.height"
+                              :min-width="106"
+                              :min-height="60"
+                              :lock-aspect-ratio="true"
+                              :parent="true"
+                              class="dragContainer"
+                              @resizing="(x, y, width, height) => { resize( x, y, width, height, v ) }"
+                              @dragging="(x, y) => { drag( x, y, v ) }"
+                              @activated="onActivated( v )"
+                              @deactivated="onDeactivated( v )"
+                              @resizestop="( x, y, width, height ) => { onResizstop( v, x, y, width, height ) }"
+                              v-for="( v, n ) in playObj"
+                              :key="v.pointId"
+                          >
+                              <h3 class="titleTxt">{{
+                                      v.pointName }}{{
+                                      v.isActived }}<span
+                                      @click="closeAlertFn( v.ccsDevId )">&times;</span></h3>
+                              <div class="containMark" v-if="isActived"></div>
+                              <iframe data-v-5a9dd0f5="" class="myiframe" ref="myiframe" :src="v.src"
+                                      allowfullscreen="allowfullscreen"
+                                      allow="autoplay; fullscreen"></iframe>
+                          </VueDraggableResizable>
+                          <img :src="imgUrl" @mousemove="() => null"
+                               style="user-select:none; pointer-events:none; z-index:-1;"
+                               :style="{ width : imgWidth + 'px', height : imgHeight + 'px' }">
+                      </div>
+
 
                                 </div>
                             </div>
