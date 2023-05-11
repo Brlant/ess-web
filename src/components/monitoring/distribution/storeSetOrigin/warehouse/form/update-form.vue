@@ -1,5 +1,5 @@
 <style lang="scss" scoped>
-.flexDis{ display:flex; 
+.flexDis{ display:flex;
     align-items:center;
     .el-input{ width:108px; margin:0 10px; }
     .el-tooltip{ margin:0 10px 0 0; }
@@ -85,7 +85,7 @@
                         <h3 :class="{active: pageSets[0].key === currentTab.key}" class="tit f-dib index-tit">
                             {{pageSets[0].name}}</h3>
                     </div>
-                
+
                     <el-form-item label="名称" prop="imageName">
                         <oms-input v-model="form.imageName"></oms-input>
                     </el-form-item>
@@ -113,7 +113,7 @@
                                     v-for="item in logisticsCenterList"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="仓库" prop="warehouseIds"> 
+                    <el-form-item label="仓库" prop="warehouseIds">
                         <el-select clearable filterable remote  reserve-keyword
                                  @focus="queryWarehouse"
                                 multiple placeholder="请选择仓库" v-model="form.warehouseIds">
@@ -122,7 +122,7 @@
                         </el-select>
                     </el-form-item>
                 </div>
-                
+
                 <div class="form-header-part">
                     <div class="header">
                         <h3 :class="{active: pageSets[1].key === currentTab.key}" class="tit f-dib index-tit">
@@ -154,7 +154,7 @@
                             <!-- 正常 -->
                             <div class="item">
 
-                                <oms-upload-icon-picture class="user-img" 
+                                <oms-upload-icon-picture class="user-img"
                                     @onSuccess="handelNormal"
                                     :ref="'normal'+index"
                                 >
@@ -164,7 +164,7 @@
                                         <img :src="item.normalImageSrc" v-else>
                                     </div>
                                 </oms-upload-icon-picture>
-                                
+
                                 <!--
                                     <i class="delete el-icon-circle-close" v-if="item.normalImageSrc" @click="resetNormal"></i>
                                     <el-upload
@@ -189,7 +189,7 @@
                             <!-- 高温 -->
                             <div class="item">
 
-                                <oms-upload-icon-picture class="user-img" 
+                                <oms-upload-icon-picture class="user-img"
                                     @onSuccess="handelWarn"
                                     :ref="'highWarn'+index"
                                 >
@@ -200,7 +200,7 @@
                                     </div>
                                 </oms-upload-icon-picture>
 
-                                <!-- 
+                                <!--
                                     <i class="delete el-icon-circle-close" v-if="item.highWarnImageSrc" @click="resetWarn"></i>
                                     <el-upload
                                         class="upload"
@@ -217,7 +217,7 @@
                                             <i :class="['icon', 'warn', item.icon]" v-if="!item.highWarnImageSrc"></i>
                                             <img :src="item.highWarnImageSrc" v-else>
                                         </div>
-                                    </el-upload> 
+                                    </el-upload>
                                 -->
                                 <span>超温</span>
                             </div>
@@ -245,7 +245,7 @@
                             <!--离线-->
                             <div class="item">
 
-                                <oms-upload-icon-picture class="user-img" 
+                                <oms-upload-icon-picture class="user-img"
                                     @onSuccess="handelOffLine"
                                     :ref="'offlineWarn'+index"
                                 >
@@ -256,7 +256,7 @@
                                     </div>
                                 </oms-upload-icon-picture>
 
-                                <!-- 
+                                <!--
                                     <i class="delete el-icon-circle-close" v-if="item.offlineWarnImageSrc" @click="resetOffLine"></i>
                                     <el-upload
                                         class="upload"
@@ -273,7 +273,7 @@
                                             <i :class="[item.icon]" v-if="!item.offlineWarnImageSrc"></i>
                                             <img :src="item.offlineWarnImageSrc" v-else>
                                         </div>
-                                    </el-upload> 
+                                    </el-upload>
                                 -->
                                 <span>离线</span>
                             </div>
@@ -321,7 +321,7 @@
                         1 : <el-input v-model="form.coordsProportion" placeholder="坐标比例" @blur="coordsProportionBlurFn"></el-input>
                         </div>
                     </el-form-item>
-                    
+
                     <el-form-item
                         label="定位图标修改"
                         v-for="(item, index) in formItemsSetOrigin"
@@ -332,7 +332,7 @@
                             <!-- 正常 -->
                             <div class="item">
 
-                                <oms-upload-icon-picture class="user-img" 
+                                <oms-upload-icon-picture class="user-img"
                                     @onSuccess="handelSetOriginNormal"
                                     :ref="'normalSetOrigin'+index"
                                 >
@@ -342,7 +342,7 @@
                                         <img :src="item.normalImageSrc" v-else>
                                     </div>
                                 </oms-upload-icon-picture>
-                                
+
                                 <!--
                                     <i class="delete el-icon-circle-close" v-if="item.normalImageSrc" @click="resetNormal"></i>
                                     <el-upload
@@ -364,11 +364,11 @@
                                 -->
                                 <span>正常</span>
                             </div>
-                            
+
                             <!--离线-->
                             <div class="item">
 
-                                <oms-upload-icon-picture class="user-img" 
+                                <oms-upload-icon-picture class="user-img"
                                     @onSuccess="handelSetOriginOffLine"
                                     :ref="'offlineWarnSetOrigin'+index"
                                 >
@@ -379,7 +379,7 @@
                                     </div>
                                 </oms-upload-icon-picture>
 
-                                <!-- 
+                                <!--
                                     <i class="delete el-icon-circle-close" v-if="item.offlineWarnImageSrc" @click="resetOffLine"></i>
                                     <el-upload
                                         class="upload"
@@ -396,7 +396,7 @@
                                             <i :class="[item.icon]" v-if="!item.offlineWarnImageSrc"></i>
                                             <img :src="item.offlineWarnImageSrc" v-else>
                                         </div>
-                                    </el-upload> 
+                                    </el-upload>
                                 -->
                                 <span>离线</span>
                             </div>
@@ -414,13 +414,13 @@
                         >
                         </el-switch>
                     </el-form-item>
-                    
+
                     <el-form-item label="刷新间隔" prop="refreshStep">
                         <div class="flexDis">
                             <el-input v-model="form.refreshStep" placeholder="请输入刷新间隔" @blur="refreshStepBlurFn"></el-input> 秒
                         </div>
                     </el-form-item>
-                    
+
                 </div>
             </el-form>
         </template>
@@ -516,7 +516,7 @@ export default {
 
             currentTab : {},
 
-            videoDevList : [], 
+            videoDevList : [],
             devTypeVal : -1 // 初始化后的 formItemsSetOrigin 对象索引
         };
     },
@@ -542,7 +542,7 @@ export default {
 
         }
     },
-    
+
     methods: {
 
         getVideoDevListFn(){
@@ -565,7 +565,7 @@ export default {
             this.formItemsSetOrigin[this.flag].normalImageId = res.attachmentId
             this.formItemsSetOrigin[this.flag].normalImageSrc = res.url ? res.url : ''
             this.$refs['normalSetOrigin'+this.flag][0].clearFilesFn && this.$refs['normalSetOrigin'+this.flag][0].clearFilesFn() ;
-            
+
         },
 
 
@@ -576,9 +576,9 @@ export default {
             this.formItemsSetOrigin[this.flag].offlineWarnImageId = res.attachmentId
             this.formItemsSetOrigin[this.flag].offlineWarnImageSrc = res.url ? res.url : ''
             this.$refs['offlineWarnSetOrigin'+this.flag][0].clearFilesFn && this.$refs['offlineWarnSetOrigin'+this.flag][0].clearFilesFn() ;
-           
+
         },
-        
+
         // 重置定位图标 - 正常
         resetSetOriginNormal() {
             this.formItemsSetOrigin[this.flag].normalImageSrc = ''
@@ -594,16 +594,16 @@ export default {
             // ){
             //     this.$refs['normal'+this.flag][0].handleRemove( this.formItems[this.flag].normalFile ) ;
             // }
-            
+
             // this.$refs['normal'+this.flag][0].clearFilesFn && this.$refs['normal'+this.flag][0].clearFilesFn() ;
 
         },
-        
+
         // 重置定位图标 - 离线
         resetSetOriginOffLine() {
             this.formItemsSetOrigin[this.flag].offlineWarnImageSrc = '' ;
             this.formItemsSetOrigin[this.flag].offlineWarnImageId = '' ;
-            this.formItemsSetOrigin[this.flag].offlineWarnFile = { attachmentId : '', url : '' } ; 
+            this.formItemsSetOrigin[this.flag].offlineWarnFile = { attachmentId : '', url : '' } ;
 
             // if(
             //     this.$refs['offlineWarn'+this.flag][0] &&
@@ -621,10 +621,10 @@ export default {
             this.formItems[this.flag].normalImageId = res.attachmentId
             this.formItems[this.flag].normalImageSrc = res.url ? res.url : ''
             this.$refs['normal'+this.flag][0].clearFilesFn && this.$refs['normal'+this.flag][0].clearFilesFn() ;
-            
-            
+
+
             /*
-                // 之前逻辑 
+                // 之前逻辑
                 this.formItems[this.flag].normalImageId = res ; // 之前返回 res 就是一个数字, 来做为 normalImageId 使用
                 this.formItems[this.flag].normalImageSrc = this.baseUrl + res
                 this.$refs['normal'+this.flag][0].clearFiles()
@@ -649,7 +649,7 @@ export default {
             this.formItems[this.flag].lowWarnImageId = res.attachmentId
             this.formItems[this.flag].lowWarnImageSrc = res.url ? res.url : ''
             this.$refs['lowWarn'+this.flag][0].clearFilesFn && this.$refs['lowWarn'+this.flag][0].clearFilesFn() ;
-            
+
             /*
                 // 之前逻辑
                 this.formItems[this.flag].lowWarnImageId = res
@@ -663,7 +663,7 @@ export default {
             this.formItems[this.flag].offlineWarnImageId = res.attachmentId
             this.formItems[this.flag].offlineWarnImageSrc = res.url ? res.url : ''
             this.$refs['offlineWarn'+this.flag][0].clearFilesFn && this.$refs['offlineWarn'+this.flag][0].clearFilesFn() ;
-            
+
             /*
                 // 之前逻辑
                 this.formItems[this.flag].offlineWarnImageId = res
@@ -671,7 +671,7 @@ export default {
                 this.$refs['offlineWarn'+this.flag][0].clearFiles()
             */
         },
-        
+
         typeChange(value) {
             this.flag = value
         },
@@ -719,7 +719,7 @@ export default {
             this.currentTab = this.pageSets[0] ;
 
             this.resetFormFn() ;
-            // console.error( 'reset...' ) ; 
+            // console.error( 'reset...' ) ;
 
             this.formItems.forEach(v => {
                 v.normalImageSrc = ''
@@ -757,7 +757,7 @@ export default {
             // ){
             //     this.$refs['normal'+this.flag][0].handleRemove( this.formItems[this.flag].normalFile ) ;
             // }
-            
+
             // this.$refs['normal'+this.flag][0].clearFilesFn && this.$refs['normal'+this.flag][0].clearFilesFn() ;
 
         },
@@ -786,14 +786,14 @@ export default {
             // ){
             //     this.$refs['lowWarn'+this.flag][0].handleRemove( this.formItems[this.flag].lowWarnFile ) ;
             // }
-            
+
         },
         resetOffLine() {
             // this.formItems[this.flag].offLineImageSrc = '' ;
             // this.formItems[this.flag].offLineImageId = '' ;
             this.formItems[this.flag].offlineWarnImageSrc = '' ;
             this.formItems[this.flag].offlineWarnImageId = '' ;
-            this.formItems[this.flag].offlineWarnFile = { attachmentId : '', url : '' } ; 
+            this.formItems[this.flag].offlineWarnFile = { attachmentId : '', url : '' } ;
 
             // if(
             //     this.$refs['offlineWarn'+this.flag][0] &&
@@ -865,12 +865,12 @@ export default {
                 // this.attachmentList = [{ name : this.form.imageName } ];
 
                 if( res.data.imageId && res.data.imageUrl ){
-                    this.attachmentList = [{ 
-                        name : res.data.imageName, 
+                    this.attachmentList = [{
+                        name : res.data.imageName,
 
                         attachmentId : res.data.imageId,
 
-                        // attachmentStoragePath、attachmentFileName 这二个属性用于在 upload.vue 文件中解析 
+                        // attachmentStoragePath、attachmentFileName 这二个属性用于在 upload.vue 文件中解析
                         attachmentStoragePath : res.data.imageUrl,
                         attachmentFileName : res.data.imageName
                     } ];
@@ -927,7 +927,7 @@ export default {
                                     attachmentId : ( v2.offlineWarnAttachmentId && v2.offlineWarnIconUrl ) ? v2.offlineWarnAttachmentId : '',
                                     url : ( v2.offlineWarnAttachmentId && v2.offlineWarnIconUrl ) ? v2.offlineWarnIconUrl : ''
                                 } ;
-                                
+
                                 // 之前字段
                                 // v1.normalImageId = v2.normalImageId || ''
                                 // v1.highWarnImageId = v2.highWarnImageId || ''
@@ -956,14 +956,14 @@ export default {
                             // v.normalImageSrc = indoorPositionSceneDTO.normalIconUrl ; // 之前逻辑
 
                             // 如果接口有数据用接口数据, 否则用 base64数据
-                            v.normalImageSrc = indoorPositionSceneDTO.normalIconUrl ? indoorPositionSceneDTO.normalIconUrl : this.normalUrlBase64 ;  
-                            
+                            v.normalImageSrc = indoorPositionSceneDTO.normalIconUrl ? indoorPositionSceneDTO.normalIconUrl : this.normalUrlBase64 ;
+
 
                             v.offlineWarnImageId = indoorPositionSceneDTO.offlineIconId ;
                             // v.offlineWarnImageSrc = indoorPositionSceneDTO.offlineIconUrl ;  // 之前逻辑
 
                             // 如果接口有数据用接口数据, 否则用 base64数据
-                            v.offlineWarnImageSrc = indoorPositionSceneDTO.offlineIconUrl ? indoorPositionSceneDTO.offlineIconUrl : this.offlineUrlBase64 ; 
+                            v.offlineWarnImageSrc = indoorPositionSceneDTO.offlineIconUrl ? indoorPositionSceneDTO.offlineIconUrl : this.offlineUrlBase64 ;
                         }
                     } ) ;
 
@@ -1016,7 +1016,7 @@ export default {
         onSubmit: function (formName) {
             this.$refs[formName].validate((valid) => {
                     if (!valid || this.doing) return;
-                    
+
                     const warehouseImageIconList = this.formItems.map(v => {
                         return {
                             backgroundId: this.formItem.backgroundId,
@@ -1063,7 +1063,7 @@ export default {
                         //     normalIconId : '',
                         //     normalIconUrl : '',
                         //     offlineIconId : '',
-                        //     offlineIconUrl : ''                    
+                        //     offlineIconUrl : ''
                         // }
                     };
 
@@ -1079,19 +1079,19 @@ export default {
                         normalIconId : '',
                         normalIconUrl : '',
                         offlineIconId : '',
-                        offlineIconUrl : ''                    
+                        offlineIconUrl : ''
                     } ;
 
                     this.formItemsSetOrigin.map( v => {
                         if( v.devType === this.devTypeVal ){
-                            
+
                             form.indoorPositionSceneDTO.normalIconId = v.normalImageId ;
                             // form.indoorPositionSceneDTO.normalIconUrl = v.normalImageSrc ; // 后台让修改的, 做图片本地缓存, 不用传 url 字段值, 只用传图片相关的 id 值
 
                             form.indoorPositionSceneDTO.offlineIconId = v.offlineWarnImageId ;
                             // form.indoorPositionSceneDTO.offlineIconUrl = v.offlineWarnImageSrc ;  // 后台让修改的, 做图片本地缓存, 不用传 url 字段值, 只用传图片相关的 id 值
                         }
-                        
+
                     } ) ;
 
                     this.doing = true;
@@ -1143,9 +1143,9 @@ export default {
             // console.error( 'picProportion: ', this.form.picProportion ) ;
         },
         coordsProportionBlurFn(){
-            if( !/^([0-9]\.[0-9]+|[1-9]|10)$/.test( this.form.coordsProportion ) ){
+            if( !/^([0-9]{1,2}\.?[0-9]+|[1-9]|100)$/.test( this.form.coordsProportion ) ){
                 this.$message({
-                  message : '不能小于等于0, 可以为小数, 最大为10',
+                  message : '不能小于等于0, 可以为小数, 最大为100',
                   type : 'warning'
                 }) ;
                 this.form.coordsProportion = '' ;
