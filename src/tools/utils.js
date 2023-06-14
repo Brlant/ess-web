@@ -31,12 +31,14 @@ export default {
         1: {'title': '停用', status: '0', num: ''}
     },
     wifiType: {
-        0: {'title': '全部', status: null, num: ''},
-        1: {'title': '使用中', status: '4', num: ''},
+        0: {'title': '全部', status: '', num: ''},
+        1: {'title': '待发放', status: '2', num: ''},
         2: {'title': '待使用', status: '3', num: ''},
-        3: {'title': '待发放', status: '2', num: ''},
-        4: {'title': '校准中', status: '1', num: ''},
-        5: {'title': '停用', status: '0', num: ''}
+        3: {'title': '使用中', status: '4', num: ''},
+        4: {'title': '待回收', status: '5', num: ''},     
+        5: {'title': '校准中', status: '1', num: ''},
+        6: {'title': '维修中', status: '6', num: ''},
+        7: {'title': '停用', status: '0', num: ''},
     },
     monitorType: {
         0: {'title': '激活', status: '1', num: ''},

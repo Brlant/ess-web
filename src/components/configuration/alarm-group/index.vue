@@ -11,7 +11,11 @@
 
     <div class="order-list" style="margin-top: 10px">
       <el-row class="order-list-header">
-        <el-col :span="20">规则组名称</el-col>
+        <el-col :span="4">规则组名称</el-col>
+        <el-col :span="4">运输条件</el-col>
+        <el-col :span="4">货主</el-col>
+        <el-col :span="4">匹配类型</el-col>
+        <el-col :span="4">优先级</el-col>
         <!--<el-col :span="10">创建时间</el-col>-->
         <el-col :span="4">操作</el-col>
       </el-row>
@@ -31,7 +35,13 @@
         <div :class="['status-no', {'active':currentItemId===item.id}]" @click="showItemDetail(item)"
              class="order-list-item order-list-item-bg " v-for="item in dataList">
           <el-row>
-            <el-col :span="20">{{item.ruleGroupName}}</el-col>
+            <el-col :span="4">{{item.ruleGroupName}}</el-col>
+            <el-col :span="4">
+              <dict :dict-group="'transportationCondition'" :dict-key="item.transCondition"></dict>
+            </el-col>
+            <el-col :span="4">{{formatOwns(item.owners)}}</el-col>
+            <el-col :span="4">{{formatNormalType(item.matchTypeList)}}</el-col>
+            <el-col :span="4">{{item.level}}</el-col>
             <el-col :span="4" class="opera-btn">
               <des-btn @click="edit(item)" icon="edit" v-has="'ccs-warn-rule-group-edit'">编辑</des-btn>
               <des-btn @click="deleteItem(item)" icon="delete" v-has="'ccs-warn-rule-group-del'"
@@ -67,7 +77,7 @@
     import alarmMixin from '@/mixins/alarmMixin';
 
     import {AlarmRuleGroup} from '@/resources';
-
+    import https from "@/https";
     export default {
         components: {
             SearchPart
@@ -84,7 +94,9 @@
                 defaultStyle: {
                     'width': '900px',
                     'padding': 0
-                }
+                },
+                customerList:[], // 货主列表
+                ruleGroupMatchTypeList:[], // 匹配类型列表
             };
         },
         watch: {
@@ -95,8 +107,15 @@
                 deep: true
             }
         },
-        mounted() {
-            this.queryList(1);
+        // computed: { 
+        //     ruleGroupMatchTypeList(){
+        //         return this.$getDict('ruleGroupMatchType');
+        //     },
+        // },
+        async mounted() {
+          await this.initCustom()
+          await this.initType()
+          await this.queryList(1);
         },
         methods: {
             searchResult: function (search) {
@@ -155,7 +174,78 @@
             change() {
                 this.resetRightBox();
                 this.queryList(1);
-            }
+            },
+            // 初始化货主
+            initCustom(){
+              let params = {
+                  pageNo: 1,
+                  pageSize: 9999,
+                  deleteFlag: false,
+                  keyWord:''
+              }
+              https.get('/org/pager', params).then(res => {
+                    this.customerList = res.list
+              })
+            },
+            // 初始化匹配类型（computed字典暂时拿不到该值）
+            initType(){
+              let params = {} ;
+              https.get('/dictGroup/ruleGroupMatchType/items', params).then(res => {
+                 this.ruleGroupMatchTypeList = res || [] ;
+              }).catch(error => {
+                  this.$notify.error({
+                      message: '接口请求失败！'
+                  })
+              }).finally(() => {
+              }) ;
+
+            },
+            // 格式化货主
+            formatOwns(val){
+              if(!val || val == null || val== undefined ||val =='')return ''
+              let value = val.split(',')
+              let arr = []
+              let str = ''
+              this.customerList.forEach(item => {
+                for(let i=0;i<value.length;i++){
+                  if(item.orgId == value[i]){
+                    arr.push(item)
+                  }
+                }
+              });
+              // 循环拼接字符串，最后一个不加，
+              for(let i=0;i<arr.length;i++){
+                if(i === arr.length-1){
+                  str += arr[i].orgName
+                } else {
+                  str +=arr[i].orgName+','
+                }
+              }
+              return str
+            },
+            // 格式化匹配类型
+            formatNormalType(val){
+              if(!val || val == null || val== undefined ||val =='')return ''
+              let value = val.split(',')
+              let arr = []
+              let str = ''
+              this.ruleGroupMatchTypeList.forEach(item => {
+                for(let i=0;i<value.length;i++){
+                  if(item.key == value[i]){
+                    arr.push(item)
+                  }
+                }
+              });
+              // 循环拼接字符串，最后一个不加，
+              for(let i=0;i<arr.length;i++){
+                if(i === arr.length-1){
+                  str += arr[i].label
+                } else {
+                  str +=arr[i].label+','
+                }
+              }
+              return str
+            },
         }
     };
 </script>

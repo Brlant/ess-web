@@ -266,6 +266,7 @@
                     @showBigMap="showBigMap"
                   -->
                   <tm :color="item.color" :fontColor="item.fontcolor" :item="item.devDetail" :key="index" :position="item.position" @goTo="goTo"
+                      :standby="item.standby"
                       :read-only="!editPosition"
                       :size="12" :tmData="tmData" ref="tm-part" v-for="(item, index) in tmData">
                     {{item.text}}
@@ -376,6 +377,9 @@
             };
         },
         computed: {
+          staticFullScreenInfo(){
+            return this.$store.state.staticFullScreen;
+          },
             bodyHeight: function () {
                 return parseInt(this.$store.state.bodyHeight, 10) - 20;
             },
@@ -468,6 +472,16 @@
             }
         },
         watch: {
+          staticFullScreenInfo:{
+            handler(val){
+              if(val){
+                this.queryDevs()
+                this.$store.state.staticFullScreen = false;
+              }
+              
+            },
+            deep: true
+          },
             isShowBigMap(val) {
                 if (val) return;
                 this.currentHeight = 0;
@@ -739,7 +753,8 @@
                       // currentGraph : JSON.stringify(this.currentGraph), // 之前逻辑
                       // tmData : JSON.stringify(this.tmData), // 之前逻辑
                       background : this.svgFrameStyle.backgroundImage,
-                      activeId : this.activeId
+                      activeId : this.activeId,
+                      backgroundName:this.currentGraph.backgroundName
                     }
                 });
                 window.open(routeData.href, '_blank') ;
@@ -782,7 +797,7 @@
                     // yxh 之前取的 ccsWarehouseImageDevRelationDTOList 字段信息
                     // let list = res.data.ccsWarehouseImageDevRelationDTOList;
 
-                    let list = res.data.ccsWarehouseImagePointRelationDTOList;  // 现在取 ccsWarehouseImagePointRelationDTOList 字段信息
+                    let list = res.data.response;  // 现在取 response 字段信息
                     if (list.length && list[0].backgroundId !== this.activeId) return;
                     // console.error( this.$refs.svgPart.offsetWidth, this.currentWidth, 77 ) ;
                     this.currentWidth = this.$refs.svgPart.offsetWidth ;
@@ -806,7 +821,24 @@
                     if( this.$refs.alarmMusic ){
                         this.isPlay ? this.$refs.alarmMusic.play() : this.$refs.alarmMusic.pause();
                     }
-
+                    if( this.tmData && Array.isArray( this.tmData ) ){
+                      this.tmData.forEach( v => {
+                        let standby = []
+                        if(v.devDetail.devPointName){   //设备名称
+                            standby.push({devType:v.devDetail.devType,value:v.devDetail.devPointName,key:'devPointName'})
+                        }
+                        if(v .devDetail.voltage){ // 电量  
+                            standby.push({devType:v.devDetail.devType,value:v.devDetail.voltage,key:'voltage'})
+                        }
+                        if(v.devDetail.temperature){ // 温度  
+                            standby.push({devType:v.devDetail.devType,value:v.devDetail.temperature,key:'temperature'})
+                        }
+                        if(v.devDetail.humidity){ // 湿度  
+                            standby.push({devType:v.devDetail.devType,value:v.devDetail.humidity,key:'humidity'})
+                        }
+                        v.standby = standby
+                      } ) ;
+                }
                     /*
                       // 暂时屏蔽掉大图跳转逻辑
                       if( isStaticFullScreen ){

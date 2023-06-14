@@ -293,8 +293,21 @@ export const PointRelation = resource('/ccs-point-relation', http, {
 export const CcsWarehouse = resource('/ccsWarehouse', http, {
   queryAllList(params) {
     return http.get('/ccsWarehouse/gainAllWarehouseList', {params});
-  }
+  },
+  /**
+   * zxh  获取静态配置中的显示字段
+   * 
+   */
+  getWarehouseConfig(id){
+    return http.get(`/ccsWarehouse/getWarehouseConfig/${id}`);
+  },
+  editWarehouseConfig(params){
+    return http.put('/ccsWarehouse/editWarehouseConfig',params);
+  },
 });
+
+
+
 
 // dev设备对象
 export const TempDev = resource('/ccsDevice', http, {
