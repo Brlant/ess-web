@@ -167,9 +167,9 @@
         </el-scrollbar>
       </div>
       <div class="d-table-right applyFlex flexWStatic">
-        <!-- 
+        <!--
           之前标签
-          <el-scrollbar :style="'height:'+ (bodyHeight+20) + 'px'" class="d-table-left_scroll" id="d-table-left_scroll" tag="div"> 
+          <el-scrollbar :style="'height:'+ (bodyHeight+20) + 'px'" class="d-table-left_scroll" id="d-table-left_scroll" tag="div">
         -->
         <div :style="'height:'+ (bodyHeight+20) + 'px;'" class="d-table-left_scroll" id="d-table-left_scroll" tag="div">
           <div v-if="loadingDataTemp">
@@ -213,17 +213,20 @@
 
                 <!--
                   之前权限逻辑 - 控制范围权限
-                 <el-col :span="7" align="right" v-has="'ccs-warehouse-dev-edit'" v-show="tmData.length"> 
+                 <el-col :span="7" align="right" v-has="'ccs-warehouse-dev-edit'" v-show="tmData.length">
                 -->
                 <el-col :span="7" align="right" v-show="tmData.length">
 
                   <el-button-group>
+                    <el-button @click="open3d" v-has="'ccs-image-scan'" plain="" size="mini">
+                      3D航头仓库
+                    </el-button>
                     <el-button @click="showBigMap" plain="" size="mini">查看大图</el-button>
 
                     <el-button @click="unitRight" plain="" size="mini" v-has="'ccs-org-devmap-authorized'">单位授权</el-button>
                     <!--<el-button plain="" size="mini" v-has="'ccs-org-devmap-authorized'">单位授权</el-button>-->
 
-                    <el-button @click="doEditPos" plain="" v-has="'ccs-warehouse-dev-edit'" size="mini" v-if="!editPosition">编辑设备位置
+                    <el-button @click="doEditPos" plain="" v-has="'ccs-warehouse-dev-edit'" size="mini" v-if="!editPosition">编辑点位位置
                     </el-button>
                     <template v-else  v-has="'ccs-warehouse-dev-edit'">
                       <el-button @click="savePos" plain="" size="mini">保存
@@ -236,7 +239,7 @@
               </el-row>
               <!-- <div class="content clearfix applyFlex flexDis flexDirV" :style="{ 'width': currentWidth + 'px', 'height' : currentHeight + 'px' }"> -->
               <div class="content clearfix applyFlex flexDis flexDirV">
-                
+
                 <VueDraggableResizable
                   :x="v.x"
                   :y="v.y"
@@ -288,9 +291,9 @@
 
 
           </div>
-        <!-- 
+        <!--
           之前标签
-          </el-scrollbar> 
+          </el-scrollbar>
         -->
         </div>
       </div>
@@ -368,7 +371,7 @@
                 isActived : false, // 是否激活 iframe
                 playObj : {}, // 视频播放 列表数据
 
-                idVal : '', // 场景 id 
+                idVal : '', // 场景 id
                 step : 1000, // 间隔
                 timer : null, // 定时器引用
 
@@ -409,10 +412,10 @@
                     */
                 });
                 return this.tempList.map((m) => {
-                   
+
                     if ( m.warnFlag  || ( m.warnTypes && m.warnTypes.includes( 4 ) ) ) { // 超温 和 离线
                       this.isAlarm = true;
-                    } 
+                    }
 
                     let obj = {
                       color: this.getColor(m),
@@ -424,8 +427,8 @@
                             // x: m.isNotAlloat ? m.initPositionX : (m.positionX * this.scaling),
                             // y: m.isNotAlloat ? m.initPositionY : (m.positionY * this.scaling)
                         },
-                        text: m.devType === 4 ? 
-                              m.humidity + '%' : 
+                        text: m.devType === 4 ?
+                              m.humidity + '%' :
                               +m.isVideo === 1 ? // 如果是视频类型
                               m.pointName :
                               m.temperature + '℃',
@@ -530,13 +533,13 @@
               }
             },
             drag(x, y, v) {
-              v.x = x ;  
-              v.y = y ; 
+              v.x = x ;
+              v.y = y ;
 
               let statcVideo = JSON.parse( localStorage.getItem( 'staticVideo' ) ) || {} ;
               if( statcVideo[ this.idVal ] && statcVideo[ this.idVal ][ v.ccsDevId ]){
-                statcVideo[ this.idVal ][ v.ccsDevId ].x = v.x; 
-                statcVideo[ this.idVal ][ v.ccsDevId ].y = v.y; 
+                statcVideo[ this.idVal ][ v.ccsDevId ].x = v.x;
+                statcVideo[ this.idVal ][ v.ccsDevId ].y = v.y;
 
                 localStorage.setItem( 'staticVideo', JSON.stringify( statcVideo ) ) ;
               }
@@ -554,7 +557,7 @@
               let obj = { ...this.playObj } ;
               delete obj[ ccsDevId ] ;
               // delete obj[ pointId ] ;
-              this.playObj = obj ; 
+              this.playObj = obj ;
 
               let statcVideo = JSON.parse( localStorage.getItem( 'staticVideo' ) ) || {} ;
               if( statcVideo[ this.idVal ] ){
@@ -572,7 +575,7 @@
               if (m.monitorStatus !== '1') return '#26d6dd'; // 低温
                 if (!m.warnFlag) return '#0f0'; // 正常
                 if (m.warnTypes && m.warnTypes.includes(4)) return '#666'; // 离线
-                
+
                 return '#f00'; // 超温
 
                 /*
@@ -677,7 +680,7 @@
 
                 // 之前逻辑
                 // if (isAlarm) {
-                if ( this.isPlay ) { 
+                if ( this.isPlay ) {
                     if (alarmMusic) {
                         alarmMusic.currentTime = 0;
                         alarmMusic.play();
@@ -719,6 +722,10 @@
                 this.setScaling();
                 this.$router.push(`/monitoring/distribution/${item.backgroundId ? item.backgroundId : 'id'}`);
             },
+            open3d() {
+                let id = this.activeId;
+                window.open('/api/warehouse3d/' + id);
+            },
             showBigMap() { // 显示大图
                 this.tempList = [];
                 let width = document.body.clientWidth;
@@ -754,7 +761,7 @@
             queryGraphList: function () {
                 this.loadingDataWare = true;
 
-                warehouseDevImage.query({ 
+                warehouseDevImage.query({
                   sceneType : 1  // 1 : 静态场景     2 : 室内定位场景
                 }).then(res => {
                   this.currentGraph = {};
@@ -787,7 +794,7 @@
                     // console.error( this.$refs.svgPart.offsetWidth, this.currentWidth, 77 ) ;
                     this.currentWidth = this.$refs.svgPart.offsetWidth ;
                     this.currentHeight = this.$refs.svgPart.offsetHeight ;
-                    
+
                     // debugger
                       // if( this.count % 2 === 0 ){
                       //   list.forEach( v => {
@@ -798,8 +805,8 @@
                       //     v.warnFlag = true ;
                       //   } ) ;
                       // }
-                    
-                    this.tempList = list; 
+
+                    this.tempList = list;
 
                     // this.count ++ ;
 
@@ -905,14 +912,14 @@
                 });
             },
             goTo(value){
-                
+
                 // 重置
                 value.x = value.x || 0 ;
                 value.y = value.y || 0 ;
                 value.width = value.width || 400 ;
                 value.height = value.height || 228 ;
 
-                if( +value.isVideo === 1 ){ // 如果是视频类型 
+                if( +value.isVideo === 1 ){ // 如果是视频类型
                   this.drawer = false ;
 
                   if( Object.keys( this.playObj ).length >= 2 ){
@@ -921,9 +928,9 @@
                         message: '打开超过限制'
                       });
                       return ;
-                  } 
+                  }
 
-                  value.src= value.videoUrl;                
+                  value.src= value.videoUrl;
                   this.$set( this.playObj, value.ccsDevId, value ) ;
 
                   let staticVideo = JSON.parse( localStorage.getItem( 'staticVideo' ) ) || {} ;
@@ -942,15 +949,15 @@
                     devCode:value.devCode,
                     devlist:[value]
                   };
-                  
+
                   if(this.drawer){
                     this.refreshEcharts=this.currentClickElement.scenesElementId;
                     if( +value.isVideo ){  // 如果是视频类型则不查看 echarts 图数据
-                      this.drawer=false; 
+                      this.drawer=false;
                     }
                   } else {
                     if( +value.isVideo ){  // 如果是视频类型则不查看 echarts 图数据
-                      this.drawer=false; 
+                      this.drawer=false;
                     } else {
                       this.drawer=true;
                     }
@@ -963,7 +970,7 @@
             },
             //子组件slider组件input事件
             sliderChange(val) {
-              
+
             },
             //关闭弹窗
             handleCloseDrawer(e) {

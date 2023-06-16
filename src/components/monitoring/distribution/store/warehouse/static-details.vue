@@ -26,14 +26,14 @@
                         <i class="el-icon-circle-close" @click="closeDrawer"></i>
                         <!-- <i class="el-icon-error" @click="closeDrawer"></i> -->
                     </div>
-                    <!-- 
+                    <!--
                         之前逻辑
                         <el-col :span="2">
                             <i class="el-icon-error" @click="closeDrawer"></i>
-                        </el-col> 
+                        </el-col>
                     -->
                 </el-row>
-            </div>   
+            </div>
             <div class="content">
                 <div class="left">
                     <el-tooltip  :content="element.scenesElementName"  placement="right"  >
@@ -42,7 +42,7 @@
                  <p class="device-name" >{{"设备Code："+selectDevice.devCode }}</p>
                 </div>
                 <div class="right">
-                    <!-- 
+                    <!--
                         // 解决 echarts 解决 TypeError : axis.getAxesOnZeroOf is not a function 问题, 应该注释此位置的如下代码 :
                         <e-charts
                             class="e-charts-box"
@@ -50,7 +50,7 @@
                             ref="chart"
                             theme="light"
                         >
-                        </e-charts> 
+                        </e-charts>
                     -->
                     <!--
                         // 解决 echarts 解决 TypeError : axis.getAxesOnZeroOf is not a function 问题, 添加此位置的如下代码 :
@@ -61,7 +61,7 @@
                             theme="light"
                             v-if="Object.keys(options).length"
                         >
-                        </e-charts> 
+                        </e-charts>
                         <div v-else style="color:white; height:100%; display:flex; justify-content:center; align-items:center;"><p>暂无数据</p></div>
                     -->
                     <e-charts
@@ -72,8 +72,8 @@
                     >
                     </e-charts>
                 </div>
-                
-                <!-- 
+
+                <!--
                     之前逻辑
                     <div style="position: absolute;top: 3px;right: 7px;z-index: 1001;color: gray;cursor: pointer;font-size: 15px;" >
                         <i
@@ -85,7 +85,7 @@
                             @click="clickShowRecored"
                             style="margin-left: 10px;"
                         ></i>
-                    </div> 
+                    </div>
                 -->
             </div>
 
@@ -159,7 +159,7 @@ export default {
             showDatePickerRange: false,
             datePickerRangeValue: "",
             sliderMaxCount: 0,
-            
+
             /*
                 // 解决 echarts 解决 TypeError : axis.getAxesOnZeroOf is not a function 问题, 注释掉此位置的如下代码 :
                 options: {
@@ -320,7 +320,7 @@ export default {
             });
 
             /*
-                // 解决 echarts 解决 TypeError : axis.getAxesOnZeroOf is not a function 问题 应该注释掉此位置的如下代码 : 
+                // 解决 echarts 解决 TypeError : axis.getAxesOnZeroOf is not a function 问题 应该注释掉此位置的如下代码 :
 
                 this.options = this.getOptions();
 
@@ -348,7 +348,7 @@ export default {
                     this.devicesInfo=devices;
 
                     /*
-                        解决 echarts 解决 TypeError : axis.getAxesOnZeroOf is not a function 问题, 应添加此位置如下代码 : 
+                        解决 echarts 解决 TypeError : axis.getAxesOnZeroOf is not a function 问题, 应添加此位置如下代码 :
                         if( list.length ){ // 如果有数据则进行渲染
                             this.options = this.getOptions();
 
@@ -424,7 +424,7 @@ export default {
                         data,
                         devices
                     );
-                    
+
                     this.options.series.push(seriesItem);
                     yAxisItem = this.getYAxisItem(
                         name,
@@ -442,12 +442,12 @@ export default {
 
                         '温度': +this.selectDevice.devType === 0 ||
                                 +this.selectDevice.devType === 1 ||
-                                +this.selectDevice.devType === 2 || 
+                                +this.selectDevice.devType === 2 ||
                                 +this.selectDevice.devType === 3,
 
                         "湿度": +this.selectDevice.devType === 4,
                         "电量": +this.selectDevice.devType === -1, // 暂无电量类型 屏蔽掉为 -1
-                        
+
                     };
 
                 })
@@ -686,7 +686,7 @@ export default {
 
     },
     mounted() {
-        
+
 
         /*
             // 解决 echarts 解决 TypeError : axis.getAxesOnZeroOf is not a function 问题, 注释掉此位置的如下代码 :
@@ -732,7 +732,7 @@ export default {
     align-items: center;
     justify-content: center;
     z-index: 999;
-    
+
 }
 
 .container-box {
@@ -776,7 +776,7 @@ export default {
 }
 .content .left {
     /* width:100px; */
-    
+
     width:13em;
     /* height: 190px; */
 }
@@ -873,7 +873,7 @@ export default {
 
 .el-slider /deep/ .el-slider__button {
     border: solid 2px gray;
-    width:14px; height:14px; 
+    width:14px; height:14px;
 }
 
 .el-tabs /deep/ .el-tabs__item {
