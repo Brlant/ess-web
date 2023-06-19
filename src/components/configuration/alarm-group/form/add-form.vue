@@ -195,7 +195,11 @@
                     if (valid && this.doing === false) {
                         let form = JSON.parse(JSON.stringify(this.form));
                         form.ruleIds = form.rules.join(',');
-                        form.owners = form.owners.join(',');
+                        if(form.owners && form.owners.length>0){
+                            form.owners = form.owners.join(',');
+                        }else{
+                            form.owners = '';
+                        }
                         form.matchTypeList = form.matchTypeList.join(',');
                         form.ccsNotifyIdList = form.ccsNotifyIdList.join(',');
                         // TODO
