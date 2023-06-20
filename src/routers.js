@@ -228,7 +228,7 @@ export const routes = [
                 {
                     path: '/statistics/warehouseTemp',
                     component: () => import('./components/statistics/warehouseTemp/index.vue'),
-                    meta: { moduleId: 'statistics', title: '库内温度巡检', perm: 'ccs-check-task' }
+                    meta: { moduleId: 'statistics', title: '库内温湿度巡检', perm: 'ccs-check-task' }
                 },
 
             ]
@@ -403,7 +403,7 @@ export const routes = [
         path: '/warehouseTemp/detail',
         name:'warehouseTempDetail',
         component: () => import('./components/statistics/warehouseTemp/detail/index'),
-        meta: { moduleId: 'statistics', title: '库内温度巡检详情', perm: '',breadcrumb: false }
+        meta: { moduleId: 'statistics', title: '库内温湿度巡检详情', perm: '',breadcrumb: false }
     },
 
   // yxh 添加动态场景全屏组件路由

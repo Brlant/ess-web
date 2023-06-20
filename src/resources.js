@@ -681,7 +681,7 @@ export const BaseInfo = resource('/orgs', http, {
 
 });
 
-//统计-库内温度巡检
+//统计-库内温湿度巡检
 export const WarehouseTemp = resource('/auto', http, {
     // 查询自动巡检任务
     gainWarehouseWithChildList: () => {
