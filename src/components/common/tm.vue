@@ -1,9 +1,9 @@
 <template>
     <!-- <svg :style="`left:${currentPos.x}px;top:${currentPos.y}px;height: ${iconScale !== 1 ? '30px' : '20px'}`" -->
     <!-- <svg  :style="`left:${currentPos.x}px;top:${currentPos.y}px;height: ${iconScale !== 1 ? '30px' : '20px'}`" -->
-    <!-- :style="`left:${currentPos.x}%;top:${currentPos.y}%;height: ${iconScale !== 1 ? '55px' : '20px'};`" -->
+    <!-- :style="`left:${currentPos.x}%;top:${currentPos.y}%;height: ${iconScale !== 1 ? '55px' : '55px'};`"  大图小图显示同样的数据-->   
     <svg :style="
-        `left:${currentPos.x}%;top:${currentPos.y}%;height: ${iconScale !== 1 ? '55px' : '26px'};`  
+        `left:${currentPos.x}%;top:${currentPos.y}%;height: ${iconScale !== 1 ? '55px' : '55px'};`  
     "
          @click="goTo"
          @mousedown="dragPosition"
