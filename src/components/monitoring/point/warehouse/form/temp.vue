@@ -29,7 +29,7 @@
                     <oms-input placeholder="请输入点位名称" type="text" v-model="point.pointName" min="0" :maxlength="100"
                                show-word-limit></oms-input>
                 </el-form-item>
-                <el-form-item label="高度">
+                <el-form-item label="高度(m)">
                     <oms-input placeholder="请输入点位高度"
                                type="number"
                                v-model="point.pointHeight"
