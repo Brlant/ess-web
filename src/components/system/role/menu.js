@@ -880,61 +880,61 @@ export default [
             {
                 'id': 'ccs-check-task',
                 'parentId': 'report-center',
-                'label': '库内温度巡检',
+                'label': '库内温湿度巡检',
                 'sort': 1,
                 'children': [{
                     'id': 'ccs-check-task-list',
                     'parentId': 'ccs-check-task',
-                    'label': '库内温度巡检列表查询',
+                    'label': '库内温湿度巡检列表查询',
                     'sort': null,
                     'children': null,
                     'leaf': true
                 }, {
                     'id': 'ccs-check-task-add',
                     'parentId': 'ccs-check-task',
-                    'label': '库内温度巡检添加按钮',
+                    'label': '库内温湿度巡检添加按钮',
                     'sort': null,
                     'children': null,
                     'leaf': true
                 }, {
                     'id': 'ccs-check-task-refresh',
                     'parentId': 'ccs-check-task',
-                    'label': '库内温度巡检刷新按钮',
+                    'label': '库内温湿度巡检刷新按钮',
                     'sort': null,
                     'children': null,
                     'leaf': true
                 }, {
                     'id': 'ccs-check-result',
                     'parentId': 'ccs-check-task',
-                    'label': '库内温度巡检结果查看按钮',
+                    'label': '库内温湿度巡检结果查看按钮',
                     'sort': null,
                     'children': null,
                     'leaf': true
                 }, {
                     'id': 'ccs-auto-check-config',
                     'parentId': 'ccs-check-task',
-                    'label': '库内温度巡检自动任务配置按钮',
+                    'label': '库内温湿度巡检自动任务配置按钮',
                     'sort': null,
                     'children': null,
                     'leaf': true
                 }, {
                     'id': 'ccs-auto-check-config-add',
                     'parentId': 'ccs-check-task',
-                    'label': '库内温度巡检自动任务配置添加按钮',
+                    'label': '库内温湿度巡检自动任务配置添加按钮',
                     'sort': null,
                     'children': null,
                     'leaf': true
                 }, {
                     'id': 'ccs-auto-check-config-edit',
                     'parentId': 'ccs-check-task',
-                    'label': '库内温度巡检自动任务配置修改按钮',
+                    'label': '库内温湿度巡检自动任务配置修改按钮',
                     'sort': null,
                     'children': null,
                     'leaf': true
                 }, {
                     'id': 'ccs-auto-check-config-del',
                     'parentId': 'ccs-check-task',
-                    'label': '库内温度巡检自动任务配置删除按钮',
+                    'label': '库内温湿度巡检自动任务配置删除按钮',
                     'sort': null,
                     'children': null,
                     'leaf': true
@@ -1213,7 +1213,44 @@ export default [
                 'leaf': true
             }],
             'leaf': false
-        }, {
+        }, 
+        {
+            'id': 'ccs-warn-rule-group-set',
+            'parentId': 'ccs-config-center',
+            'label': '运单/车辆告警规则组',
+            'sort': 1,
+            'children': [{
+                'id': 'ccs-warn-rule-group-set-del',
+                'parentId': 'ccs-warn-rule-group-set',
+                'label': '删除告警规则组',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-warn-rule-group-set-edit',
+                'parentId': 'ccs-warn-rule-group-set',
+                'label': '修改告警规则组',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-warn-rule-group-set-add',
+                'parentId': 'ccs-warn-rule-group-set',
+                'label': '添加告警规则组',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-warn-rule-group-set-scan',
+                'parentId': 'ccs-warn-rule-group-set',
+                'label': '查看告警规则组',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }],
+            'leaf': false
+        },
+        {
             'id': 'ccs-warn-rule-manager',
             'parentId': 'ccs-config-center',
             'label': '告警规则',

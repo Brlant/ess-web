@@ -182,20 +182,19 @@ export function init(Vue) {
     Vue.prototype.$formatDevData = function (item, type) {
         let unit = ['', '℃', '%', '%'];
         let prop = ['', 'temperature', 'humidity', 'voltage'];
-        if (!item[prop[+type]]) return '';
+        if (item[prop[+type]] ==null || item[prop[+type]] == undefined) return '';
         return item[prop[+type]].toFixed(2) + unit[+type]; 
     };
 
     // 格式化设备首页数据
     Vue.prototype.$formatDevIndexData = function (item, devType) {
-
         let unit = ['', '℃', '%', '%'];
         let prop = ['', 'temperature', 'humidity', 'voltage'];
         if (devType && +devType === 4) {
-            if (!item[prop[2]]) return '';
+            if (item[prop[2]] === null || item[prop[2]] === undefined) return '';
             return item[prop[2]].toFixed(2) + unit[2];
         } else {
-            if (!item[prop[1]]) return '';
+            if (item[prop[1]] === null || item[prop[1]] === undefined) return '';
             return item[prop[1]].toFixed(2) + unit[1];
         }
     };

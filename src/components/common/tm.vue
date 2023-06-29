@@ -1,9 +1,9 @@
 <template>
     <!-- <svg :style="`left:${currentPos.x}px;top:${currentPos.y}px;height: ${iconScale !== 1 ? '30px' : '20px'}`" -->
     <!-- <svg  :style="`left:${currentPos.x}px;top:${currentPos.y}px;height: ${iconScale !== 1 ? '30px' : '20px'}`" -->
-        
+    <!-- :style="`left:${currentPos.x}%;top:${currentPos.y}%;height: ${iconScale !== 1 ? '55px' : '55px'};`"  大图小图显示同样的数据-->   
     <svg :style="
-        `left:${currentPos.x}%;top:${currentPos.y}%;height: ${iconScale !== 1 ? '30px' : '20px'};`  
+        `left:${currentPos.x}%;top:${currentPos.y}%;height: ${iconScale !== 1 ? '55px' : '55px'};`  
     "
          @click="goTo"
          @mousedown="dragPosition"
@@ -35,10 +35,16 @@
         ></image>
         <use :height="getDevIconWH(item, 3)" :style="'fill:'+ color" :width="getDevIconWH(item, 2)"
              :xlink:href="getDevIcon(item)" v-show="item.devType !== '3'" v-else></use>
-        <text :font-size="12" :x="getDevIconOffset(item).x" :y="getDevIconOffset(item).y"
+        <!-- <text :font-size="12" :x="getDevIconOffset(item).x" :y="getDevIconOffset(item).y"
               :fill="fontColor" text-anchor="start" class="text">
             <slot></slot>
-        </text>
+        </text> -->
+        <text v-for="(item1,index) in standby" :font-size="12" :key="index" :fill="fontColor" :x="getDevIconOffset(item).x+5" :y="getDevIconOffset(item).y+(index*12)-2">
+            {{item1.key == 'temperature'?item1.value+'℃':item1.value}}</text>
+        <!-- <text :x="getDevIconOffset(item).x" :y="getDevIconOffset(item).y">111111</text>
+        <text :x="getDevIconOffset(item).x" :y="getDevIconOffset(item).y+10">111111</text>
+        <text :x="getDevIconOffset(item).x" :y="getDevIconOffset(item).y+22">111111</text>
+        <text :x="getDevIconOffset(item).x" :y="getDevIconOffset(item).y+34">111111</text> -->
     </svg>
 </template>
 
@@ -66,7 +72,7 @@ export default {
         },
         labelId() {
             return this.item.ccsWarehouseImagePointRelationId + this.iconScale + '';
-        }
+        },
     },
     props: {
         size: {
@@ -106,12 +112,38 @@ export default {
             type: Number,
             default: 1
         },
-        tmData: Array
+        tmData: Array,
+        standby: Array,
+
     },
     watch : {
         position( v ){
             this.currentPos = v ;
-        }
+        },
+        // tmData:{
+        //     handler(){
+        //         // 备用一个数组，为了展示svg返回过来的显示信息
+        //         this.tmData.forEach(item=>{
+        //             let standby = []
+        //             debugger
+        //             if(item.devDetail.devPointName){   //设备名称
+        //                 standby.push({devType:item.devDetail.devType,x:item.position.x,y:item.position.y,value:item.devDetail.devPointName})
+        //             }
+        //             if(item.devDetail.voltage){ // 电量  
+        //                 standby.push({devType:item.devDetail.devType,x:item.position.x,y:item.position.y,value:item.devDetail.voltage})
+        //             }
+        //             if(item.devDetail.temperature){ // 温度  
+        //                 standby.push({devType:item.devDetail.devType,x:item.position.x,y:item.position.y,value:item.devDetail.temperature})
+        //             }
+        //             if(item.devDetail.humidity){ // 湿度  
+        //                 standby.push({devType:item.devDetail.devType,x:item.position.x,y:item.position.y,value:item.devDetail.humidity})
+        //             }
+        //             item.standby = standby
+        //         })
+        //     },
+        //     deep:true,
+        //     immediate:true
+        // },
     },
     methods: {
         getVideoImageURL(item){
@@ -304,7 +336,7 @@ export default {
 <style>
 .tm-container {
     position: absolute;
-    width: 70px;
+    /* width: auto; */
     height: 20px;
     cursor: pointer;
 }

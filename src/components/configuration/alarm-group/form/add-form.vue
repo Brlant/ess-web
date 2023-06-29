@@ -10,7 +10,7 @@
           <oms-input placeholder="请输入规则名称" type="text" v-model="form.ruleGroupName"></oms-input>
         </el-form-item>
         <el-form-item label="告警规则" prop="rules">
-          <el-select :remote-method="queryRule" filterable
+          <el-select :remote-method="queryRule" filterable 
                      multiple placeholder="请输入名称搜索告警规则" remote v-model="form.rules">
             <el-option :key="item.id" :label="item.ruleName" :value="item.id"
                        v-for="item in ruleList"></el-option>
@@ -22,7 +22,7 @@
 </template>
 <script>
     import {AlarmRule, AlarmRuleGroup} from '@/resources';
-
+    import https from "@/https";
     export default {
         data() {
             return {
