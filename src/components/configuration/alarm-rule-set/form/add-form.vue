@@ -19,7 +19,7 @@
             <el-select filterable remote placeholder="请输入名称搜索货主信息" :remote-method="filterCustomer"
                             multiple @click.native.once="filterCustomer('')"
                            v-model="form.owners" >
-                <el-option :value="org.orgId" :key="org.orgId" :label="org.orgName" v-for="org in customerList">
+                <el-option :value="org.dhsOrgId" :key="org.orgId" :label="org.orgName" v-for="org in customerList">
                     <!-- <div style="overflow: hidden">
                       <span class="pull-left" style="clear: right">{{org.name}}</span>
                     </div>
