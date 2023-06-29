@@ -182,7 +182,7 @@ export function init(Vue) {
     Vue.prototype.$formatDevData = function (item, type) {
         let unit = ['', '℃', '%', '%'];
         let prop = ['', 'temperature', 'humidity', 'voltage'];
-        if (!item[prop[+type]]) return '';
+        if (item[prop[+type]] ==null || item[prop[+type]] == undefined) return '';
         return item[prop[+type]].toFixed(2) + unit[+type]; 
     };
 

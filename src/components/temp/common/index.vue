@@ -10,20 +10,19 @@
                     <f-a class="icon-small" name="export"></f-a>
                     导出设备信息
                 </el-button>
-                <el-button class="warp-a" plain size="small" v-has="'ccs-dev-import-add'">
-                    <a href="/excel/设备批量新增模板.xlsx"></a>
-                    <f-a class="icon-small" name="export"></f-a>
-                    下载设备批量新增模板
+                <el-button class="warp-a" plain size="small" v-has="'ccs-dev-import-add'"   >
+                        <a href="/excel/设备批量新增模板.xlsx" target="_blank"></a>
+                        <f-a class="icon-small" name="export"></f-a>
+                        下载设备批量新增模板
                 </el-button>
                 <el-button @click="batchHandleDev('1')" plain size="small" v-has="'ccs-dev-import-add'">
                     <f-a class="icon-small" name="plus"></f-a>
                     批量新增设备
                 </el-button>
-
-                <el-button class="warp-a" plain size="small" v-has="'ccs-dev-import-update'">
+                <el-button class="warp-a" plain size="small" v-has="'ccs-dev-import-update'" >
                     <f-a class="icon-small" name="export"></f-a>
                     下载设备批量编辑模板
-                    <a href="/excel/设备批量编辑模板.xlsx"></a>
+                    <a href="/excel/设备批量编辑模板.xlsx"  target="_blank"></a>
                 </el-button>
                 <el-button @click="batchHandleDev('2')" plain size="small" v-has="'ccs-dev-import-update'">
                     <f-a class="icon-small" name="edit"></f-a>
@@ -323,7 +322,6 @@ export default {
             this.resetRightBox();
             this.queryList(this.pager.currentPage);
         },
-
         downloadFn(){
             // window.location.href = 'http://localhost:8006/static/excel/设备批量新增模板.xlsx' ;
             // let el = document.createElement( 'a' ), EXT_NAME = '.xls' ;
