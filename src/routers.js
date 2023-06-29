@@ -352,7 +352,7 @@ export const routes = [
           {
             path: '/configuration/alarm/rule/set',
             component: () => import('./components/configuration/alarm-rule-set/index.vue'),
-            meta: { moduleId: 'configuration', title: '告警规则组(新)', perm: 'ccs-warn-rule-group-set-scan' }
+            meta: { moduleId: 'configuration', title: '运单/车辆告警规则组', perm: 'ccs-warn-rule-group-set-scan' }
           },
           {
             path: '/configuration/alarm',

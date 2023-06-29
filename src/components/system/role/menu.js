@@ -1217,7 +1217,7 @@ export default [
         {
             'id': 'ccs-warn-rule-group-set',
             'parentId': 'ccs-config-center',
-            'label': '告警规则组(新)',
+            'label': '运单/车辆告警规则组',
             'sort': 1,
             'children': [{
                 'id': 'ccs-warn-rule-group-set-del',
