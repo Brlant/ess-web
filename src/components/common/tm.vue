@@ -3,8 +3,8 @@
     <!-- <svg  :style="`left:${currentPos.x}px;top:${currentPos.y}px;height: ${iconScale !== 1 ? '30px' : '20px'}`" -->
     <!-- :style="`left:${currentPos.x}%;top:${currentPos.y}%;height: ${iconScale !== 1 ? '55px' : '55px'};`"  大图小图显示同样的数据-->   
     <svg :style="
-        `left:${currentPos.x}%;top:${currentPos.y}%;height: ${iconScale !== 1 ? '55px' : '55px'};`  
-    "
+        `left:${currentPos.x}%;top:${currentPos.y}%;height: ${iconScale !== 1 ? '30px' : '20px'};`  
+    "    style="overflow: visible"
          @click="goTo"
          @mousedown="dragPosition"
          @mouseenter="showDetail" @mouseleave="hideDetail" @mouseup="isDraging = false" class="tm-container" :class="{ ani : item.indoorPositionSceneDTO && +item.indoorPositionSceneDTO.flashIcon  }">
@@ -39,7 +39,7 @@
               :fill="fontColor" text-anchor="start" class="text">
             <slot></slot>
         </text> -->
-        <text v-for="(item1,index) in standby" :font-size="12" :key="index" :fill="fontColor" :x="getDevIconOffset(item).x+5" :y="getDevIconOffset(item).y+(index*12)-2">
+        <text v-for="(item1,index) in standby" :font-size="12" :key="index" :fill="fontColor" :x="item.imageUrl?getDevIconOffset(item).x+50: getDevIconOffset(item).x+5" :y="getDevIconOffset(item).y+(index*12)-2">
             {{item1.key == 'temperature'?item1.value+'℃':item1.value}}</text>
         <!-- <text :x="getDevIconOffset(item).x" :y="getDevIconOffset(item).y">111111</text>
         <text :x="getDevIconOffset(item).x" :y="getDevIconOffset(item).y+10">111111</text>
@@ -336,7 +336,7 @@ export default {
 <style>
 .tm-container {
     position: absolute;
-    /* width: auto; */
+    width: auto;
     height: 20px;
     cursor: pointer;
 }
