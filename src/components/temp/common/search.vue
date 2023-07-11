@@ -76,7 +76,7 @@ export default {
     },
     computed: {
         statusType() {
-            return utils[this.searchCondition.devType === 1 ? 'wifiType' : 'orderType'];
+            return utils[ 'wifiType' ];
         }
     },
     watch: {

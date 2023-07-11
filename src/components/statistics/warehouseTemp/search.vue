@@ -1,6 +1,6 @@
 <template>
     <search-template :isShow="showSearch" :isShowAdvance="false" @isShow="isShow" @reset="reset" @search="search">
-        <template slot="title">库内温度巡检</template>
+        <template slot="title">库内温湿度巡检</template>
         <template slot="btn">
             <slot name="btn"></slot>
         </template>

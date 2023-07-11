@@ -47,7 +47,6 @@ export default {
             beforeRequest && beforeRequest();
             let nowTime = new Date();
             this.nowTime = nowTime;
-
             http(params).then(res => {
                 if (this.nowTime > nowTime) return;
                 this.dataList = res.data.currentList || [];
