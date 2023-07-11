@@ -7,7 +7,7 @@ function resolve(dir) {
 
 const target = {
     essWebapi:'http://192.168.1.101:8110', // 现在 开发环境 地址
-    yj:'http://192.168.5.15:8110'
+    yj:'http://192.168.5.23:8110',
 }
 
 module.exports = {
