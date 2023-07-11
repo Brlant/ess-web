@@ -1,19 +1,14 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const SentryWebpackPlugin = require('@sentry/webpack-plugin');
 
 function resolve(dir) {
     return path.join(__dirname, '..', dir);
 }
 
-const target = {
-    essWebapi:'http://192.168.1.101:8110', // 现在 开发环境 地址
-    yj:'http://192.168.5.15:8110'
-}
-
 module.exports = {
     devServer: {
         open: true,
-        host: '0.0.0.0',
         port: '8006',
         https: false,
         hotOnly: false,
@@ -23,13 +18,15 @@ module.exports = {
                 // target: 'https://test1-mcc.cdcerp.cn/',
                 // target: 'https://test-ess.cdcerp.cn/',
                 // target: 'https://dev-ess-inner.cdcerp.cn/api', // 原开发服务地址
-                target: target.yj, // 现在 开发环境 地址
+                // target: 'http://192.168.1.101:8110/api', // 现在 开发环境 地址
+                // target: 'http://192.168.5.44:8110/api', // wzl
+                target: 'http://hf-ess-inner.cdcerp.cn/api', // 现在 测试环境 地址
                 // target: 'https://sh-ess-inner.cdcerp.cn/api',
                 logLevel: "debug", // cmd 控制台可以看到具体的代理地址
                 changOrigin: true,
-                // pathRewrite : {
-                //     '/api' : ''
-                // }
+                pathRewrite : {
+                    '/api' : ''
+                }
             }
         }
     },

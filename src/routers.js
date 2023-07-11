@@ -228,7 +228,7 @@ export const routes = [
                 {
                     path: '/statistics/warehouseTemp',
                     component: () => import('./components/statistics/warehouseTemp/index.vue'),
-                    meta: { moduleId: 'statistics', title: '库内温度巡检', perm: 'ccs-check-task' }
+                    meta: { moduleId: 'statistics', title: '库内温湿度巡检', perm: 'ccs-check-task' }
                 },
 
             ]
@@ -350,6 +350,11 @@ export const routes = [
             meta: { moduleId: 'configuration', title: '告警规则组', perm: 'ccs-warn-rule-group-scan' }
           },
           {
+            path: '/configuration/alarm/rule/set',
+            component: () => import('./components/configuration/alarm-rule-set/index.vue'),
+            meta: { moduleId: 'configuration', title: '运单/车辆告警规则组', perm: 'ccs-warn-rule-group-set-scan' }
+          },
+          {
             path: '/configuration/alarm',
             component: () => import('./components/configuration/alarm/index.vue'),
             meta: { moduleId: 'configuration', title: '告警规则', perm: 'ccs-warn-rule-scan' }
@@ -398,7 +403,7 @@ export const routes = [
         path: '/warehouseTemp/detail',
         name:'warehouseTempDetail',
         component: () => import('./components/statistics/warehouseTemp/detail/index'),
-        meta: { moduleId: 'statistics', title: '库内温度巡检详情', perm: '',breadcrumb: false }
+        meta: { moduleId: 'statistics', title: '库内温湿度巡检详情', perm: '',breadcrumb: false }
     },
 
   // yxh 添加动态场景全屏组件路由

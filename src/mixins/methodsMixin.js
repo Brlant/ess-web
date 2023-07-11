@@ -15,6 +15,8 @@ export default {
             allTempList: [],
             orgList: [],
             customerList: [],
+            dhsOrgList:[],
+            customerOrgList:[],
             relationCustomerList: [],
             relationCustomerWarehouseList: [],
             tempTypeList: ['有线温度计', '无线温度计', '冷柜温度计', '车载温度计', '湿度计']
@@ -46,6 +48,41 @@ export default {
             BaseInfo.query(params).then(res => {
             // BaseInfo.getOrgList(params).then(res => {
                 this.orgList = res.data.list;
+            });
+        },
+        // 查询货主，取dhsOrgId值
+        queryDhsOrgId(query){
+            let params = {};
+            if (typeof query === 'string') {
+                Object.assign(params, {keyWord: query});
+            } else if (typeof query === 'object') {
+                Object.assign(params, query);
+            }
+            BaseInfo.query(params).then(res => {
+                if(res && res.data && res.data.list && res.data.list.length !=0){
+                    res.data.list.forEach(item=>{
+                        item.id = item.dhsOrgId
+                    })
+                    this.dhsOrgList = res.data.list;
+                }
+            });
+        },
+        // 查询客户 取dhsOrgId值
+        queryCustomerDhsOrgId(query){
+            let params = { orgtype: '0'};
+            if (typeof query === 'string') {
+                Object.assign(params, {keyWord: query});
+            } else if (typeof query === 'object') {
+                Object.assign(params, query);
+            }
+            
+            BaseInfo.query(params).then(res => {
+                if(res && res.data && res.data.list && res.data.list.length !=0){
+                    res.data.list.forEach(item=>{
+                        item.id = item.dhsOrgId
+                    })
+                    this.customerOrgList = res.data.list;
+                }
             });
         },
         queryRelationCustomer: function (props) {// 查询业务关系

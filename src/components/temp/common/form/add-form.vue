@@ -28,9 +28,9 @@
                     <oms-input placeholder="请输入备注" type="textarea" v-model="form.comment"/>
                 </el-form-item>
                 <el-form-item label="状态">
-                    <el-switch active-text="启用" active-value="1" inactive-text="停用" inactive-value="0"
-                               v-if="type !== 2" v-model="form.devStatus"></el-switch>
-                    <el-select placeholder="请选择状态" v-if="type === 2" v-model="form.devStatus">
+                    <!-- <el-switch active-text="启用" active-value="1" inactive-text="停用" inactive-value="0"
+                               v-if="type !== 2" v-model="form.devStatus"></el-switch> -->
+                    <el-select placeholder="请选择状态"  v-model="form.devStatus">
                         <el-option :key="key" :label="item.title" :value="item.status"
                                    v-for="(item, key) in statusType" v-show="item.status !== null"></el-option>
                     </el-select>

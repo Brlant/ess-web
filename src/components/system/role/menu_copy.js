@@ -815,7 +815,44 @@ export default [
                 'leaf': true
             }],
             'leaf': false
-        }, {
+        },
+        {
+            'id': 'ccs-warn-rule-group-set',
+            'parentId': 'ccs-config-center',
+            'label': '运单/车辆告警规则组',
+            'sort': 1,
+            'children': [{
+                'id': 'ccs-warn-rule-group-set-del',
+                'parentId': 'ccs-warn-rule-group-set',
+                'label': '删除告警规则组',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-warn-rule-group-set-edit',
+                'parentId': 'ccs-warn-rule-group-set',
+                'label': '修改告警规则组',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-warn-rule-group-set-add',
+                'parentId': 'ccs-warn-rule-group-set',
+                'label': '添加告警规则组',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-warn-rule-group-set-scan',
+                'parentId': 'ccs-warn-rule-group-set',
+                'label': '查看告警规则组',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }],
+            'leaf': false
+        },
+        {
             'id': 'ccs-warn-rule-manager',
             'parentId': 'ccs-config-center',
             'label': '告警规则',

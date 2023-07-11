@@ -29,7 +29,8 @@ const state = {
     findPath: true,
     times: [],
     isShowTemp: false,
-
+    // zxh 用于静态场景中大屏修改配置去触发
+    staticFullScreen:false,
     // yxh 用于动态场景状态数据
     elementColumn: {
         depository: {

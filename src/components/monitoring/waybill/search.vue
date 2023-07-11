@@ -24,13 +24,13 @@
           </el-col>
           <el-col :span="8">
             <oms-form-row :span="5" label="货主">
-              <org-select :list="orgList" :remoteMethod="queryOrg"
+              <org-select :list="dhsOrgList" :remoteMethod="queryDhsOrgId"
                           placeholder="请输入名称搜索货主信息" v-model="searchCondition.ownnerId"></org-select>
             </oms-form-row>
           </el-col>
           <el-col :span="8">
             <oms-form-row :span="5" label="客户">
-              <org-select :list="customerList" :remoteMethod="queryCustomer"
+              <org-select :list="customerOrgList" :remoteMethod="queryCustomerDhsOrgId"
                           placeholder="请输入名称搜索客户信息" v-model="searchCondition.customerId"></org-select>
             </oms-form-row>
           </el-col>

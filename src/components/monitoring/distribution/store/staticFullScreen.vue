@@ -1,45 +1,75 @@
 <template>
-        <div :style="svgFrameStyle" class='boxContainerItem'>
-            <VueDraggableResizable
-                :x="v.x"
-                :y="v.y"
-                :w="v.width"
-                :h="v.height"
-                :min-width="106"
-                :min-height="60"
-                :parent="true"
-                ref="dragVideo"
-                class="dragContainer"
-                @resizing="(x, y, width, height) => { resize( x, y, width, height, v ) }"
-                @dragging="(x, y) => { drag( x, y, v ) }"
-                @activated="onActivated( v )"
-                @deactivated="onDeactivated( v )"
-                @resizestop="( x, y, width, height ) => { onResizstop( v, x, y, width, height ) }"
-                v-for="( v, n ) in playObj"
-                :key="v.pointId"
-            >
-                <h3 class="titleTxt">{{ v.pointName }}{{ v.isActived }}<span @click="closeAlertFn( v.ccsDevId )">&times;</span></h3>
-                <div class="containMark" v-if="isActived"></div>
-                <iframe data-v-5a9dd0f5="" class="myiframe" ref="myiframe" :src="v.src" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen"></iframe>
-            </VueDraggableResizable>
+        <div class='boxContainerItem'>
+            <div class="header">
+                <span class="embellish">
+                    <span class="scene-name">{{ this.backgroundName }}</span>
+                    <i class="el-icon-setting" style="margin-left: 20px;color: gray;cursor: pointer;font-size: 15px;"
+                       @click="setting()"></i>
+                </span>
+            </div>
+            <div class="content" :style="svgFrameStyle">
+                <VueDraggableResizable
+                    :x="v.x"
+                    :y="v.y"
+                    :w="v.width"
+                    :h="v.height"
+                    :min-width="106"
+                    :min-height="60"
+                    :parent="true"
+                    ref="dragVideo"
+                    class="dragContainer"
+                    @resizing="(x, y, width, height) => { resize( x, y, width, height, v ) }"
+                    @dragging="(x, y) => { drag( x, y, v ) }"
+                    @activated="onActivated( v )"
+                    @deactivated="onDeactivated( v )"
+                    @resizestop="( x, y, width, height ) => { onResizstop( v, x, y, width, height ) }"
+                    v-for="( v, n ) in playObj"
+                    :key="v.pointId"
+                >
+                    <h3 class="titleTxt">{{ v.pointName }}{{ v.isActived }}<span @click="closeAlertFn( v.ccsDevId )">&times;</span></h3>
+                    <div class="containMark" v-if="isActived"></div>
+                    <iframe data-v-5a9dd0f5="" class="myiframe" ref="myiframe" :src="v.src" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen"></iframe>
+                </VueDraggableResizable>
 
-            <audio hidden loop ref="alarmMusic" src="@/../static/audio/alarm.mp3"></audio>
+                <audio hidden loop ref="alarmMusic" src="@/../static/audio/alarm.mp3"></audio>
 
-            <!-- 添加 echarts 数据图表展示 -->
-            <static-details
-                v-if="drawer"
-                :element="currentClickElement"
-                :refreshEcharts="refreshEcharts"
-                @close-drawer="handleCloseDrawer"
-            ></static-details>
-            
+                <!-- 添加 echarts 数据图表展示 -->
+                <static-details
+                    v-if="drawer"
+                    :element="currentClickElement"
+                    :refreshEcharts="refreshEcharts"
+                    @close-drawer="handleCloseDrawer"
+                ></static-details>
+                
 
-            <tm :color="item.color" :fontColor="item.fontcolor" :iconScale="1.2" :item="item.devDetail" :key="index" :position="item.position"
-                @showBigMap="showBigMap"
-                style="z-index:1;"
-                :read-only="true" :size="12" :tmData="tmData" ref="tm-big-part" v-for="(item, index) in tmData">
-            {{item.text}}
-            </tm>
+                <tm :color="item.color" :fontColor="item.fontcolor" :iconScale="1.2" :item="item.devDetail" :key="index" :position="item.position"
+                    :standby="item.standby"
+                    @showBigMap="showBigMap"
+                    style="z-index:1;"
+                    :read-only="true" :size="12" :tmData="tmData" ref="tm-big-part" v-for="(item, index) in tmData">
+                {{item.text}}
+                </tm>
+            </div>
+            <!--  -->
+            <el-dialog :visible.sync="dialogVisible" width="800px">
+                <el-tabs class="tabs" v-model="activeName" >
+                    <el-tab-pane label="显示字段" name="zero">
+                        <el-form style="margin-bottom: 30px;" ref="fieldForm" :model="fieldForm" label-width="0px">
+                            <el-form-item label="">
+                                <el-select v-model="fieldForm.displayField" placeholder="请选择" multiple class="select-mt" @change="changeSelect">
+                                    <el-option
+                                        size="mini"
+                                        v-for="item in displayFieldList"
+                                        :key="item.key"
+                                        :label="item.label"
+                                        :value="item.key">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-tab-pane>
+                </el-tabs>
+            </el-dialog>
         </div>
 </template>
 
@@ -47,7 +77,7 @@
 import Tm from '@/components/common/tm';
 import VueDraggableResizable from 'vue-draggable-resizable';
 
-import {warehouseDevImage} from '@/resources';
+import {warehouseDevImage,CcsWarehouse} from '@/resources';
 
 import staticDetails from './warehouse/static-details';
 
@@ -71,15 +101,20 @@ export default {
             drawer : false,
             refreshEcharts: '',
             currentClickElement:{},
-
+            dialogVisible: false,
+            activeName: 'zero',
             idVal : '',
-
             step : 500, // 间隔
-            videoTimer : null // 定时器引用
-
-        } ;
+            videoTimer : null, // 定时器引用
+            fieldForm:{
+                displayField:[], 
+            },
+        }
     },
     computed : {
+        displayFieldList: function () {
+            return this.$getDict('staticSceneFields');
+        },
         tmData() {
             let height = this.currentHeight ? this.currentHeight : (this.bodyHeight);
             let width = this.currentWidth ? this.currentWidth : 866;
@@ -153,7 +188,7 @@ export default {
 
             this.svgFrameStyle = { background : this.$route.query.background } ;
             this.activeId =  this.$route.query.activeId ;
-
+            this.backgroundName = this.$route.query.backgroundName
         }
 
         if( this.$route.params ){
@@ -163,7 +198,7 @@ export default {
 
              // 如果 id 存在
             if( this.id ){ // 如果 id 存在, 取缓存视频
-
+              //获取场景信息
               this.idVal = this.id ;
               this.playObj = this.getPlayObj( JSON.parse( localStorage.getItem( 'staticVideo' ) ) || {} ) ;
 
@@ -335,7 +370,7 @@ export default {
                 // yxh 之前取的 ccsWarehouseImageDevRelationDTOList 字段信息
                 // let list = res.data.ccsWarehouseImageDevRelationDTOList;
 
-                let list = res.data.ccsWarehouseImagePointRelationDTOList;  // 现在取 ccsWarehouseImagePointRelationDTOList 字段信息
+                let list = res.data.response;  // 现在取 response 字段信息
                 if (list.length && list[0].backgroundId !== this.activeId) return;
                 // console.error( this.$refs.svgPart.offsetWidth, this.currentWidth, 77 ) ;
                 this.currentWidth = this.$el.offsetWidth ;
@@ -356,10 +391,52 @@ export default {
                             //     this.showBigMap( v.devDetail ) ;
                             // }
                         }
+                    let standby = []
+                    if(v.devDetail.devPointName){   //设备名称
+                        standby.push({devType:v.devDetail.devType,value:v.devDetail.devPointName,key:'devPointName'})
+                    }
+                    if(v .devDetail.voltage){ // 电量  
+                        standby.push({devType:v.devDetail.devType,value:v.devDetail.voltage,key:'voltage'})
+                    }
+                    if(v.devDetail.temperature){ // 温度  
+                        standby.push({devType:v.devDetail.devType,value:v.devDetail.temperature,key:'temperature'})
+                    }
+                    if(v.devDetail.humidity){ // 湿度  
+                        standby.push({devType:v.devDetail.devType,value:v.devDetail.humidity,key:'humidity'})
+                    }
+                    v.standby = standby
                     } ) ;
                 }
-
             });
+        },
+        setting(){
+            this.dialogVisible = true
+            // 清空表单
+            // this.$nextTick(()=>{
+                this.fieldForm.displayField = []
+            // })
+            this.getConfig()
+        },
+        // 获取已配置的显示字段
+        getConfig(){
+            CcsWarehouse.getWarehouseConfig(this.activeId).then(res=>{
+                // console.log(res,'res');
+                this.fieldForm.displayField = res.data.props
+            })
+        },
+        changeSelect(){
+            this.editConfig()
+        },
+        editConfig(){
+            let params = {
+                id:this.activeId,
+                props:this.fieldForm.displayField.join(',')
+            }
+            CcsWarehouse.editWarehouseConfig(params).then(res=>{
+                // 修改完配置后重新请求页面数据
+                this.queryDevs()
+                this.$store.state.staticFullScreen = true;
+            })
         },
 
     }
@@ -378,5 +455,31 @@ export default {
     .dragContainer h3 span{ text-align:center; transition:right 200ms ease; cursor:pointer; font-weight:normal; font-size:1.2em; width:20px; height:20px; overflow:hidden; position:absolute; right:-20px; top:0; background:rgba(0,0,0,.7); line-height:17px; padding:0; margin:0; }
     .dragContainer h3 span:hover{ background:rgba(245, 108, 108, 1); color:white; }
     .myiframe{ width:100%; height:100%; position:absolute; left:0; top:0; z-index:0; }
-    .boxContainerItem{ width:100vw!important; height:100vh!important; background-size:100% 100%!important; background-repeat:no-repeat; position:absolute; z-index:10; margin:0;}
+    .boxContainerItem{ width:100vw!important; height:100vh!important;  margin:0;}
+    .header{
+        width:100vw!important;
+        height: 50px;
+        display: flex;
+        align-items: center;
+    }
+    .embellish{
+        display: inline-block;
+        height: 50px;
+        line-height: 50px;
+        padding: 3px 8px;
+        font-size: 16px;
+        color: #b27500;
+        background: #000;
+    }
+    .content{
+        width:100vw!important;
+        height: calc(100vh - 50px);
+        background-size:100% 100%!important; 
+        background-repeat:no-repeat; 
+        position:absolute; 
+        z-index:10;
+    }
+    .tabs /deep/ .el-tabs__nav-wrap::after{
+        background-color: #fff;
+    }
 </style>

@@ -10,20 +10,19 @@
                     <f-a class="icon-small" name="export"></f-a>
                     导出设备信息
                 </el-button>
-                <el-button class="warp-a" plain size="small" v-has="'ccs-dev-import-add'">
-                    <a href="/excel/设备批量新增模板.xlsx"></a>
-                    <f-a class="icon-small" name="export"></f-a>
-                    下载设备批量新增模板
+                <el-button class="warp-a" plain size="small" v-has="'ccs-dev-import-add'"   >
+                        <a href="/excel/设备批量新增模板.xlsx" target="_blank"></a>
+                        <f-a class="icon-small" name="export"></f-a>
+                        下载设备批量新增模板
                 </el-button>
                 <el-button @click="batchHandleDev('1')" plain size="small" v-has="'ccs-dev-import-add'">
                     <f-a class="icon-small" name="plus"></f-a>
                     批量新增设备
                 </el-button>
-
-                <el-button class="warp-a" plain size="small" v-has="'ccs-dev-import-update'">
+                <el-button class="warp-a" plain size="small" v-has="'ccs-dev-import-update'" >
                     <f-a class="icon-small" name="export"></f-a>
                     下载设备批量编辑模板
-                    <a href="/excel/设备批量编辑模板.xlsx"></a>
+                    <a href="/excel/设备批量编辑模板.xlsx"  target="_blank"></a>
                 </el-button>
                 <el-button @click="batchHandleDev('2')" plain size="small" v-has="'ccs-dev-import-update'">
                     <f-a class="icon-small" name="edit"></f-a>
@@ -31,7 +30,7 @@
                 </el-button>
             </template>
         </search-part>
-        <status-list :activeStatus="activeStatus" :checkStatus="checkStatus" :statusList="statusType" v-show="!!type"/>
+        <status-list :activeStatus="activeStatus" :checkStatus="checkStatus" :statusList="statusType" />
         <div class="order-list" style="margin-top: 20px">
             <el-row class="order-list-header" v-if="type">
                 <el-col :span="3">设备编码devCode</el-col>
@@ -102,7 +101,7 @@
                             <el-col :span="4" class="R">{{ item.devName }}</el-col>
                             <el-col :span="4">{{ tempTypeList[item.devType] }}</el-col>
                             <el-col :span="3">
-                                {{ formatStatus(item.devStatus, item.devType == '1' ? wifiType : orderType) }}
+                                {{ formatStatus(item.devStatus, statusType) }}
                             </el-col>
                             <el-col :span="3">
                                 <el-tooltip :content="showRecordDate(item.recordDate)" effect="dark" placement="top">
@@ -156,11 +155,11 @@ export default {
     mixins: [CommonMixin],
     data() {
         return {
-            statusType: JSON.parse(JSON.stringify(utils.orderType)),
+            statusType: JSON.parse(JSON.stringify(utils.wifiType)),
             wifiType: utils.wifiType,
             orderType: utils.orderType,
             filters: {
-                status: '1',
+                devStatus: '',
                 devCode: '',
                 devName: ''
             },
@@ -196,7 +195,7 @@ export default {
         }
     },
     mounted() {
-        this.filters.status = this.type === 2 ? '4' : '1';
+        // this.filters.status = '4' ;
         this.queryList(1);
     },
     methods: {
@@ -210,21 +209,24 @@ export default {
         },
         init(val) {
             this.activeStatus = 0;
-            this.statusType = utils[val === 2 ? 'wifiType' : 'orderType'];
+            // this.statusType = utils[val === 2 ? 'wifiType' : 'orderType'];
+            this.statusType = utils['wifiType'];
             this.filters = {
-                status: '1',
+                devStatus: '',
                 devCode: '',
                 devName: ''
             };
-            this.$nextTick(() => {
-                this.filters.status = val === 2 ? null : '1';
-            });
+            // TODO 所有状态一致的情况下是否需要删除？
+            // this.$nextTick(() => {
+            //     this.filters.status = val === 2 ? null : '1';
+            // });
         },
         searchResult: function (search) {
             this.filters = Object.assign({}, this.filters, search);
+            console.log(this.filters,'this.filters');
         },
         checkStatus(item, key) {
-            this.filters.status = item.status;
+            this.filters.devStatus = item.status;
             this.activeStatus = key;
         },
         resetRightBox() {
@@ -241,41 +243,44 @@ export default {
             const http = TempDev.query;
             let isAll = typeof this.filters.devType === 'number';
             this.filters.devType = isAll ? this.filters.devType : this.type ? this.type - 1 : null;
-            this.filters.devStatus = isAll ? this.filters.status : this.type ? this.filters.status : null;
+            // this.filters.devStatus = isAll ? this.filters.status : this.type ? this.filters.status : null;
             const params = this.queryUtil(http, pageNo);
-            this.type && this.queryStatusNum(params);
+            this.queryStatusNum(params);
         },
         queryStatusNum(params) {
-            const pm = Object.assign({}, params, {devStatus: null});
-            // 若是无线温度计,单独拼数量
-            if (this.type === 2) {
-                TempDev.queryStateNum(params).then(res => {
-                    this.statusType[0].num = res.data[4] + res.data[3] + res.data[2] + res.data[1] + res.data[0];
-                    this.statusType[1].num = res.data[4];
-                    this.statusType[2].num = res.data[3];
-                    this.statusType[3].num = res.data[2];
-                    this.statusType[4].num = res.data[1];
-                    this.statusType[5].num = res.data[0];
-                });
-                return;
-            }
-            const http = TempDev.queryStateNum;
-            const res = {};
-            this.queryStatusNumUtil(http, pm, this.statusType, res);
+            // const pm = Object.assign({}, params, {devStatus: null});
+            // TODO 无论无线还是有线，都按照顺序展示这些状态
+            TempDev.queryStateNum(params).then(res => {
+                this.statusType[0].num = res.data[6] + res.data[5] + res.data[4] + res.data[3] + res.data[2] + res.data[1] + res.data[0];
+                this.statusType[1].num = res.data[2];
+                this.statusType[2].num = res.data[3];
+                this.statusType[3].num = res.data[4];
+                this.statusType[4].num = res.data[6];
+                this.statusType[5].num = res.data[1];
+                this.statusType[6].num = res.data[5];
+                this.statusType[7].num = res.data[0];
+            });
+            // if (this.type === 2) { 
+            //     return;
+            // }
+            // const http = TempDev.queryStateNum;
+            // const res = {};
+            // this.queryStatusNumUtil(http, pm, this.statusType, res);
         },
         add() {
             this.form = {};
             this.showPart(0);
         },
         edit(item) {
-            this.statusType = item.devType === 1 ? this.wifiType:this.orderType;
+            // this.statusType = item.devType === 1 ? this.wifiType:this.orderType;
+            this.statusType = this.wifiType;
             this.currentItem = item;
             this.currentItemId = item.id;
             this.form = item;
             this.showPart(0);
         },
         showItemDetail(item) {
-            this.statusType = item.devType === 1 ? this.wifiType:this.orderType;
+            this.statusType = this.wifiType;
             this.currentItem = item;
             this.currentItemId = item.id;
             this.showPart(1);
@@ -317,7 +322,6 @@ export default {
             this.resetRightBox();
             this.queryList(this.pager.currentPage);
         },
-
         downloadFn(){
             // window.location.href = 'http://localhost:8006/static/excel/设备批量新增模板.xlsx' ;
             // let el = document.createElement( 'a' ), EXT_NAME = '.xls' ;
