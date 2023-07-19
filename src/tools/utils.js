@@ -46,7 +46,7 @@ export default {
     },
     DevIcon: {
         0: ['temp-wire', 'temp-wire', 16, 16],
-        12: ['temp-wire', 'temp-wire', 16, 16],
+        13: ['temp-wire', 'temp-wire', 16, 16],
         14: ['temp-wire', 'temp-wire', 16, 16],
         1: ['temp-wifi', 'temp-wifi', 20, 20],
         2: ['temp-freezer', 'temp-freezer', 20, 20],
