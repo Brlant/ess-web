@@ -9,7 +9,7 @@ export function amap() {
             "plugins": ["AMap.Driving", "AMap.Geocoder", "AMap.Geolocation", "AMap.AutoComplete", 'AMap.Scale', 'AMap.OverView', 'AMap.ToolBar', 'AMap.MapType', 'AMap.Geocoder', 'AMap.MoveAnimation'],
             "AMapUI": {
                 "version": '1.1',
-                "plugins":['overlay/SimpleMarker','control/BasicControl','overlay/SvgMarker','misc/PathSimplifier']
+                "plugins": ['overlay/SimpleMarker', 'control/BasicControl', 'overlay/SvgMarker', 'misc/PathSimplifier']
             }
         }).then((AMap) => {
             resolve(AMap);
@@ -35,7 +35,7 @@ export default {
         1: {'title': '待发放', status: '2', num: ''},
         2: {'title': '待使用', status: '3', num: ''},
         3: {'title': '使用中', status: '4', num: ''},
-        4: {'title': '待回收', status: '6', num: ''},     
+        4: {'title': '待回收', status: '6', num: ''},
         5: {'title': '校准中', status: '1', num: ''},
         6: {'title': '维修中', status: '5', num: ''},
         7: {'title': '停用', status: '0', num: ''},
@@ -46,6 +46,8 @@ export default {
     },
     DevIcon: {
         0: ['temp-wire', 'temp-wire', 16, 16],
+        13: ['temp-wire', 'temp-wire', 16, 16],
+        14: ['temp-wire', 'temp-wire', 16, 16],
         1: ['temp-wifi', 'temp-wifi', 20, 20],
         2: ['temp-freezer', 'temp-freezer', 20, 20],
         3: ['temp-car', 'temp-car', 18, 18],
