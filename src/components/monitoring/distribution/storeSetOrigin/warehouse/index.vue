@@ -1392,7 +1392,7 @@ export default {
                 // yxh 之前取的 ccsWarehouseImageDevRelationDTOList 字段信息
                 // let list = res.data.ccsWarehouseImageDevRelationDTOList;
 
-                let list = res.data.ccsWarehouseImagePointRelationDTOList;  // 现在取 ccsWarehouseImagePointRelationDTOList 字段信息
+                let list = res.data.response;  // 现在取 ccsWarehouseImagePointRelationDTOList 字段信息
                 if (list.length && list[0].backgroundId !== this.activeId) return;
                 // console.error( this.$refs.svgPart.offsetWidth, this.currentWidth, 77 ) ;
                 this.currentWidth = this.$refs.svgPart.offsetWidth;
