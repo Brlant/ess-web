@@ -392,9 +392,15 @@ export const routes = [
             path: '/permission/log',
             component: () => import('./components/common/log/list.vue'),
             meta: { moduleId: 'permission', title: '系统日志', perm: 'ccs-system-log' }
-          }
+          },
+          {
+            path: '/permission/updateLog',
+            component: () => import('./components/updateLog/index.vue'),
+            meta: { moduleId: 'permission', title: '更新日志', perm: 'ccs-system-update-log' },
+          },
         ]
-      }
+      },
+
     ]
   },
 

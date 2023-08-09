@@ -82,7 +82,9 @@
                 取消监控
               </des-btn>
               <!--<des-btn v-has="'ccs-transorder-rulecfg'" icon="edit" @click="ruleConfig(item.id)">配置规则</des-btn>-->
-              <des-btn @click="exportFile(item.ccsOrderId)" icon="print" v-has="'ccs-transorder-export'">导出温度计记录
+              <!--<des-btn @click="exportFile(item.ccsOrderId)" icon="print" v-has="'ccs-transorder-export'">导出温度计记录
+              </des-btn>-->
+              <des-btn @click="handleExport(item.ccsOrderId)" icon="print" v-has="'ccs-transorder-export'">导出温度计记录
               </des-btn>
             </el-col>
           </el-row>
@@ -107,6 +109,23 @@
                width="100%">
       <map-path :formItem="form" :isLoaded="isLoaded" :mapStyle="{height: bodyHeight}" :vhList="vhList"
                 custom-class="custom-dialog-map" vid="waybillBigMap"></map-path>
+    </el-dialog>
+
+    <!--  导出温度计记录弹窗  -->
+    <el-dialog
+        class="export-dialog"
+        title="导出模板"
+        :visible.sync="exportDialog"
+        width="30%"
+        center>
+        <el-radio-group v-model="exportForm.type">
+          <el-radio :label="1">国控生物模板</el-radio>
+          <el-radio :label="2">阿里模板</el-radio>
+        </el-radio-group>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="exportDialog = false">取 消</el-button>
+          <el-button type="primary" @click="exportFile(exportForm.id, exportForm.type)" :loading="exportDisabled" :disabled="exportDisabled">下 载</el-button>
+        </span>
     </el-dialog>
   </div>
 </template>
@@ -141,7 +160,13 @@
                 },
                 isShowMulBigMap: false,
                 vhList: [],
-                isLoaded: false
+                isLoaded: false,
+                exportDialog: false,
+                exportForm: {
+                  type: 1,
+                  id: null
+                },
+                exportDisabled: false
             };
         },
         computed: {
@@ -270,13 +295,26 @@
                     });
                 });
             },
-            exportFile(billWayId) {
+
+            // 导出温度计记录
+            handleExport(ccsOrderId) {
+              this.exportDialog = true;
+              this.exportForm.id = ccsOrderId;
+            },
+
+            // 选择模板后导出
+            exportFile(billWayId, type) {
+                this.exportDisabled = true;
                 this.setIsPrinting(true);
-                this.$http.get(`ccsOrder/${billWayId}/temperature-log/export`).then(res => {
+                this.$http.get(`ccsOrder/${billWayId}/temperature-log/export/${type}`).then(res => {
                     utils.download(res.data.path);
                     this.setIsPrinting(false);
+                    this.exportDialog = false;
+                    this.exportDisabled = false;
                 }).catch(error => {
-                    this.setIsPrinting(false);
+                  this.exportDialog = false;
+                  this.exportDisabled = false;
+                  this.setIsPrinting(false);
                     this.$notify.error({
                         message: error.response && error.response.data && error.response.data.msg || '导出失败'
                     });
@@ -292,3 +330,12 @@
         }
     };
 </script>
+<style lang="scss" scoped>
+::v-deep{
+  .export-dialog {
+    .el-dialog__body{
+      text-align: center;
+    }
+  }
+}
+</style>

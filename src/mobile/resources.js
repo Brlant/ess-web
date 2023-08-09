@@ -458,6 +458,22 @@ export const BaseInfo = resource('/orgs', http, {
     }
 });
 
+// 系统设置-更新日志
+export const CcsPublishLog = resource('/ccsPublishLog', http, {
+    // 查询更新日志列表
+    getCcsPublishLogList: (data) => {
+        return http.post('/ccsPublishLog/page', data);
+    },
+    // 增加日志信息
+    addCcsPublishLog: (data) => {
+        return http.post('/ccsPublishLog', data);
+    },
+    // 删除日志信息
+    deleteCcsPublishLog: (id) => {
+        return http.delete('/ccsPublishLog/deleteById/' + id);
+    }
+});
+
 /**
  * create vue-resource's resource like object
  *

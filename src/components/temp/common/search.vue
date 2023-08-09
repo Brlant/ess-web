@@ -4,6 +4,19 @@
     clear: both;
     display: table;
 }
+.select-other-info {
+  line-height: initial;
+  margin-left: 0;
+
+  &:after, &:before {
+    content: '';
+    clear: both;
+  }
+}
+
+.pull-left {
+  float: left
+}
 </style>
 <template>
     <search-template :isShow="showSearch" :isShowAdvance="false" :midSpan="0" @isShow="isShow" @reset="reset"
@@ -32,6 +45,32 @@
                                    v-model.trim="searchCondition.devName"></oms-input>
                     </oms-form-row>
                 </el-col>
+              <el-col :span="8" v-if="type == 2">
+                <oms-form-row :span="4" label="使用单位">
+                  <el-select
+                      v-model="searchCondition.usingOffice"
+                      filterable
+                      clearable
+                      remote
+                      placeholder="请输入使用单位"
+                      popperClass="good-selects"
+                      @click.native.once="queryOrg('')"
+                      :remote-method="queryOrg">
+                    <el-option :value="org.dhsOrgId" :key="org.id" :label="org.name" v-for="org in orgList">
+                      <slot :row="org">
+                        <div style="overflow: hidden">
+                          <span class="pull-left" style="clear: right">{{org.name}}</span>
+                        </div>
+                        <div style="overflow: hidden">
+                          <span class="select-other-info pull-left">
+                            <span>系统代码:</span>{{org.manufacturerCode}}
+                          </span>
+                        </div>
+                      </slot>
+                    </el-option>
+                  </el-select>
+                </oms-form-row>
+              </el-col>
                 <el-col :span="8" v-if="!type">
                     <oms-form-row :span="8" label="类型">
                         <el-select @change="search" placeholder="请选择设备类型" v-model="searchCondition.devType">
@@ -54,6 +93,7 @@
 </template>
 <script>
 import utils from '@/tools/utils';
+import { BaseInfo } from '@/resources';
 
 export default {
     props: {
@@ -67,11 +107,13 @@ export default {
                 devName: null,
                 devType: null,
                 status: null,
-                devNo: null
+                devNo: null,
+                usingOffice: null,
             },
             showSearch: false,
             list: [],
-            times: []
+            times: [],
+            orgList: [],
         };
     },
     computed: {
@@ -81,12 +123,14 @@ export default {
     },
     watch: {
         type() {
+          console.log(this.type)
             this.searchCondition = {
                 devCode: null,
                 devName: null,
                 devType: null,
                 status: null,
-                devNo: null
+                devNo: null,
+                usingOffice: null,
             };
         }
     },
@@ -107,13 +151,28 @@ export default {
                 devName: null,
                 devType: null,
                 status: null,
-                devNo: null
+                devNo: null,
+                usingOffice: null,
             };
             this.$emit('search', this.searchCondition);
         },
         isShow(val) {
             this.showSearch = val;
-        }
+        },
+
+        // 查询使用单位
+        queryOrg(query) {
+          let params = { orgtype: '0'};
+          if (typeof query === 'string') {
+            Object.assign(params, {keyWord: query});
+          } else if (typeof query === 'object') {
+            Object.assign(params, query);
+          }
+
+          BaseInfo.query(params).then(res => {
+            this.orgList = res.data.list;
+          });
+        },
     }
 };
 </script>
