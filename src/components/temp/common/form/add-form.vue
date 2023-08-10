@@ -172,7 +172,7 @@ export default {
 
         // 查询使用单位
         queryOrg(query) {
-          let params = { orgtype: '0'};
+          let params = { orgtype: '0', pageSize: 2000,};
           if (typeof query === 'string') {
             Object.assign(params, {keyWord: query});
           } else if (typeof query === 'object') {

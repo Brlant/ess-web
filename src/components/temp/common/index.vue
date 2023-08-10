@@ -265,7 +265,7 @@ export default {
                 this.statusType[6].num = res.data[5];
                 this.statusType[7].num = res.data[0];
             });
-            // if (this.type === 2) { 
+            // if (this.type === 2) {
             //     return;
             // }
             // const http = TempDev.queryStateNum;
@@ -357,7 +357,8 @@ export default {
       queryOrg() {
         let params = {
           orgtype: '0',
-          keyWord: ''
+          keyWord: '',
+          pageSize: 2000,
         };
         BaseInfo.query(params)
             .then(res => {

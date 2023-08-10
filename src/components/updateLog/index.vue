@@ -25,9 +25,7 @@
           <el-row>
             <el-col :span="16">
               <div>发布内容：</div>
-               <div>
-                 {{ item.content }}
-               </div>
+               <div style="white-space: pre-wrap;" v-html="item.content"></div>
             </el-col>
           </el-row>
         </div>
