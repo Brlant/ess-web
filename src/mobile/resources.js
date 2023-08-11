@@ -125,7 +125,11 @@ export const TempDev = resource('/ccsDevice', http, {
     },
     exportDevInfo(params) {
         return http.get('/ccsDevice/export-dev', {params});
-    }
+    },
+
+    getEssOrgByDhsOrgId(params) {
+        return http.get('/ccsDevice/getEssOrgByDhsOrgId', {params});
+    },
 });
 
 export const HandoverData = resource('/handover-data', http, {

@@ -109,6 +109,11 @@ export default {
             if (this.formItem.ccsDevId) {
                 this.form = Object.assign({}, this.formItem);
                 this.actionType = '编辑';
+                if (this.form.usingOffice) {
+                  this.queryDhsOrgId(this.form.usingOffice)
+                } else {
+                  this.orgList = [];
+                }
             } else {
                 this.form = {
                     devCode: null,
@@ -126,7 +131,7 @@ export default {
         }
     },
   mounted() {
-      // this.queryOrg('')
+
   },
   methods: {
         // 修改状态时
@@ -172,7 +177,7 @@ export default {
 
         // 查询使用单位
         queryOrg(query) {
-          let params = { orgtype: '0', pageSize: 2000,};
+          let params = { orgtype: '0'};
           if (typeof query === 'string') {
             Object.assign(params, {keyWord: query});
           } else if (typeof query === 'object') {
@@ -189,6 +194,13 @@ export default {
           if (!val) {
             this.form.usingOffice = null
           }
+        },
+
+        // 默认回显最后一次使用单位
+        queryDhsOrgId(dhsOrgId) {
+          TempDev.getEssOrgByDhsOrgId({dhsOrgId: dhsOrgId}).then(res=>{
+            this.orgList = res.data
+          })
         }
     }
 };

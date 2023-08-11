@@ -296,7 +296,7 @@ export const CcsWarehouse = resource('/ccsWarehouse', http, {
   },
   /**
    * zxh  获取静态配置中的显示字段
-   * 
+   *
    */
   getWarehouseConfig(id){
     return http.get(`/ccsWarehouse/getWarehouseConfig/${id}`);
@@ -343,6 +343,9 @@ export const TempDev = resource('/ccsDevice', http, {
         return http.get('/ccsDevice/findAllDevListFuzzy', {params});
     },
 
+    getEssOrgByDhsOrgId(params) {
+        return http.get('/ccsDevice/getEssOrgByDhsOrgId', {params});
+    },
 });
 
 export const HandoverData = resource('/handover-data', http, {

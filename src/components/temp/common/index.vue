@@ -71,7 +71,7 @@
                         <el-row>
                             <el-col :span="3" class="R">{{ item.devCode }}</el-col>
                             <el-col :span="3" class="R">{{ item.devNo }}</el-col>
-                            <el-col :span="3" class="R" v-if="type == 2">{{ formatUsingOffice(item.usingOffice) }}</el-col>
+                            <el-col :span="3" class="R" v-if="type == 2">{{ item.usingOfficeName }}</el-col>
                             <el-col :span="4" class="R">{{ item.devName }}</el-col>
                             <el-col :span="type !== 2 ? 3 : 2">
                                 {{ formatStatus(item.devStatus, statusType) }}
@@ -358,7 +358,6 @@ export default {
         let params = {
           orgtype: '0',
           keyWord: '',
-          pageSize: 2000,
         };
         BaseInfo.query(params)
             .then(res => {
