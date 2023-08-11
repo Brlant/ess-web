@@ -126,7 +126,7 @@ export default {
         }
     },
   mounted() {
-      this.queryOrg('')
+      // this.queryOrg('')
   },
   methods: {
         // 修改状态时

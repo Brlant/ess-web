@@ -369,7 +369,6 @@ export default {
       formatUsingOffice(usingOffice) {
         let name = ''
         if (usingOffice) {
-          console.log("this.orgList", this.orgList)
           let obj = this.orgList.find(item => item.dhsOrgId == usingOffice)
           return name = obj && obj.name
                         ? obj.name
