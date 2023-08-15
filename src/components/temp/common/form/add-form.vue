@@ -136,7 +136,7 @@ export default {
   methods: {
         // 修改状态时
         changeDevStatus(val) {
-          if (val == 3 || !this.devCode) {
+          if (val == 3 || !this.form.devCode) {
             this.form.usingOffice = null;
           }
         },
