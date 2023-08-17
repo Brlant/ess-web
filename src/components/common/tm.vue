@@ -1,9 +1,9 @@
 <template>
     <!-- <svg :style="`left:${currentPos.x}px;top:${currentPos.y}px;height: ${iconScale !== 1 ? '30px' : '20px'}`" -->
     <!-- <svg  :style="`left:${currentPos.x}px;top:${currentPos.y}px;height: ${iconScale !== 1 ? '30px' : '20px'}`" -->
-    <!-- :style="`left:${currentPos.x}%;top:${currentPos.y}%;height: ${iconScale !== 1 ? '55px' : '55px'};`"  大图小图显示同样的数据-->   
+    <!-- :style="`left:${currentPos.x}%;top:${currentPos.y}%;height: ${iconScale !== 1 ? '55px' : '55px'};`"  大图小图显示同样的数据-->
     <svg :style="
-        `left:${currentPos.x}%;top:${currentPos.y}%;height: ${iconScale !== 1 ? '30px' : '20px'};`  
+        `left:${currentPos.x}%;top:${currentPos.y}%;height: ${iconScale !== 1 ? '30px' : '20px'};`
     "    style="overflow: visible"
          @click="goTo"
          @mousedown="dragPosition"
@@ -13,10 +13,10 @@
                 :stroke="color"
                 stroke-linecap="round"
                 stroke-width="0" v-show="item.devType === '3'"></circle>
-        
+
         <!--
             // 之前字段
-             v-if="item.imageId" 
+             v-if="item.imageId"
         -->
         <image
             x="0"
@@ -129,13 +129,13 @@ export default {
         //             if(item.devDetail.devPointName){   //设备名称
         //                 standby.push({devType:item.devDetail.devType,x:item.position.x,y:item.position.y,value:item.devDetail.devPointName})
         //             }
-        //             if(item.devDetail.voltage){ // 电量  
+        //             if(item.devDetail.voltage){ // 电量
         //                 standby.push({devType:item.devDetail.devType,x:item.position.x,y:item.position.y,value:item.devDetail.voltage})
         //             }
-        //             if(item.devDetail.temperature){ // 温度  
+        //             if(item.devDetail.temperature){ // 温度
         //                 standby.push({devType:item.devDetail.devType,x:item.position.x,y:item.position.y,value:item.devDetail.temperature})
         //             }
-        //             if(item.devDetail.humidity){ // 湿度  
+        //             if(item.devDetail.humidity){ // 湿度
         //                 standby.push({devType:item.devDetail.devType,x:item.position.x,y:item.position.y,value:item.devDetail.humidity})
         //             }
         //             item.standby = standby
@@ -336,7 +336,7 @@ export default {
 <style>
 .tm-container {
     position: absolute;
-    width: auto;
+    width: 80px;
     height: 20px;
     cursor: pointer;
 }
