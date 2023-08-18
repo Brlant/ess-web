@@ -39,7 +39,7 @@
               :fill="fontColor" text-anchor="start" class="text">
             <slot></slot>
         </text> -->
-        <text v-for="(item1,index) in standby" :font-size="12" :key="index" :fill="fontColor" :x="item.imageUrl?getDevIconOffset(item).x+42: getDevIconOffset(item).x+5" :y="getDevIconOffset(item).y+(index*12)-2">
+        <text v-for="(item1,index) in standby" :font-size="12" :key="index" :fill="fontColor" :x="item.imageUrl?getDevIconOffset(item).x+10: getDevIconOffset(item).x+5" :y="getDevIconOffset(item).y+(index*12)-2">
             {{item1.key == 'temperature'?item1.value+'℃':(item1.key == 'humidity' || item1.key == 'voltage')?item1.value+'%':item1.value}}</text>
         <!-- <text :x="getDevIconOffset(item).x" :y="getDevIconOffset(item).y">111111</text>
         <text :x="getDevIconOffset(item).x" :y="getDevIconOffset(item).y+10">111111</text>
