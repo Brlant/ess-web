@@ -218,8 +218,9 @@
                 <el-col :span="7" align="right" v-show="tmData.length">
 
                   <el-button-group>
-                    <el-button @click="open3d" v-has="'ccs-image-scan'" plain="" size="mini">
-                      3D航头仓库
+                    <el-button v-if="showScene" @click="open3d" v-has="'ccs-image-scan'" plain="" size="mini">
+                      <!--3D航头仓库-->
+                      3D场景
                     </el-button>
                     <el-button @click="showBigMap" plain="" size="mini">查看大图</el-button>
 
@@ -377,6 +378,8 @@
                 timer : null, // 定时器引用
 
                 // count : 0
+                // 是否显示3D场景
+                showScene: false,
             };
         },
         computed: {
@@ -481,7 +484,7 @@
                 this.queryDevs()
                 this.$store.state.staticFullScreen = false;
               }
-              
+
             },
             deep: true
           },
@@ -716,6 +719,8 @@
                 this.currentGraph = item;
             },
             showWarehouseDetail(item) {
+                // 有sceneUrl显示3D场景
+                this.showScene = item.sceneUrl ? true : false;
 
                 this.idVal = item.backgroundId ; //更新 idVal
 
@@ -834,13 +839,13 @@
                         if(v.devDetail.devPointName){   //设备名称
                             standby.push({devType:v.devDetail.devType,value:v.devDetail.devPointName,key:'devPointName'})
                         }
-                        if(v .devDetail.voltage){ // 电量  
+                        if(v .devDetail.voltage){ // 电量
                             standby.push({devType:v.devDetail.devType,value:v.devDetail.voltage,key:'voltage'})
                         }
-                        if(v.devDetail.temperature){ // 温度  
+                        if(v.devDetail.temperature){ // 温度
                             standby.push({devType:v.devDetail.devType,value:v.devDetail.temperature,key:'temperature'})
                         }
-                        if(v.devDetail.humidity){ // 湿度  
+                        if(v.devDetail.humidity){ // 湿度
                             standby.push({devType:v.devDetail.devType,value:v.devDetail.humidity,key:'humidity'})
                         }
                         v.standby = standby

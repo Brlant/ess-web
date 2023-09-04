@@ -378,7 +378,7 @@
                                 <el-col :span="10" align="right"
                                         v-show="tmData.length || ( ccsWarehouseImagePointRelationDTOListData && ccsWarehouseImagePointRelationDTOListData.length ) ">
                                     <el-button-group>
-                                        <el-button @click="open3d" v-has="'ccs-image-scan'" plain="" size="mini">
+                                        <el-button v-if="showScene" @click="open3d" v-has="'ccs-image-scan'" plain="" size="mini">
                                             3D室内定位
                                         </el-button>
                                         <el-button @click="pointConfigFn" v-if='!isPointConfig'
@@ -634,10 +634,12 @@ export default {
 
             // 室内定位本地缓存图片信息
             normalIconUrlBase64: '', // 正常
-            offlineIconUrlBase64: '' // 离线
+            offlineIconUrlBase64: '', // 离线
 
 
             // count : 0
+            // 是否显示3D室内定位
+            showScene: false,
         };
     },
     computed: {
@@ -1181,6 +1183,8 @@ export default {
 
         },
         showWarehouseDetail(item) {
+            // 有sceneUrl显示3D室内定位
+            this.showScene = item.sceneUrl ? true : false;
             this.idVal = item.backgroundId; //更新 idVal
 
             let staticVideo = JSON.parse(localStorage.getItem('staticVideo')) || {};
