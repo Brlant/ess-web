@@ -190,7 +190,7 @@
                                         imageId: '',
                                         imageUrl: '',
                                         enableSceneUrl: false,
-                                        sceneUrl: false,
+                                        sceneUrl: '',
                                     };
                                     // this.$refs.uploadFile.$refs.upload.clearFiles();
                                 },
