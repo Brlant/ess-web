@@ -34,14 +34,15 @@
         <div class="order-list" style="margin-top: 20px">
             <el-row class="order-list-header" v-if="type">
                 <el-col :span="3">设备编码devCode</el-col>
-                <el-col :span="5">设备编号devNo</el-col>
-                <el-col :span="5">名称</el-col>
+                <el-col :span="3">设备编号devNo</el-col>
+                <el-col :span="3" v-if="type == 2">使用单位</el-col>
+                <el-col :span="4">名称</el-col>
                 <el-col :span="type !== 2 ? 3 : 2">状态</el-col>
                 <el-col :span="type !== 2 ? 3 : 2">最新数据</el-col>
                 <el-col :span="3" v-show="type === 2">校准期</el-col>
                 <el-col :span="4">操作</el-col>
             </el-row>
-            <el-row class="order-list-header" v-else> 
+            <el-row class="order-list-header" v-else>
                 <el-col :span="3">设备编码devCode</el-col>
                 <el-col :span="3">设备编号devNo</el-col>
                 <el-col :span="4">名称</el-col>
@@ -69,10 +70,11 @@
                          v-for="item in dataList">
                         <el-row>
                             <el-col :span="3" class="R">{{ item.devCode }}</el-col>
-                            <el-col :span="5" class="R">{{ item.devNo }}</el-col>
-                            <el-col :span="5" class="R">{{ item.devName }}</el-col>
+                            <el-col :span="3" class="R">{{ item.devNo }}</el-col>
+                            <el-col :span="3" class="R" v-if="type == 2">{{ item.usingOfficeName }}</el-col>
+                            <el-col :span="4" class="R">{{ item.devName }}</el-col>
                             <el-col :span="type !== 2 ? 3 : 2">
-                                {{ formatStatus(item.devStatus, statusType) }} 
+                                {{ formatStatus(item.devStatus, statusType) }}
                             </el-col>
                             <el-col :span="type !== 2 ? 3 : 2">
                                 <el-tooltip :content="showRecordDate(item.recordDate)" effect="dark" placement="top">
@@ -147,6 +149,7 @@ import showForm from './form/show-form';
 import CommonMixin from '@/mixins/commonMixin';
 import {TempDev} from '@/resources';
 import LeadForm from './form/lead-form';
+import { BaseInfo } from '@/resources';
 
 export default {
     components: {
@@ -170,7 +173,8 @@ export default {
             },
             tempTypeList: ['有线温度计', '无线温度计', '冷柜温度计', '车载温度计', '湿度计'],
             defaultPageRight: {'width': '700px', 'padding': 0},
-            batchType: '0'
+            batchType: '0',
+            orgList: [],
         };
     },
     computed: {
@@ -197,6 +201,7 @@ export default {
     mounted() {
         // this.filters.status = '4' ;
         this.queryList(1);
+        this.queryOrg();
     },
     methods: {
         batchHandleDev(val) {
@@ -260,7 +265,7 @@ export default {
                 this.statusType[6].num = res.data[5];
                 this.statusType[7].num = res.data[0];
             });
-            // if (this.type === 2) { 
+            // if (this.type === 2) {
             //     return;
             // }
             // const http = TempDev.queryStateNum;
@@ -346,7 +351,30 @@ export default {
             a.remove(); // 一次性的，用完就删除a标签
 
 
+        },
+
+      // 查询使用单位
+      queryOrg() {
+        let params = {
+          orgtype: '0',
+          keyWord: '',
+        };
+        BaseInfo.query(params)
+            .then(res => {
+              this.orgList = res.data.list;
+            });
+      },
+
+      formatUsingOffice(usingOffice) {
+        let name = ''
+        if (usingOffice) {
+          let obj = this.orgList.find(item => item.dhsOrgId == usingOffice)
+          return name = obj && obj.name
+                        ? obj.name
+                        : ''
         }
+        return name
+      }
     }
 };
 </script>

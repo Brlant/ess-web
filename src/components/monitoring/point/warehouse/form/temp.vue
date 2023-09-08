@@ -26,7 +26,15 @@
         <template slot="content">
             <el-form :label-width="labelWidth" :model="point" :rules="rules" ref="form">
                 <el-form-item label="点位名称" prop="pointName">
-                    <oms-input placeholder="请输入点位名称" type="text" v-model="point.pointName" :maxlength="100"
+                    <oms-input placeholder="请输入点位名称" type="text" v-model="point.pointName" min="0" :maxlength="100"
+                               show-word-limit></oms-input>
+                </el-form-item>
+                <el-form-item label="高度(m)">
+                    <oms-input placeholder="请输入点位高度"
+                               type="number"
+                               v-model="point.pointHeight"
+                               :min="0"
+                               :maxlength="100"
                                show-word-limit></oms-input>
                 </el-form-item>
                 <el-form-item label="备注" prop="remark">
@@ -68,6 +76,7 @@ export default {
             point: {
                 id: '',
                 pointName: '',
+                pointHeight:'',//高度
                 remark: '',
                 warehouseId: ''
             },
@@ -83,12 +92,15 @@ export default {
     props: ['index', 'area', 'tempItem', 'action'],
     watch: {
         tempItem:function (val){
-            this.$refs['form'].resetFields();
+            console.log(val,'打印监听的值');
+            this.$refs.form.resetFields();
+            this.resetForm()
             if (!val.id){
                 this.point.id = '';
                 this.point = {
                     id: '',
                     pointName: '',
+                    pointHeight:'',//高度
                     remark: '',
                     warehouseId: ''
                 }
@@ -106,13 +118,29 @@ export default {
         }
     },
     methods: {
+        resetForm() {
+            this.point = {
+                id: '',
+                pointName: '',
+                pointHeight: '',//高度
+                remark: '',
+                warehouseId: ''
+            }
+        },
         doClose() {
             this.$emit('right-close');
         },
+
         onSubmit(formName) {
+
             this.$refs[formName].validate((valid) => {
                     if (!valid || this.doing) return;
-                    
+                    if(Number(this.point.pointHeight) < 0){
+                        this.$notify.error({
+                            message: '请输入非负数'
+                        });
+                        return;
+                    }
                     // yxh warehouseId 字段修改为 belongObjectId, 添加 pointType : 1 (库区)
                     // this.point.warehouseId = this.area.id;
                     this.point.belongObjectId = this.area.id;
@@ -125,12 +153,13 @@ export default {
                             errorTitle: '新增点位失败',
                             success: res => {
                                 this.doing = false;
-                                
+
                                 // this.point.warehouseId = '';
                                 this.point.belongObjectId = '';
                                 this.point.pointType = '1';
 
                                 this.point.pointName = '';
+                                this.point.pointHeight = '';
                                 this.point.remark = '';
                                 this.$emit('refresh');
                             },

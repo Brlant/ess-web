@@ -30,10 +30,35 @@
                 <el-form-item label="状态">
                     <!-- <el-switch active-text="启用" active-value="1" inactive-text="停用" inactive-value="0"
                                v-if="type !== 2" v-model="form.devStatus"></el-switch> -->
-                    <el-select placeholder="请选择状态"  v-model="form.devStatus">
+                    <el-select placeholder="请选择状态"  v-model="form.devStatus" @change="changeDevStatus">
                         <el-option :key="key" :label="item.title" :value="item.status"
                                    v-for="(item, key) in statusType" v-show="item.status !== null"></el-option>
                     </el-select>
+                </el-form-item>
+                <el-form-item v-if="type === 2&&actionType == '编辑'" label="最后一次使用单位">
+                  <el-select
+                      v-model="form.usingOffice"
+                      clearable
+                      filterable
+                      remote
+                      placeholder="请输入最后一次使用单位"
+                      popperClass="good-selects"
+                      @click.native.once="queryOrg('')"
+                      :remote-method="queryOrg"
+                      @change="changeUsingOffice">
+                    <el-option :value="org.dhsOrgId" :key="org.id" :label="org.name" v-for="org in orgList">
+                      <slot :row="org">
+                        <div style="overflow: hidden">
+                          <span class="pull-left" style="clear: right">{{org.name}}</span>
+                        </div>
+                        <div style="overflow: hidden">
+                          <span class="select-other-info pull-left">
+                            <span>系统代码:</span>{{org.manufacturerCode}}
+                          </span>
+                        </div>
+                      </slot>
+                    </el-option>
+                  </el-select>
                 </el-form-item>
             </el-form>
         </template>
@@ -41,6 +66,7 @@
 </template>
 <script>
 import {TempDev} from '@/resources';
+import { BaseInfo } from '@/resources';
 
 export default {
     data() {
@@ -67,7 +93,8 @@ export default {
                     {required: true, message: '请输入设备编号', trigger: 'blur'}
                 ]
             },
-            actionType: '添加'
+            actionType: '添加',
+            orgList: [],
         };
     },
     props: {
@@ -82,6 +109,11 @@ export default {
             if (this.formItem.ccsDevId) {
                 this.form = Object.assign({}, this.formItem);
                 this.actionType = '编辑';
+                if (this.form.usingOffice) {
+                  this.queryDhsOrgId(this.form.usingOffice)
+                } else {
+                  this.orgList = [];
+                }
             } else {
                 this.form = {
                     devCode: null,
@@ -91,13 +123,23 @@ export default {
                     monitorStatus: '0',
                     comment: null,
                     createTime: null,
-                    devNo: null
+                    devNo: null,
+                    usingOffice: null,
                 };
                 this.actionType = '添加';
             }
         }
     },
-    methods: {
+  mounted() {
+
+  },
+  methods: {
+        // 修改状态时
+        changeDevStatus(val) {
+          if (val == 3 || !this.form.devCode) {
+            this.form.usingOffice = null;
+          }
+        },
         save(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid && this.doing === false) {
@@ -131,6 +173,34 @@ export default {
                     }
                 }
             });
+        },
+
+        // 查询使用单位
+        queryOrg(query) {
+          let params = { orgtype: '0'};
+          if (typeof query === 'string') {
+            Object.assign(params, {keyWord: query});
+          } else if (typeof query === 'object') {
+            Object.assign(params, query);
+          }
+
+          BaseInfo.query(params).then(res => {
+            this.orgList = res.data.list;
+          });
+        },
+
+        // 改变最后一次使用单位
+        changeUsingOffice(val) {
+          if (!val) {
+            this.form.usingOffice = null
+          }
+        },
+
+        // 默认回显最后一次使用单位
+        queryDhsOrgId(dhsOrgId) {
+          TempDev.getEssOrgByDhsOrgId({dhsOrgId: dhsOrgId}).then(res=>{
+            this.orgList = res.data
+          })
         }
     }
 };

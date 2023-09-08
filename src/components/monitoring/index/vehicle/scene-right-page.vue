@@ -12,7 +12,7 @@
                             @input="sliderChange"
                         ></el-slider>
                         <div
-                            class="headerBeforeIcon" 
+                            class="headerBeforeIcon"
                             style="position: absolute;top: 3px;right: 7px;z-index: 1001;color: gray;cursor: pointer;font-size: 15px;"
                         >
                             <i
@@ -43,7 +43,7 @@
                             @tab-click="tabClick"
                             v-model="activeTab"
                         >
-                            <!-- 
+                            <!--
                                 之前用的设备名称
                                 :label="item.devName"
                             -->
@@ -62,12 +62,12 @@
                                     :key="index"
                                     @click="selectDevice"
                                     :data-index="index"
-                                    :data-deviceid="item.pointId" 
+                                    :data-deviceid="item.pointId"
                                 >
                                     <span
                                         class="devices-span devices-span-name"
                                     >
-                                        {{ item.devName }} 
+                                        {{ item.devName }}
                                     </span>
 
                                     <span
@@ -129,8 +129,8 @@
                     >
                     </e-charts>
                 </div>
-                
-                <!-- 
+
+                <!--
                     之前逻辑
                     <div
                         style="position: absolute;top: 3px;right: 7px;z-index: 1001;color: gray;cursor: pointer;font-size: 15px;"
@@ -422,7 +422,8 @@ export default {
             this.tipsDataList = arr ;
         },
         setSliderMaxCount( sliderMaxCount ){
-            this.sliderMaxCount = sliderMaxCount ;
+            // 数据是从0开始的，所以有数据时要减去1才是最大值
+            this.sliderMaxCount = sliderMaxCount > 0 ? sliderMaxCount - 1 : sliderMaxCount ;
         },
         formatSliderTootip(value) {
             let item = this.tipsDataList[value];
@@ -437,10 +438,15 @@ export default {
             this.$emit("close-drawer");
         },
         sliderChange(sliderValue) {
+            let echartsIndex;
+            let slideItem = this.tipsDataList[sliderValue];
+            if (slideItem && slideItem.createTime) {
+                echartsIndex = this.ccsScenesElementHistoryData.findIndex(item => this.$options.filters["minute"](item.createTime) == this.$options.filters["minute"](slideItem.createTime))
+            }
             this.$refs.chart.dispatchAction({
                 type: "showTip",
                 seriesIndex: 0,
-                dataIndex: sliderValue
+                dataIndex: echartsIndex
             });
             this.$emit("slider-change", sliderValue);
         },
@@ -455,7 +461,7 @@ export default {
             let devices = this.element.devList;
             if (devices.length > 0) {
                 // yxh 之前逻辑
-                // let deviceId = devices[e.index - 0].id; // 之前取 id 
+                // let deviceId = devices[e.index - 0].id; // 之前取 id
                 let deviceId = devices[e.index - 0].pointId; // 现在取 pointId
 
                 this.getDeviceHistory(deviceId);
@@ -464,7 +470,7 @@ export default {
                 let deviceId = "null";
                 this.getDeviceHistory(deviceId);
             }
-            
+
             /*
                 yxh 之前逻辑
                 // let devices = this.element.points[e.index].devices;
@@ -910,20 +916,20 @@ export default {
 
          if( this.element.devList && this.element.devList.length ){
             this.activeTab = this.element.devList[0].id + ''
-            
+
             // yxh 之前逻辑参数
-            //  const deviceId = this.element.devList[0].id // 之前取 id 
+            //  const deviceId = this.element.devList[0].id // 之前取 id
             //  this.getDeviceHistory(deviceId)
 
-            const deviceId = this.element.devList[0].pointId ; // 现在取 pointId 
-            this.getDeviceHistory(deviceId) ; 
+            const deviceId = this.element.devList[0].pointId ; // 现在取 pointId
+            this.getDeviceHistory(deviceId) ;
         } else {
             // this.$message({
             //     message : `${ this.element.scenesElementName } 暂无设备绑定! 请先绑定设备`,
             //     type : 'warning'
             // }) ;
         }
-         
+
         //  if ( this.element.points.length > 0 ){
 
         //  }
@@ -975,7 +981,7 @@ export default {
     box-shadow: 0 0 10px rgba(255, 255, 255, 1);
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipse;
+    text-overflow: ellipsis;
 }
 
 .container-box {
@@ -1059,7 +1065,7 @@ export default {
     cursor: pointer;
     font-size: 12px;
     overflow: hidden;
-    text-overflow: ellipse;
+    text-overflow: ellipsis;
 }
 
 .devices-span-name {

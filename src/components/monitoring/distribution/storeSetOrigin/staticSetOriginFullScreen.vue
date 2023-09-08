@@ -1,29 +1,34 @@
 <template>
         <!-- <div :style="svgFrameStyle" class='boxContainerItem'> -->
         <div class='boxContainerItem' ref="svgPart">
-            <img :src='imgUrl' :style="{ width : imgWidth + 'px', height : imgHeight + 'px' }" />
-            <VueDraggableResizable
-                :x="v.x"
-                :y="v.y"
-                :w="v.width"
-                :h="v.height"
-                :min-width="106"
-                :min-height="60"
-                :parent="true"
-                ref="dragVideo"
-                class="dragContainer"
-                @resizing="(x, y, width, height) => { resize( x, y, width, height, v ) }"
-                @dragging="(x, y) => { drag( x, y, v ) }"
-                @activated="onActivated( v )"
-                @deactivated="onDeactivated( v )"
-                @resizestop="( x, y, width, height ) => { onResizstop( v, x, y, width, height ) }"
-                v-for="( v, n ) in playObj"
-                :key="v.pointId"
-            >
-                <h3 class="titleTxt">{{ v.pointName }}{{ v.isActived }}<span @click="closeAlertFn( v.ccsDevId )">&times;</span></h3>
-                <div class="containMark" v-if="isActived"></div>
-                <iframe data-v-5a9dd0f5="" class="myiframe" ref="myiframe" :src="v.src" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen"></iframe>
-            </VueDraggableResizable>
+            <!--  把监控视频定位到图片上   -->
+            <div :style="{ width : imgWidth + 'px', height : imgHeight + 'px' }" >
+                <VueDraggableResizable
+                    :x="v.x"
+                    :y="v.y"
+                    :w="v.width"
+                    :h="v.height"
+                    :min-width="106"
+                    :min-height="60"
+                    :parent="true"
+                    ref="dragVideo"
+                    class="dragContainer"
+                    @resizing="(x, y, width, height) => { resize( x, y, width, height, v ) }"
+                    @dragging="(x, y) => { drag( x, y, v ) }"
+                    @activated="onActivated( v )"
+                    @deactivated="onDeactivated( v )"
+                    @resizestop="( x, y, width, height ) => { onResizstop( v, x, y, width, height ) }"
+                    v-for="( v, n ) in playObj"
+                    :key="v.pointId"
+                >
+                    <h3 class="titleTxt">{{ v.pointName }}{{ v.isActived }}<span @click="closeAlertFn( v.ccsDevId )">&times;</span></h3>
+                    <div class="containMark" v-if="isActived"></div>
+                    <iframe data-v-5a9dd0f5="" class="myiframe" ref="myiframe" :src="v.src" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen"></iframe>
+                </VueDraggableResizable>
+                <img :src='imgUrl' :style="{ width : imgWidth + 'px', height : imgHeight + 'px' }" />
+            </div>
+
+
 
             <audio hidden loop ref="alarmMusic" src="@/../static/audio/alarm.mp3"></audio>
 
@@ -35,7 +40,7 @@
                 :isBigScreen="true"
                 @close-drawer="handleCloseDrawer"
             ></static-details>
-            
+
 
             <tmPer :color="item.color" :fontColor="item.fontcolor" :iconScale="1.2" :item="item.devDetail" :key="index" :position="item.position"
                 @showBigMap="showBigMap"
@@ -49,7 +54,7 @@
                 :size="12" :tmData="ccsWarehouseImagePointRelationDTOListData" ref="tm-part" v-for="(item, index) in ccsWarehouseImagePointRelationDTOListData">
             {{item.text}}
             </tm>
-            
+
         </div>
 </template>
 
@@ -86,15 +91,15 @@ export default {
 
             idVal : '',
 
-            imgWidth : 0, 
+            imgWidth : 0,
             imgHeight : 0,
             ccsWarehouseImagePointRelationDTOList : [],
             positionTimer : null,
             positionTimerStep : 0,
 
             pointRatio : 1,
-            pointX : 0, 
-            pointY : 0, 
+            pointX : 0,
+            pointY : 0,
             graphList : [],
 
             step : 500, // 间隔
@@ -116,27 +121,27 @@ export default {
         ccsWarehouseImagePointRelationDTOListData() {
             let width = this.imgWidth;
             let height = this.imgHeight;
-            
+
             if( this.$refs.svgPart ){
             this.ccsWarehouseImagePointRelationDTOList.filter(f => !f.positionX || !f.positionY).map((m, index) => {
-                m.initPositionX = this.pointX ; 
-                m.initPositionY = this.pointY ; 
+                m.initPositionX = this.pointX ;
+                m.initPositionY = this.pointY ;
 
                 //之前逻辑以图片宽高比进行定位
-                // m.initPositionX = width / 2 ; 
-                // m.initPositionY = height / 2 ; 
+                // m.initPositionX = width / 2 ;
+                // m.initPositionY = height / 2 ;
 
                 m.isNotAlloat = true;
 
             });
-                
+
             return this.ccsWarehouseImagePointRelationDTOList.map((m) => {
                 let xScale = m.positionX * +this.pointRatio ;
                 let yScale = m.positionY * +this.pointRatio ;
-                
+
                 if (m.warnFlag) {
                     this.isAlarm = true;
-                } 
+                }
 
                 let obj = {
                     color: this.getColorPx(m),
@@ -147,18 +152,18 @@ export default {
                     position: {
                         // 原点坐标设置 x 轴： ( 实际坐标 + 偏移量 ) * 坐标缩放比例
                         // 原点坐标设置 y 轴： ( 实际坐标 - 偏移量 ) * 坐标缩放比例 [ 注意: 这里的 y 轴向上为正方向, 往下为负方向 ]
-                        x:  m.isNotAlloat ? 
+                        x:  m.isNotAlloat ?
                             m.initPositionX :
                                 m.positionX > 0 ? // 表示在原点的右侧
                                 this.currPosObj.pointX + ( xScale ) :
                                 this.currPosObj.pointX - ( Math.abs( xScale ) ),
 
-                        y:  m.isNotAlloat ? 
-                            m.initPositionY : 
+                        y:  m.isNotAlloat ?
+                            m.initPositionY :
                                 m.positionY > 0 ? // 表示在原点的上方
                                 this.currPosObj.pointY - ( yScale ) :
                                 this.currPosObj.pointY + ( Math.abs( yScale ) ),
-                        
+
                         // x: m.isNotAlloat ? m.initPositionX : (m.positionX * this.scaling),
                         // y: m.isNotAlloat ? m.initPositionY : (m.positionY * this.scaling)
                     },
@@ -168,7 +173,7 @@ export default {
                     devDetail: {...m, indoorPositionSceneDTO : { ...this.curPos.indoorPositionSceneDTO, normalIconUrlBase64 : this.normalIconUrlBase64, offlineIconUrlBase64 : this.offlineIconUrlBase64 } }
                 } ;
 
-                if( m.pointName === this.currentClickElement.scenesElementName ){ 
+                if( m.pointName === this.currentClickElement.scenesElementName ){
                     this.currentClickElement = {
                         scenesElementName:m.pointName,
                         scenesElementId:m.pointId,
@@ -177,7 +182,7 @@ export default {
                         itemValue : {...m, indoorPositionSceneDTO : { ...this.curPos.indoorPositionSceneDTO } }
                         // itemValue : m
                     }
-                      
+
                 }
                 return obj;
             }) || [];
@@ -228,8 +233,8 @@ export default {
                         // x: m.isNotAlloat ? m.initPositionX : (m.positionX * this.scaling),
                         // y: m.isNotAlloat ? m.initPositionY : (m.positionY * this.scaling)
                     },
-                    text: m.devType === 4 ? 
-                              m.humidity + '%' : 
+                    text: m.devType === 4 ?
+                              m.humidity + '%' :
                               +m.isVideo === 1 ? // 如果是视频类型
                               m.pointName :
                               m.temperature + '℃',
@@ -264,7 +269,7 @@ export default {
             this.imgHeight = this.$route.query.imgHeight ;
             this.positionTimerStep = this.$route.query.positionTimerStep ;
             this.pointRatio = this.$route.query.pointRatio ;
-           
+
         }
 
         if( this.$route.params ){
@@ -288,7 +293,7 @@ export default {
     },
     methods : {
         initFn(){
-            
+
             this.queryDevs() ; // 默认初始化
             this.reqListFn() ; // 定时请求渲染数据
             this.reqPositionById() ;
@@ -309,7 +314,7 @@ export default {
             this.normalIconUrlBase64 = '' ;
             this.offlineIconUrlBase64 = '' ;
 
-            warehouseDevImage.query({ 
+            warehouseDevImage.query({
                 sceneType : 2  // 1 : 静态场景     2 : 室内定位场景
             }).then(res => {
                 this.graphList = res.data.ccsWarehouseImageDTOS;
@@ -328,7 +333,7 @@ export default {
                         var base64 = this.getBase64Image(img, this.curPos.indoorPositionSceneDTO.normalIconUrl.slice(this.curPos.indoorPositionSceneDTO.normalIconUrl.lastIndexOf('.') + 1));
                         this.normalIconUrlBase64 = base64 ;
                     }, false ) ;
-                  
+
                   } else {
                     this.normalIconUrlBase64 = '' ;
                   }
@@ -413,14 +418,14 @@ export default {
             if (!this.activeId) return;
             warehouseDevImage.positionById(this.activeId).then(res => {
                 let { data } = res ;
-                
+
                 this.ccsWarehouseImagePointRelationDTOList = data.ccsWarehouseImagePointRelationDTOList ;
-               
+
             });
         },
 
         showBigMap( item ){
-            
+
             // 重置
             item.x = item.x || 0 ;
             item.y = item.y || 0 ;
@@ -433,7 +438,7 @@ export default {
                 // this.$set( this.playObj, item.pointId, item ) ;
             */
 
-            if( +item.isVideo === 1 ){ // 如果是视频类型 
+            if( +item.isVideo === 1 ){ // 如果是视频类型
                 this.drawer = false ;
 
                 if( Object.keys( this.playObj ).length >= 2 ){
@@ -442,9 +447,9 @@ export default {
                     message: '打开超过限制'
                     });
                     return ;
-                } 
+                }
 
-                item.src= item.videoUrl;                
+                item.src= item.videoUrl;
                 this.$set( this.playObj, item.ccsDevId, item ) ;
 
                 let staticVideo = JSON.parse( localStorage.getItem( 'staticVideo' ) ) || {} ;
@@ -454,7 +459,7 @@ export default {
                     localStorage.setItem( 'staticVideo', JSON.stringify( staticVideo ) ) ;
                 }
 
-                
+
             } else {
                 // 添加 echarts 图数据展示
                 this.currentClickElement= {
@@ -514,7 +519,7 @@ export default {
             let obj = { ...this.playObj } ;
             delete obj[ ccsDevId ] ;
             // delete obj[ pointId ] ;
-            this.playObj = obj ; 
+            this.playObj = obj ;
 
             let statcVideo = JSON.parse( localStorage.getItem( 'staticVideo' ) ) || {} ;
             if( statcVideo[ this.idVal ] ){
@@ -531,7 +536,7 @@ export default {
                 // yxh 之前取的 ccsWarehouseImageDevRelationDTOList 字段信息
                 // let list = res.data.ccsWarehouseImageDevRelationDTOList;
 
-                let list = res.data.ccsWarehouseImagePointRelationDTOList;  // 现在取 ccsWarehouseImagePointRelationDTOList 字段信息
+                let list = res.data.response;  // 现在取 response 字段信息
                 if (list.length && list[0].backgroundId !== this.activeId) return;
                 // console.error( this.$refs.svgPart.offsetWidth, this.currentWidth, 77 ) ;
                 this.currentWidth = this.$el.offsetWidth ;
@@ -539,7 +544,7 @@ export default {
 
                 this.tempList = list;
 
-                // // 如果有告警产生, 则播放告警音, 否则不播放告警音 
+                // // 如果有告警产生, 则播放告警音, 否则不播放告警音
                 if( this.$refs.alarmMusic ){
                     this.isPlay ? this.$refs.alarmMusic.play() : this.$refs.alarmMusic.pause();
                 }

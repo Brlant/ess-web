@@ -23,7 +23,7 @@
                     <el-row>
                         <el-col :span="4">{{ parent.formatStatus(item.oldStatus, statusType) }}</el-col>
                         <el-col :span="4">{{ parent.formatStatus(item.newStatus, statusType) }}</el-col>
-                        <el-col :span="10">{{ item.createName }}</el-col>
+                        <el-col :span="10">{{ item.createName || item.updatedBy }}</el-col>
                         <el-col :span="6">{{ item.createTime | time }}</el-col>
                     </el-row>
                 </div>

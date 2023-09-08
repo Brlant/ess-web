@@ -7,7 +7,7 @@
         display:flex;
         flex-direction:row;
         .d-table-left{ flex-shrink:0; box-sizing:border-box; }
-        .d-table-right{ box-sizing:border-box; 
+        .d-table-right{ box-sizing:border-box;
             .content-right{width:100%; overflow:hidden; box-sizing:border-box;}
         }
 
@@ -25,7 +25,7 @@
     .d-table > div.d-table-left {
         padding-left: 10px;
         padding-right: 0;
-        width:260px; 
+        width:260px;
         flex-shrink:0;
         /*.d-table-left_scroll_content {*/
         /*padding-right: 20px;*/
@@ -44,23 +44,23 @@
 
     .noDataTips{ text-align:center; min-height:300px; color:#999; display:flex; justify-content: center; align-items: center; }
 
-    .pointPositionTable{ 
+    .pointPositionTable{
         width:100%!important;
         table{ width:100%!important; }
-        .el-table__body-wrapper{ width:100%!important; } 
-        .el-table__body{ width:100%!important; } 
-        
+        .el-table__body-wrapper{ width:100%!important; }
+        .el-table__body{ width:100%!important; }
+
     }
 
     .warehouse-tree{
-        .el-collapse-item__header{ display:flex; align-items:center; flex-direction:row; 
+        .el-collapse-item__header{ display:flex; align-items:center; flex-direction:row;
             > span{ line-height:normal; }
             .list-opera-icon{ display:flex; }
-            .titleTxt{ 
+            .titleTxt{
                 display: -webkit-box;
                 -webkit-box-orient: vertical;
                 overflow: hidden;
-                -webkit-line-clamp: 2; 
+                -webkit-line-clamp: 2;
             }
         }
     }
@@ -93,7 +93,7 @@
                                             <des-btn @click="editWarehouse(item)" icon="edit" v-has="'ccs-point-warehouse-edit'"></des-btn>
                                             <des-btn @click="addArea" icon="plus" v-has="'ccs-point-warehouse-area-add'"></des-btn>
                                         </span>
-                                        <span class="titleTxt" :title="item.warehouseCode">{{ item.warehouseCode }}</span> 
+                                        <span class="titleTxt" :title="item.warehouseCode">{{ item.warehouseCode }}</span>
                                         <!--<el-tag type="success" v-show="item.warnStatus === '0'">正常</el-tag>-->
                                         <!--<el-tag type="danger" v-show="item.warnStatus === '1'">告警</el-tag>-->
                                         <el-tag type="success" v-show="item.activeFlag === '1'">启用</el-tag>
@@ -264,7 +264,7 @@
                                         </template>
                                     </el-table-column>
                                 </el-table>
-                                
+
                             </div>
                             <div class="text-center" v-show="tempList.length">
                                 <el-pagination :current-page="pager.currentPage" :page-size="pager.pageSize"
@@ -288,7 +288,7 @@
 
             <!-- 新增 - 导出数据组件 -->
             <export-data :ccsWarehouseId="ccsWarehouseId" :index="showIndex" v-show="showIndex=== 4"/>
-            
+
         </page-right>
     </div>
 </template>
@@ -440,16 +440,16 @@ export default {
                 keyWord: this.keyWord
             });
             let unbandingFlag = false;
-            
+
             Point.queryPointList(this.currentArea.id, params).then(res => {
                 let pointList = res.data;
-               
+
                 pointList.forEach(f => {
                     if (f.ccsDevId === null) {
                         unbandingFlag = true;
                     }
                 })
-               
+
                 if (unbandingFlag) {
                     this.$notify.info({
                         message: '存在未绑定设备的点位，无法进行配置规则的操作。'
@@ -506,7 +506,7 @@ export default {
             });
         },
         queryArea: function () {
-            
+
             let param = {
                 parentId: this.activeId,
                 warehouseType: '2',
@@ -528,10 +528,10 @@ export default {
 
                 belongObjectId: this.currentArea.id,
                 // ccsWarehouseId: this.currentArea.id,
-                
+
                 keyWord: this.keyWord,
 
-                pointType : '1' // 表示查询库区点位 
+                pointType : '1' // 表示查询库区点位
             });
             this.loadingDataTemp = true;
             this.tempList = [] ;
@@ -554,7 +554,7 @@ export default {
             this.$router.push({path: '/monitoring/point-dev/temp', query: {pointId, type}});
         },
 
-        monitoringControlsFn( activeFlag ){            
+        monitoringControlsFn( activeFlag ){
             let params = {
                 activeFlag,
                 warehouseId : this.ccsWarehouseId
@@ -573,11 +573,11 @@ export default {
                         message: +status === 200 ? `${ activeFlag ? '开启' : '取消' }成功` : `${ activeFlag ? '开启' : '取消' }失败`
                     });
                 });
-                
+
             });
 
 
-           
+
         }
     }
 };

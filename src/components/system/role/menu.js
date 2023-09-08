@@ -1496,6 +1496,27 @@ export default [
                 'leaf': true
             }],
             'leaf': false
-        }],
+        }, {
+            'id': 'ccs-system-update-log',
+            'parentId': 'ccs-system-config',
+            'label': '更新日志',
+            'sort': 5,
+            'children': [{
+                'id': 'ccs-update-log-delete',
+                'parentId': 'ccs-system-update-log',
+                'label': '删除更新日志',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-update-log-add',
+                'parentId': 'ccs-system-update-log',
+                'label': '新增更新日志',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }],
+            'leaf': true
+        },],
         'leaf': false
     }];

@@ -125,7 +125,11 @@ export const TempDev = resource('/ccsDevice', http, {
     },
     exportDevInfo(params) {
         return http.get('/ccsDevice/export-dev', {params});
-    }
+    },
+
+    getEssOrgByDhsOrgId(params) {
+        return http.get('/ccsDevice/getEssOrgByDhsOrgId', {params});
+    },
 });
 
 export const HandoverData = resource('/handover-data', http, {
@@ -455,6 +459,22 @@ export const BaseInfo = resource('/orgs', http, {
     // 删除受控法规
     deleteFg: (id) => {
         return http.delete('/bizLegislation/' + id);
+    }
+});
+
+// 系统设置-更新日志
+export const CcsPublishLog = resource('/ccsPublishLog', http, {
+    // 查询更新日志列表
+    getCcsPublishLogList: (data) => {
+        return http.post('/ccsPublishLog/page', data);
+    },
+    // 增加日志信息
+    addCcsPublishLog: (data) => {
+        return http.post('/ccsPublishLog', data);
+    },
+    // 删除日志信息
+    deleteCcsPublishLog: (id) => {
+        return http.delete('/ccsPublishLog/deleteById/' + id);
     }
 });
 

@@ -30,7 +30,7 @@
                 </el-form-item>
                 <el-form-item label="上传分布图">
                    <oms-upload :limit="1" @change="changeFiles" ref="uploadFile"></oms-upload>
-                    <!-- 
+                    <!--
                         // 之前逻辑
                         <el-upload
                             ref="uploadRef"
@@ -40,7 +40,7 @@
                             :limit="1"
                             :on-success="handleSuccess">
                             <el-button size="small" type="primary">点击上传</el-button>
-                        </el-upload> 
+                        </el-upload>
                     -->
                 </el-form-item>
                 <el-form-item label="物流中心">
@@ -56,6 +56,15 @@
                         <el-option :key="item.id" :label="item.warehouseCode" :value="item.id"
                                    v-for="item in warehouseList"></el-option>
                     </el-select>
+                </el-form-item>
+                <el-form-item label="是否有3D场景" prop="is3dScene">
+                  <el-switch
+                      v-model="form.enableSceneUrl"
+                      @change="switchChangeScene"
+                  />
+                </el-form-item>
+                <el-form-item label="3D场景地址" prop="sceneUrl" v-if="showSceneUrl">
+                  <oms-input v-model="form.sceneUrl"></oms-input>
                 </el-form-item>
             </el-form>
         </template>
@@ -80,7 +89,9 @@
                     logsicId: '',
                     warehouseIds: [],
                     imageId: '',
-                    imageUrl: ''
+                    imageUrl: '',
+                    enableSceneUrl: false,
+                    sceneUrl: '',
                 },
                 logisticsCenterList: [],
                 warehouseList: [],
@@ -95,7 +106,9 @@
                         {required: true, type: 'array', message: '请选择仓库', trigger: 'change'}
                     ]
                 },
-                doing: false
+                doing: false,
+                // 是否显示3d场景地址输入框
+                showSceneUrl: false,
             };
         },
         props: ['index', 'formItem'],
@@ -160,7 +173,9 @@
                                 imageUrl: this.form.imageUrl,
                                 imageId: this.form.imageId,
                                 warehouseIds: this.form.warehouseIds,
-                                sceneType : 2  // 1 : 静态场景     2 : 室内定位场景
+                                sceneType : 2,  // 1 : 静态场景     2 : 室内定位场景
+                                enableSceneUrl: this.form.enableSceneUrl,
+                                sceneUrl: this.form.sceneUrl,
                             };
                             this.doing = true;
                             this.$httpRequestOpera(warehouseDevImage.save(form), {
@@ -174,7 +189,9 @@
                                         logsicId: '',
                                         warehouseIds: [],
                                         imageId: '',
-                                        imageUrl: ''
+                                        imageUrl: '',
+                                        enableSceneUrl: false,
+                                        sceneUrl: '',
                                     };
                                     // this.$refs.uploadFile.$refs.upload.clearFiles();
                                 },
@@ -185,7 +202,17 @@
                         }
                     }
                 );
-            }
+            },
+
+            // 是否有3d场景改变
+            switchChangeScene(val) {
+              if ( val) {
+                this.showSceneUrl = true
+              } else {
+                this.showSceneUrl = false;
+                this.form.sceneUrl = '';
+              }
+            },
         }
 
     };
