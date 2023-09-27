@@ -40,7 +40,7 @@
                     :refreshEcharts="refreshEcharts"
                     @close-drawer="handleCloseDrawer"
                 ></static-details>
-                
+
 
                 <tm :color="item.color" :fontColor="item.fontcolor" :iconScale="1.2" :item="item.devDetail" :key="index" :position="item.position"
                     :standby="item.standby"
@@ -107,8 +107,9 @@ export default {
             step : 500, // 间隔
             videoTimer : null, // 定时器引用
             fieldForm:{
-                displayField:[], 
+                displayField:[],
             },
+            backgroundName: null,
         }
     },
     computed : {
@@ -159,8 +160,8 @@ export default {
                         // x: m.isNotAlloat ? m.initPositionX : (m.positionX * this.scaling),
                         // y: m.isNotAlloat ? m.initPositionY : (m.positionY * this.scaling)
                     },
-                    text: m.devType === 4 ? 
-                              m.humidity + '%' : 
+                    text: m.devType === 4 ?
+                              m.humidity + '%' :
                               +m.isVideo === 1 ? // 如果是视频类型
                               m.pointName :
                               m.temperature + '℃',
@@ -212,7 +213,7 @@ export default {
     },
     methods : {
         initFn(){
-            
+
             this.queryDevs() ; // 默认初始化
             this.reqListFn() ; // 定时请求渲染数据
         },
@@ -274,7 +275,7 @@ export default {
                 // this.$set( this.playObj, item.pointId, item ) ;
             */
 
-            if( +item.isVideo === 1 ){ // 如果是视频类型 
+            if( +item.isVideo === 1 ){ // 如果是视频类型
                 this.drawer = false ;
 
                 if( Object.keys( this.playObj ).length >= 2 ){
@@ -283,9 +284,9 @@ export default {
                     message: '打开超过限制'
                     });
                     return ;
-                } 
+                }
 
-                item.src= item.videoUrl;                
+                item.src= item.videoUrl;
                 this.$set( this.playObj, item.ccsDevId, item ) ;
 
                 let staticVideo = JSON.parse( localStorage.getItem( 'staticVideo' ) ) || {} ;
@@ -295,7 +296,7 @@ export default {
                     localStorage.setItem( 'staticVideo', JSON.stringify( staticVideo ) ) ;
                 }
 
-                
+
             } else {
                 // 添加 echarts 图数据展示
                 this.currentClickElement= {
@@ -353,7 +354,7 @@ export default {
             let obj = { ...this.playObj } ;
             delete obj[ ccsDevId ] ;
             // delete obj[ pointId ] ;
-            this.playObj = obj ; 
+            this.playObj = obj ;
 
             let statcVideo = JSON.parse( localStorage.getItem( 'staticVideo' ) ) || {} ;
             if( statcVideo[ this.idVal ] ){
@@ -378,7 +379,7 @@ export default {
 
                 this.tempList = list;
 
-                // // 如果有告警产生, 则播放告警音, 否则不播放告警音 
+                // // 如果有告警产生, 则播放告警音, 否则不播放告警音
                 if( this.$refs.alarmMusic ){
                     this.isPlay ? this.$refs.alarmMusic.play() : this.$refs.alarmMusic.pause();
                 }
@@ -395,13 +396,13 @@ export default {
                     if(v.devDetail.devPointName){   //设备名称
                         standby.push({devType:v.devDetail.devType,value:v.devDetail.devPointName,key:'devPointName'})
                     }
-                    if(v .devDetail.voltage){ // 电量  
+                    if(v .devDetail.voltage){ // 电量
                         standby.push({devType:v.devDetail.devType,value:v.devDetail.voltage,key:'voltage'})
                     }
-                    if(v.devDetail.temperature){ // 温度  
+                    if(v.devDetail.temperature){ // 温度
                         standby.push({devType:v.devDetail.devType,value:v.devDetail.temperature,key:'temperature'})
                     }
-                    if(v.devDetail.humidity){ // 湿度  
+                    if(v.devDetail.humidity){ // 湿度
                         standby.push({devType:v.devDetail.devType,value:v.devDetail.humidity,key:'humidity'})
                     }
                     v.standby = standby
@@ -464,6 +465,7 @@ export default {
     }
     .embellish{
         display: inline-block;
+        width: 100%;
         height: 50px;
         line-height: 50px;
         padding: 3px 8px;
@@ -474,9 +476,9 @@ export default {
     .content{
         width:100vw!important;
         height: calc(100vh - 50px);
-        background-size:100% 100%!important; 
-        background-repeat:no-repeat; 
-        position:absolute; 
+        background-size:100% 100%!important;
+        background-repeat:no-repeat;
+        position:absolute;
         z-index:10;
     }
     .tabs /deep/ .el-tabs__nav-wrap::after{
