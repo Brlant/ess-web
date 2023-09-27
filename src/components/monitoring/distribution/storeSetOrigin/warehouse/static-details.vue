@@ -26,11 +26,11 @@
                         <i class="el-icon-circle-close" @click="closeDrawer"></i>
                     </div>
 
-                     <!-- 
+                     <!--
                         之前逻辑
                         <el-col :span="2">
                             <i class="el-icon-error" @click="closeDrawer"></i>
-                        </el-col> 
+                        </el-col>
                     -->
                 </el-row>
             </div>
@@ -52,7 +52,7 @@
                     >
                     </e-charts>
                 </div>
-                <!-- 
+                <!--
                     之前逻辑
                     <div style="position: absolute;top: 3px;right: 7px;z-index: 1001;color: gray;cursor: pointer;font-size: 15px;" >
                         <i
@@ -64,7 +64,7 @@
                             @click="clickShowRecored"
                             style="margin-left: 10px;"
                         ></i>
-                    </div> 
+                    </div>
                 -->
             </div>
 
@@ -142,7 +142,7 @@ export default {
             showDatePickerRange: false,
             datePickerRangeValue: "",
             sliderMaxCount: 0,
-            options: {
+            /*options: {
                 legend : {
                     data : []
                 },
@@ -151,7 +151,8 @@ export default {
                 },
                 yAxis : [],
                 series : []
-            },
+            },*/
+            options: {},
             selectDevice:{
                 ccsDevId:'',
                 devCode:''
@@ -282,12 +283,12 @@ export default {
                 background: "rgba(0, 0, 0, 0.3)"
             });
 
-            this.options = this.getOptions();
+            /*this.options = this.getOptions();
 
             this.options.legend.data = [];
             this.options.xAxis.data = [];
             this.options.yAxis = [];
-            this.options.series = [];
+            this.options.series = [];*/
             let list = [];
 
             https.get("/mcc-data/ccsDevice/point/getPointAllData",params)
@@ -296,7 +297,17 @@ export default {
                     list=res.ccsDevDataList;
                     let devices=res.deviceInfoList;
                     this.devicesInfo=devices;
+                    if( list.length ){ // 如果有数据则进行渲染
+                      this.options = this.getOptions();
 
+                      this.options.legend.data = [];
+                      this.options.xAxis.data = [];
+                      this.options.yAxis = [];
+                      this.options.series = [];
+                    } else { // 如果没有数据则设置空对象 options, 不用渲染 echarts 做多余的操作
+                      this.options = {} ;
+                      return ;
+                    }
                     //重新排序
                     list.sort(function(a, b) {
                         return a.createTime - b.createTime;
@@ -359,7 +370,7 @@ export default {
                         data,
                         devices
                     );
-                    
+
                     this.options.series.push(seriesItem);
                     yAxisItem = this.getYAxisItem(
                         name,
@@ -377,12 +388,12 @@ export default {
 
                         '温度': +this.selectDevice.devType === 0 ||
                                 +this.selectDevice.devType === 1 ||
-                                +this.selectDevice.devType === 2 || 
+                                +this.selectDevice.devType === 2 ||
                                 +this.selectDevice.devType === 3,
 
                         "湿度": +this.selectDevice.devType === 4,
                         "电量": +this.selectDevice.devType === -1, // 暂无电量类型 屏蔽掉为 -1
-                        
+
                     };
 
                 })
@@ -493,7 +504,7 @@ export default {
                     formatter: function(params) {
                         let tip = "";
                         if (params != null && params.length > 0) {
-                            
+
                             for (let i = 0; i < params.length; i++) {
                                 if (i == 0) {
                                     tip += format2(params[i].value[0]) + "<br/>";
@@ -656,7 +667,7 @@ export default {
     border-top-right-radius: 5px;
     box-sizing: border-box;
     position: relative;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 1);   
+    box-shadow: 0 0 10px rgba(255, 255, 255, 1);
     background:rgba(30, 30, 30, 1) ;
     /* 就是这个 */
 }

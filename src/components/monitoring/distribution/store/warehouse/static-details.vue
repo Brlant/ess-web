@@ -177,7 +177,7 @@ export default {
                 // 解决 echarts 解决 TypeError : axis.getAxesOnZeroOf is not a function 问题, 添加此位置的如下代码 :
                 options: {},
             */
-            options: {
+            /*options: {
                 legend : {
                     data : []
                 },
@@ -186,8 +186,8 @@ export default {
                 },
                 yAxis : [],
                 series : []
-            },
-
+            },*/
+            options: {},
 
             selectDevice:{
                 ccsDevId:'',
@@ -331,12 +331,12 @@ export default {
             */
 
 
-            this.options = this.getOptions();
+            /*this.options = this.getOptions();
 
             this.options.legend.data = [];
             this.options.xAxis.data = [];
             this.options.yAxis = [];
-            this.options.series = [];
+            this.options.series = [];*/
 
             let list = [];
 
@@ -361,6 +361,18 @@ export default {
                             return ;
                         }
                     */
+
+                    if( list.length ){ // 如果有数据则进行渲染
+                      this.options = this.getOptions();
+
+                      this.options.legend.data = [];
+                      this.options.xAxis.data = [];
+                      this.options.yAxis = [];
+                      this.options.series = [];
+                    } else { // 如果没有数据则设置空对象 options, 不用渲染 echarts 做多余的操作
+                      this.options = {} ;
+                      return ;
+                    }
 
                     //重新排序
                     list.sort(function(a, b) {
