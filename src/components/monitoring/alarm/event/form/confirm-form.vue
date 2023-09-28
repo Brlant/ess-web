@@ -16,6 +16,12 @@
         <el-form-item label="情况说明">
           <oms-input placeholder="请输入情况说明" type="textarea" v-model="form.confirmContent"/>
         </el-form-item>
+        <el-form-item label="恢复前通知" prop="circularNotification">
+          <el-radio-group v-model="form.circularNotification">
+            <el-radio label="1">继续通知</el-radio>
+            <el-radio label="0">不再通知</el-radio>
+          </el-radio-group>
+        </el-form-item>
       </el-form>
     </template>
   </dialog-template>
@@ -28,7 +34,8 @@
             return {
                 form: {
                     confirmType: '1',
-                    confirmContent: ''
+                    confirmContent: '',
+                    circularNotification: '0'
                 },
                 doing: false
             };
@@ -50,7 +57,8 @@
             index: function (val) {
                 this.form = {
                     confirmType: '1',
-                    confirmContent: ''
+                    confirmContent: '',
+                    circularNotification: '0'
                 };
             }
         },

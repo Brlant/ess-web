@@ -24,6 +24,10 @@ export const NotifyRecord = resource('/ccsNotifyRecord', http, {});
 export const WarnRecord = resource('/ccsWarnRecord', http, {
     batchConfirmItem(obj) {
         return http.put('/ccsWarnRecord/batch-confirm', obj);
+    },
+
+    batchConfirm(obj) {
+        return http.put('/ccsWarnRecord/batchConfirm', obj);
     }
 });
 

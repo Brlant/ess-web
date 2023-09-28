@@ -275,3 +275,48 @@
         text-overflow: ellipsis;
     }
 }
+
+// 预警告警label
+.warning-label,
+.early-warning-label {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    text-align: center;
+    line-height: 25px;
+    margin-right: 5px;
+    color: #ffffff;
+    border-radius: 5px;
+}
+
+.warning-label {
+    //background: #FF0000;
+    background: $error-color;
+}
+
+.early-warning-label {
+    //background: #FFD200;
+    background: $warning-color;
+}
+
+.info-type {
+    display: inline-block;
+    width: 55px;
+    height: 25px;
+    text-align: center;
+    line-height: 25px;
+    color: #ffffff;
+    border-radius: 5px;
+}
+
+.warning-type {
+    background: $error-color;
+}
+
+.early-warning-type {
+    background: $warning-color;
+}
+
+.recovery-type {
+    background: $success-color;
+}
