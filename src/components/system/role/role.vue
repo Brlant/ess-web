@@ -42,14 +42,32 @@
     .d-table-col-wrap {
       overflow: auto;
     }
+
+    .role-header {
+      width: 100%;
+      .status-box {
+        width: 80%;
+
+      }
+      .button-box {
+        width: 20%;
+      }
+    }
   }
 </style>
 <template>
   <div>
     <div>
-      <status-list :activeStatus="filters.usableStatus" :checkStatus="changeType"
-                   :formatClass="formatClass" :isShowIcon="isShowIcon" :isShowNum="true"
-                   :statusList="orgType"></status-list>
+      <el-row type="flex" align="middle">
+        <el-col :span="20">
+          <status-list class="role-status" :activeStatus="filters.usableStatus" :checkStatus="changeType"
+                       :formatClass="formatClass" :isShowIcon="isShowIcon" :isShowNum="true"
+                       :statusList="orgType"></status-list>
+        </el-col>
+        <el-col :span="4">
+          <el-button @click="exportExcel">导出Excel</el-button>
+        </el-col>
+      </el-row>
       <div class="d-table">
         <div class="d-table-left">
           <div :style="'height:'+bodyHeight">
@@ -170,9 +188,10 @@
   </div>
 </template>
 <script>
-    import {Access} from '@/resources';
+    import {http, Access} from '@/resources';
     import roleForm from './form/form.vue';
     import roleMixin from '@/mixins/roleMixin';
+    import utils from "@/tools/utils";
 
     export default {
         components: {roleForm},
@@ -410,7 +429,27 @@
                     // this.getMenus(this.resData.permissionList);
                     this.showRight = false;
                 }
-            }
+            },
+
+            // 导出Excel
+            exportExcel() {
+              this.$store.commit('initPrint', {isPrinting: true,text: '正在导出'});
+              let data = Object.assign({}, {
+                deleteFlag: false,
+                objectId: 'ccs-system',
+                menuDtos: this.menuList,
+              }, this.filters);
+              http.post('/ccsRole/exportRole', data).then(res => {
+                utils.download(res.data.path, '角色管理');
+                this.$store.commit('initPrint', {isPrinting: false});
+
+              }).catch(error => {
+                this.$store.commit('initPrint', {isPrinting: false});
+                this.$notify.error({
+                  message: error.response && error.response.data && error.response.data.msg || '导出失败'
+                });
+              });
+            },
         }
     };
 </script>
