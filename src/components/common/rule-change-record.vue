@@ -1,7 +1,7 @@
 <template>
   <div class="content mt-10">
     <el-table :data="changeList" header-row-class-name="table-header-color" style="width: 100%;" v-loading="loading">
-      <el-table-column label="时间" min-width="110" prop="devName">
+      <el-table-column label="时间" min-width="110">
         <template slot-scope="scope">
           <span>{{ scope.row.createTime | time }}</span>
         </template>

@@ -116,7 +116,7 @@
                     {name: '点位信息', key: 1},
                     // {name: '温度计信息', key: 1},
                     {name: '规则信息', key: 2},
-                    {name: '规则变更记录', key: 3}
+                    {name: '变更记录', key: 3}
                 ],
                 currentTab: {},
                 form: {
