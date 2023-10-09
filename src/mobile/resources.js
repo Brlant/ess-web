@@ -198,6 +198,12 @@ export const Department = resource('/department', http, {
     getMembers: (params) => {
         return http.get('/department/members', {params});
     },
+    getOnesMemberNew: (id, params) => {
+        return http.get('/departmentNew/' + id + '/member', {params});
+    },
+    getMembersNew: (params) => {
+        return http.get('/departmentNew/members', {params});
+    },
     queryStateNum: (params) => {
         return http.get('/department/member/count', {params});
     }
@@ -255,7 +261,10 @@ export const User = resource('/oms/user', http, {
     },
     enableUser: (userId) => {
         return http.put(`/oms/user/${userId}/enablement`);
-    }
+    },
+    editUserPost: (obj) => {
+        return http.post(`/ccsRole/editUserPost`, obj);
+    },
 });
 
 // 角色管理对象
