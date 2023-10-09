@@ -36,14 +36,14 @@
                                v-for="item in ruleGroupList"></el-option>
                   </el-select>
                 </el-form-item>
-                <el-form-item label="通知列表" prop="ccsNotifyListId">
+                <!--<el-form-item label="通知列表" prop="ccsNotifyListId">
                   <el-select :remote-method="queryNotifyList" @click.once.native="queryNotifyList('')"
                              clearable
                              filterable placeholder="请输入名称搜索通知列表" remote v-model="form.ccsNotifyListId">
                     <el-option :key="item.id" :label="item.notifyListName" :value="item.id"
                                v-for="item in notifyList"></el-option>
                   </el-select>
-                </el-form-item>
+                </el-form-item>-->
                 <el-form-item label="设备" prop="ccsMonitorRelationId" v-if="configType && type === 'd'">
                   <el-select @focus="queryDevList" clearable filterable
                              placeholder="请输入名称搜索设备" popper-class="selects--custom" v-model="form.ccsMonitorRelationId">
@@ -81,6 +81,16 @@
             </div>
           </div>
         </el-form>
+        <div class="form-header-part">
+          <div class="header" v-if="pageSets[1]">
+            <div class="sign f-dib"></div>
+            <h3 :class="{active: pageSets[1].key === currentTab.key}" class="tit f-dib index-tit">
+              {{pageSets[1].name}}</h3>
+          </div>
+          <div class="content">
+            <rule-change-record :changeList="changeList" ref="ruleChangeRecord"/>
+          </div>
+        </div>
       </template>
     </dialog-template>
   </page-right>
@@ -89,10 +99,11 @@
     import {AlarmRuleGroup, BindRule, DevMonitoring, NotifyRule} from '@/resources';
     import methodsMixin from '@/mixins/methodsMixin';
     import ruleUtil from './rule-notify-util';
+    import ruleChangeRecord from '@/components/common/rule-change-record';
 
     export default {
         props: ['formItem', 'index'],
-        components: {ruleUtil},
+        components: {ruleUtil, ruleChangeRecord},
         mixins: [methodsMixin, ruleUtil],
         data() {
             return {
@@ -100,7 +111,8 @@
                 isShowRule: false,
                 isShowNotify: false,
                 pageSets: [
-                    {name: '规则信息', key: 1}
+                    {name: '规则信息', key: 1},
+                    {name: '变更记录', key: 2},
                 ],
                 currentTab: {},
                 form: {
@@ -122,6 +134,7 @@
                 doing: false,
                 actionType: '添加',
                 ruleList: [],
+                changeList: [],
                 ruleGroupList: [],
                 notifyList: [],
                 loading: false,
@@ -204,6 +217,7 @@
             },
             queryRuleList() {
                 this.ruleList = [];
+                this.changeList = [];
                 if (!this.curUnitId) return;
                 const params = {
                     pageNo: 1,
@@ -218,6 +232,7 @@
                 BindRule.query(params).then(res => {
                     this.initRuleList(res.data.currentList);
                     this.ruleList = res.data.currentList || [];
+                    this.changeList = res.data.changeList || [];
                     this.loading = false;
                 });
             },

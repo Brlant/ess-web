@@ -22,7 +22,7 @@
             <oms-col :isShow="true" label="监控状态">{{dev.monitorFlag | formatMonitoringStatus}}</oms-col>
             <!--<oms-col label="告警状态" :isShow="true">{{dev.warnStatus | formatAlarmStatus}}</oms-col>-->
               <oms-col :isShow="true" label="开始监控时间" v-show="dev.createTime">{{dev.createTime | time}}</oms-col>
-              <oms-col :isShow="true" label="状态">{{dev.activeFlag | formatUseStatus}}</oms-col> 
+              <oms-col :isShow="true" label="状态">{{dev.activeFlag | formatUseStatus}}</oms-col>
               <oms-col :isShow="true" label="备注" v-show="dev.comment">{{dev.comment}}</oms-col>
           </div>
           <div class="hr mb-10 mt-10"></div>
@@ -36,7 +36,7 @@
           <div class="content">
             <showPointList @open="openFn" :isHidden="true" :form="form" :typeList="typeList" class="w-part" ref="showPointList"></showPointList>
           </div>
-          <!-- 
+          <!--
             之前逻辑
             <div class="header">
               <div class="sign f-dib"></div>
@@ -77,12 +77,22 @@
               {{pageSets[2].name}}</h3>
           </div>
 
-          <!-- 
+          <!--
             之前逻辑
-            <rule-notify-scan :unitId="dev.id ? `d,${dev.id}` : ''" perm="ccs-monitordev-rulecfg"></rule-notify-scan> 
+            <rule-notify-scan :unitId="dev.id ? `d,${dev.id}` : ''" perm="ccs-monitordev-rulecfg"></rule-notify-scan>
           -->
-          <rule-notify-info :item="form" ref="ruleNotifyInfo"/>
+          <rule-notify-info :item="form" @getChangList="getChangList" ref="ruleNotifyInfo"/>
 
+        </div>
+        <div class="form-header-part">
+          <div class="header" v-if="pageSets[3]">
+            <div class="sign f-dib"></div>
+            <h3 :class="{active: pageSets[3].key === currentTab.key}" class="tit f-dib index-tit">
+              {{pageSets[3].name}}</h3>
+          </div>
+          <div class="content">
+            <rule-change-record :changeList="changeList" ref="ruleChangeRecord"/>
+          </div>
         </div>
       </div>
     </template>
@@ -94,6 +104,7 @@
     // yxh 引入点位信息组件
     import showPointList from '@/components/monitoring/equipment/showPointList' ;
     import ruleNotifyInfo from '@/components/common/rule-notify-info';
+    import ruleChangeRecord from '@/components/common/rule-change-record';
 
     export default {
         props: ['formItem', 'index'],
@@ -104,13 +115,14 @@
                     {name: '基本信息', key: 0},
                     {name: '点位信息', key: 1},
                     // {name: '温度计信息', key: 1},
-                    {name: '规则信息', key: 2}
+                    {name: '规则信息', key: 2},
+                    {name: '规则变更记录', key: 3}
                 ],
                 currentTab: {},
                 form: {
                     details: []
                 },
-                
+
                 dev: {},
                 typeList: this.$parent.$parent.typeList,
                 tempTypeList: ['有线温度计', '无线温度计', '冷柜温度计', '车载温度计', '湿度计'],
@@ -119,23 +131,24 @@
                 }],
 
                 type: '' ,
+                changeList: [],
             };
         },
         watch: {
             formItem : {
                 deep : true,
-                handler( item ){ 
-                    if( !item ){ return ; } 
-                    this.form = item ; 
+                handler( item ){
+                    if( !item ){ return ; }
+                    this.form = item ;
                 }
-            }, 
+            },
             index(val) {
                 if (val !== 1) return;
                 this.queryDetail();
             },
-            
+
         },
-        components : {showPointList, ruleNotifyInfo},
+        components : {showPointList, ruleNotifyInfo, ruleChangeRecord},
         mounted(){
           this.form = this.formItem;
         },
@@ -167,6 +180,11 @@
                 this.form = Object.assign({}, form);
                 this.type = type;
             },
+
+            // 获取规则变更记录
+            getChangList(val) {
+              this.changeList = val;
+            }
         }
     };
 </script>
