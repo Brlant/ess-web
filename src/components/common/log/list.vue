@@ -296,7 +296,7 @@ export default {
           this.searchWord.startTime = this.$formatAryTime(this.expectedTime, 0, 'YYYY-MM-DD HH:mm:ss');
           this.searchWord.endTime = this.$formatAryTime(this.expectedTime, 1, 'YYYY-MM-DD HH:mm:ss');
           let data = Object.assign(this.filters, this.searchWord);
-          http.post('/ccsLog/exportLog', data).then(res => {
+          http.post('/ccsLog/exportLog', data, {timeout: 0}).then(res => {
             utils.download(res.data.path, '系统日志');
             this.$store.commit('initPrint', {isPrinting: false});
 
