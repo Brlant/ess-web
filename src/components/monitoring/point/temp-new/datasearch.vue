@@ -40,7 +40,7 @@
         mounted(){
             if( this.$route.query && this.$route.query.isHistory || this.$route.query.id ){
                 this.activeName = 'first' ;
-            } else if( this.$route.query && this.$route.query.pointId ){
+            } else if( this.$route.query && this.$route.query.pointId || this.$route.query.pointIdList ){
                 this.activeName = 'second' ;
             } else {
                 this.activeName = 'first' ;
