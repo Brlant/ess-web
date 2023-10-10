@@ -18,7 +18,14 @@ export const warehouseDevImage = resource('/warehousePointImage', http, {});
 export const DevBackUp = resource('/ccsDevBackup', http, {});
 
 // 告警记录
-export const NotifyRecord = resource('/ccsNotifyRecord', http, {});
+export const NotifyRecord = resource('/ccsNotifyRecord', http, {
+    gainNotifyRecordListNew(params) {
+        return http.get('/ccsNotifyRecord/gainNotifyRecordListNew', {params});
+    },
+    gainNotifyRecordInfoNew(params) {
+        return http.get('/ccsNotifyRecord/gainNotifyRecordInfoNew', {params});
+    },
+});
 
 // 告警记录
 export const WarnRecord = resource('/ccsWarnRecord', http, {

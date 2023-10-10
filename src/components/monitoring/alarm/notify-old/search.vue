@@ -21,7 +21,7 @@
               <!--<oms-input placeholder="请输入设备名称" v-model.trim="searchCondition.devName" @keyup.native.enter="search"/>-->
             </oms-form-row>
           </el-col>
-          <!--<el-col :span="8">
+          <el-col :span="8">
             <oms-form-row :span="6" label="通知类型">
               <el-radio-group @change="search" size="small" v-model="searchCondition.notifyType">
                 <el-radio-button label="1">短信</el-radio-button>
@@ -29,12 +29,11 @@
                 <el-radio-button label="3">微信</el-radio-button>
               </el-radio-group>
             </oms-form-row>
-          </el-col>-->
+          </el-col>
           <el-col :span="6">
             <oms-form-row :span="6" label="消息类型">
               <el-radio-group @change="search" size="small" v-model="searchCondition.recordType">
                 <el-radio-button :label="0">告警</el-radio-button>
-                <el-radio-button :label="2">预警</el-radio-button>
                 <el-radio-button :label="1">恢复</el-radio-button>
               </el-radio-group>
             </oms-form-row>
@@ -42,7 +41,7 @@
           <el-col :span="6">
             <oms-form-row :span="6" label="发送状态">
               <el-radio-group @change="search" size="small" v-model="searchCondition.sendStatus">
-              <!--<el-radio-button label="1">成功</el-radio-button>-->
+                <el-radio-button label="1">成功</el-radio-button>
                 <el-radio-button label="0">失败</el-radio-button>
                   <el-radio-button label="2">发送中</el-radio-button>
               </el-radio-group>
@@ -56,18 +55,7 @@
                               type="datetimerange" v-model="times"/>
             </oms-form-row>
           </el-col>
-          <el-col :span="6">
-            <oms-form-row :span="6" label="监控对象">
-              <oms-input @keyup.native.enter="search" placeholder="请输入监控对象"
-                         v-model.trim="searchCondition.monitorCode"></oms-input>
-            </oms-form-row>
-          </el-col>
-          <el-col :span="6">
-            <oms-form-row :span="6" label="事件编号">
-              <oms-input @keyup.native.enter="search" placeholder="请输入事件编号"
-                         v-model.trim="searchCondition.eventNo"></oms-input>
-            </oms-form-row>
-          </el-col>
+          <el-col :span="12"></el-col>
         </el-row>
       </el-form>
     </template>
@@ -87,9 +75,7 @@
                     recordType: '',
                     notifyType: '',
                     sendStatus: '',
-                    devId: '',
-                    monitorCode: '',
-                    eventNo: '',
+                    devId: ''
                 },
                 showSearch: false,
                 list: [],
@@ -113,9 +99,7 @@
                     devName: '',
                     recordType: '',
                     notifyType: '',
-                    sendStatus: '',
-                    monitorCode: '',
-                    eventNo: '',
+                    sendStatus: ''
                 };
                 this.times = [];
                 this.$emit('search', this.searchCondition);
