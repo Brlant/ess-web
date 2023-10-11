@@ -208,8 +208,8 @@
                             this.doing = false;
                         });
                     } else {
-                        User.update(self.form.id, formData).then(() => {
-                          User.editUserPost(formData).then(()=>{
+                        User.editUserPost(formData).then(() => {
+                          User.update(self.form.id, formData).then(()=>{
                             this.doing = false;
                             this.$notify.success({
                               duration: 2000,
