@@ -37,6 +37,14 @@
               </oms-input>
             </oms-form-row>
           </el-col>
+          <el-col :span="7">
+            <oms-form-row :span="9" label="">
+              <el-radio-group @change="search" size="small" v-model="searchCondition.ruleType">
+                <el-radio-button :key="item.key" :label="item.key" v-for="item in ruleType">{{item.label}}
+                </el-radio-button>
+              </el-radio-group>
+            </oms-form-row>
+          </el-col>
         </el-row>
       </el-form>
     </template>
@@ -56,7 +64,8 @@
                 list: [],
                 times: [],
                 levels: this.$parent.levels,
-                logicList: this.$parent.logicList
+                logicList: this.$parent.logicList,
+                ruleType: this.$parent.ruleType,
             };
         },
         methods: {
@@ -68,7 +77,8 @@
                     ruleName: '',
                     logicType: '',
                     warnLevel: '',
-                    warnKeepTime: ''
+                    warnKeepTime: '',
+                    ruleType: '',
                 };
                 this.$emit('search', this.searchCondition);
             },
