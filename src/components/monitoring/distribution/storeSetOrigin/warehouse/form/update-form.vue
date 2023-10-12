@@ -121,15 +121,6 @@
                                     v-for="item in warehouseList"></el-option>
                         </el-select>
                     </el-form-item>
-                  <el-form-item label="是否有3D场景" prop="is3dScene">
-                    <el-switch
-                        v-model="form.enableSceneUrl"
-                        @change="switchChangeScene"
-                    />
-                  </el-form-item>
-                  <el-form-item label="3D场景地址" prop="sceneUrl" v-if="showSceneUrl">
-                    <oms-input v-model="form.sceneUrl"></oms-input>
-                  </el-form-item>
                 </div>
 
                 <div class="form-header-part">
@@ -490,9 +481,7 @@ export default {
 
                 picProportion : 1,
                 coordsProportion : 1,
-                refreshStep : 5,
-                enableSceneUrl: false,
-                sceneUrl: '',
+                refreshStep : 5
             },
             logisticsCenterList: [],
             attachmentList: [],
@@ -528,9 +517,7 @@ export default {
             currentTab : {},
 
             videoDevList : [],
-            devTypeVal : -1, // 初始化后的 formItemsSetOrigin 对象索引
-            // 是否显示3d场景地址输入框
-            showSceneUrl: false,
+            devTypeVal : -1 // 初始化后的 formItemsSetOrigin 对象索引
         };
     },
     props: ['index', 'formItem', 'normalIconUrlBase64', 'offlineIconUrlBase64'],
@@ -859,9 +846,7 @@ export default {
 
                 picProportion : 1,
                 coordsProportion : 1,
-                refreshStep : 5,
-                enableSceneUrl: false,
-                sceneUrl: '',
+                refreshStep : 5
             } ;
         },
         queryImageInfo(id, valFlag) {
@@ -873,7 +858,6 @@ export default {
             // this.$http.get(`warehouseDevImage/info/${id}`).then(res => {
             this.$http.get(`warehousePointImage/info/${id}`).then(res => {
                 this.form = res.data;
-                this.switchChangeScene(this.form.enableSceneUrl);
                 this.logisticsCenterList.push({id: this.form.logsicId, warehouseCode: this.form.logsicName});
                 this.warehouseList = this.form.warehouseList;
 
@@ -1068,8 +1052,6 @@ export default {
                         fontColor:this.fontColor,
                         warehouseImageIconList,
                         videoDevIds : this.form.videoDevIds,
-                        enableSceneUrl: this.form.enableSceneUrl,
-                        sceneUrl: this.form.sceneUrl,
 
                         // 关联室内定位场景信息
                         // indoorPositionSceneDTO : {
@@ -1171,15 +1153,7 @@ export default {
             // console.error( 'coordsProportion: ', this.form.coordsProportion ) ;
         },
 
-        // 是否有3d场景改变
-        switchChangeScene(val) {
-        if ( val) {
-          this.showSceneUrl = true
-        } else {
-          this.showSceneUrl = false;
-          this.form.sceneUrl = '';
-        }
-      },
+
 
 
     }

@@ -57,15 +57,6 @@
                                    v-for="item in warehouseList"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="是否有3D场景" prop="is3dScene">
-                  <el-switch
-                      v-model="form.enableSceneUrl"
-                      @change="switchChangeScene"
-                  />
-                </el-form-item>
-              <el-form-item label="3D场景地址" prop="sceneUrl" v-if="showSceneUrl">
-                <oms-input v-model="form.sceneUrl"></oms-input>
-              </el-form-item>
             </el-form>
         </template>
     </dialog-template>
@@ -89,12 +80,8 @@
                     logsicId: '',
                     warehouseIds: [],
                     imageId: '',
-                    imageUrl: '',
-                    enableSceneUrl: false,
-                    sceneUrl: '',
+                    imageUrl: ''
                 },
-                // 是否显示3d场景地址输入框
-                showSceneUrl: false,
                 logisticsCenterList: [],
                 warehouseList: [],
                 rules: {
@@ -172,9 +159,7 @@
                                 imageName: this.form.imageName,
                                 imageUrl: this.form.imageUrl,
                                 imageId: this.form.imageId,
-                                warehouseIds: this.form.warehouseIds,
-                                enableSceneUrl: this.form.enableSceneUrl,
-                                sceneUrl: this.form.sceneUrl,
+                                warehouseIds: this.form.warehouseIds
                             };
                             this.doing = true;
                             this.$httpRequestOpera(warehouseDevImage.save(form), {
@@ -188,9 +173,7 @@
                                         logsicId: '',
                                         warehouseIds: [],
                                         imageId: '',
-                                        imageUrl: '',
-                                        enableSceneUrl: false,
-                                        sceneUrl: '',
+                                        imageUrl: ''
                                     };
                                     // this.$refs.uploadFile.$refs.upload.clearFiles();
                                 },
@@ -201,17 +184,7 @@
                         }
                     }
                 );
-            },
-
-            // 是否有3d场景改变
-            switchChangeScene(val) {
-                if ( val) {
-                  this.showSceneUrl = true
-                } else {
-                  this.showSceneUrl = false;
-                  this.form.sceneUrl = '';
-                }
-            },
+            }
         }
 
     };

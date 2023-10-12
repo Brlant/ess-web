@@ -96,7 +96,7 @@
                     </el-upload> -->
                 </el-form-item>
                 <el-form-item label="物流中心">
-                    <el-select :remote-method="queryLogisticsCenterList" @change="logsicChange"  @focus="queryLogisticsCenterList"
+                    <el-select :remote-method="queryLogisticsCenterList" @change="logsicChange"  @focus="queryLogisticsCenterList" 
                                clearable filterable placeholder="请选择物流中心" remote v-model="form.logsicId">
                         <el-option :key="item.id" :label="item.warehouseCode" :value="item.id"
                                    v-for="item in logisticsCenterList"></el-option>
@@ -135,7 +135,7 @@
                         <!-- 正常 -->
                         <div class="item">
 
-                            <oms-upload-icon-picture class="user-img"
+                            <oms-upload-icon-picture class="user-img" 
                                 @onSuccess="handelNormal"
                                 :ref="'normal'+index"
                             >
@@ -145,7 +145,7 @@
                                     <img :src="item.normalImageSrc" v-else>
                                 </div>
                             </oms-upload-icon-picture>
-
+                            
                             <!--
                                 <i class="delete el-icon-circle-close" v-if="item.normalImageSrc" @click="resetNormal"></i>
                                 <el-upload
@@ -170,7 +170,7 @@
                         <!-- 高温 -->
                         <div class="item">
 
-                            <oms-upload-icon-picture class="user-img"
+                            <oms-upload-icon-picture class="user-img" 
                                 @onSuccess="handelWarn"
                                 :ref="'highWarn'+index"
                             >
@@ -181,7 +181,7 @@
                                 </div>
                             </oms-upload-icon-picture>
 
-                            <!--
+                            <!-- 
                                 <i class="delete el-icon-circle-close" v-if="item.highWarnImageSrc" @click="resetWarn"></i>
                                 <el-upload
                                     class="upload"
@@ -198,7 +198,7 @@
                                         <i :class="['icon', 'warn', item.icon]" v-if="!item.highWarnImageSrc"></i>
                                         <img :src="item.highWarnImageSrc" v-else>
                                     </div>
-                                </el-upload>
+                                </el-upload> 
                             -->
                             <span>超温</span>
                         </div>
@@ -226,7 +226,7 @@
                         <!--离线-->
                         <div class="item">
 
-                            <oms-upload-icon-picture class="user-img"
+                            <oms-upload-icon-picture class="user-img" 
                                 @onSuccess="handelOffLine"
                                 :ref="'offlineWarn'+index"
                             >
@@ -237,7 +237,7 @@
                                 </div>
                             </oms-upload-icon-picture>
 
-                            <!--
+                            <!-- 
                                 <i class="delete el-icon-circle-close" v-if="item.offlineWarnImageSrc" @click="resetOffLine"></i>
                                 <el-upload
                                     class="upload"
@@ -254,7 +254,7 @@
                                         <i :class="[item.icon]" v-if="!item.offlineWarnImageSrc"></i>
                                         <img :src="item.offlineWarnImageSrc" v-else>
                                     </div>
-                                </el-upload>
+                                </el-upload> 
                             -->
                             <span>离线</span>
                         </div>
@@ -277,16 +277,6 @@
                                     </div>
                         </el-option>
                     </el-select>
-                </el-form-item>
-
-                <el-form-item label="是否有3D场景" prop="is3dScene">
-                  <el-switch
-                      v-model="form.enableSceneUrl"
-                      @change="switchChangeScene"
-                  />
-                </el-form-item>
-                <el-form-item label="3D场景地址" prop="sceneUrl" v-if="showSceneUrl">
-                  <oms-input v-model="form.sceneUrl"></oms-input>
                 </el-form-item>
             </el-form>
         </template>
@@ -337,9 +327,7 @@ export default {
                 devType: 0,
 
                 // 视频设备
-                videoDevIds : [],
-                enableSceneUrl: false,
-                sceneUrl: '',
+                videoDevIds : []
             },
             logisticsCenterList: [],
             attachmentList: [],
@@ -357,9 +345,7 @@ export default {
             },
             doing: false,
 
-            videoDevList : [],
-            // 是否显示3d场景地址输入框
-            showSceneUrl: false,
+            videoDevList : []
         };
     },
     props: ['index', 'formItem'],
@@ -371,10 +357,10 @@ export default {
             this.warehouseList=[];
             this.queryImageInfo(this.formItem.backgroundId, newVal);
             this.getVideoDevListFn() ;
-
+            
         }
     },
-
+    
     methods: {
 
         getVideoDevListFn(){
@@ -396,10 +382,10 @@ export default {
             this.formItems[this.flag].normalImageId = res.attachmentId
             this.formItems[this.flag].normalImageSrc = res.url ? res.url : ''
             this.$refs['normal'+this.flag][0].clearFilesFn && this.$refs['normal'+this.flag][0].clearFilesFn() ;
-
-
+            
+            
             /*
-                // 之前逻辑
+                // 之前逻辑 
                 this.formItems[this.flag].normalImageId = res ; // 之前返回 res 就是一个数字, 来做为 normalImageId 使用
                 this.formItems[this.flag].normalImageSrc = this.baseUrl + res
                 this.$refs['normal'+this.flag][0].clearFiles()
@@ -424,7 +410,7 @@ export default {
             this.formItems[this.flag].lowWarnImageId = res.attachmentId
             this.formItems[this.flag].lowWarnImageSrc = res.url ? res.url : ''
             this.$refs['lowWarn'+this.flag][0].clearFilesFn && this.$refs['lowWarn'+this.flag][0].clearFilesFn() ;
-
+            
             /*
                 // 之前逻辑
                 this.formItems[this.flag].lowWarnImageId = res
@@ -438,7 +424,7 @@ export default {
             this.formItems[this.flag].offlineWarnImageId = res.attachmentId
             this.formItems[this.flag].offlineWarnImageSrc = res.url ? res.url : ''
             this.$refs['offlineWarn'+this.flag][0].clearFilesFn && this.$refs['offlineWarn'+this.flag][0].clearFilesFn() ;
-
+            
             /*
                 // 之前逻辑
                 this.formItems[this.flag].offlineWarnImageId = res
@@ -446,7 +432,7 @@ export default {
                 this.$refs['offlineWarn'+this.flag][0].clearFiles()
             */
         },
-
+        
         typeChange(value) {
             this.flag = value
         },
@@ -477,7 +463,7 @@ export default {
             // ){
             //     this.$refs['normal'+this.flag][0].handleRemove( this.formItems[this.flag].normalFile ) ;
             // }
-
+            
             // this.$refs['normal'+this.flag][0].clearFilesFn && this.$refs['normal'+this.flag][0].clearFilesFn() ;
 
         },
@@ -506,14 +492,14 @@ export default {
             // ){
             //     this.$refs['lowWarn'+this.flag][0].handleRemove( this.formItems[this.flag].lowWarnFile ) ;
             // }
-
+            
         },
         resetOffLine() {
             // this.formItems[this.flag].offLineImageSrc = '' ;
             // this.formItems[this.flag].offLineImageId = '' ;
             this.formItems[this.flag].offlineWarnImageSrc = '' ;
             this.formItems[this.flag].offlineWarnImageId = '' ;
-            this.formItems[this.flag].offlineWarnFile = { attachmentId : '', url : '' } ;
+            this.formItems[this.flag].offlineWarnFile = { attachmentId : '', url : '' } ; 
 
             // if(
             //     this.$refs['offlineWarn'+this.flag][0] &&
@@ -561,7 +547,6 @@ export default {
             // this.$http.get(`warehouseDevImage/info/${id}`).then(res => {
             this.$http.get(`warehousePointImage/info/${id}`).then(res => {
                 this.form = res.data;
-                this.switchChangeScene(this.form.enableSceneUrl)
                 this.logisticsCenterList.push({id: this.form.logsicId, warehouseCode: this.form.logsicName});
                 this.warehouseList = this.form.warehouseList;
 
@@ -569,12 +554,12 @@ export default {
                 // this.attachmentList = [{ name : this.form.imageName } ];
 
                 if( res.data.imageId && res.data.imageUrl ){
-                    this.attachmentList = [{
-                        name : res.data.imageName,
+                    this.attachmentList = [{ 
+                        name : res.data.imageName, 
 
                         attachmentId : res.data.imageId,
 
-                        // attachmentStoragePath、attachmentFileName 这二个属性用于在 upload.vue 文件中解析
+                        // attachmentStoragePath、attachmentFileName 这二个属性用于在 upload.vue 文件中解析 
                         attachmentStoragePath : res.data.imageUrl,
                         attachmentFileName : res.data.imageName
                     } ];
@@ -639,7 +624,7 @@ export default {
                                         url : v2.offlineWarnIconUrl
                                     } ;
                                 }
-
+                                
                                 // 之前字段
                                 // v1.normalImageId = v2.normalImageId || ''
                                 // v1.highWarnImageId = v2.highWarnImageId || ''
@@ -727,9 +712,7 @@ export default {
                         warehouseIds: this.form.warehouseIds,
                         fontColor:this.fontColor,
                         warehouseImageIconList,
-                        videoDevIds : this.form.videoDevIds,
-                        enableSceneUrl: this.form.enableSceneUrl,
-                        sceneUrl: this.form.sceneUrl,
+                        videoDevIds : this.form.videoDevIds
                     };
                     this.doing = true;
                     this.$httpRequestOpera(warehouseDevImage.updateImage(this.form.id, form), {
@@ -748,17 +731,7 @@ export default {
                     });
                 }
             );
-        },
-
-        // 是否有3d场景改变
-        switchChangeScene(val) {
-        if ( val) {
-          this.showSceneUrl = true
-        } else {
-          this.showSceneUrl = false;
-          this.form.sceneUrl = '';
         }
-      },
     }
 
 };
