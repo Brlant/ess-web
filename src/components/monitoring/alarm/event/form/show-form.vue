@@ -43,7 +43,7 @@
               <span @click.stop="parent.goToRouter(detail)" class="active-text">{{parent.formatTitle(detail)}}</span>
             </oms-col>
             <oms-col :isShow="true" :rowSpan="rowSpan" label="设备名称">
-              <el-tooltip :content="tempTypeList[detail.devType]" effect="dark" placement="top">
+              <el-tooltip v-if="detail.devType" :content="tempTypeList[detail.devType]" effect="dark" placement="top">
                 <f-a :name="parent.DevIcon[detail.devType][1]" class="icon-danger ver-a-mid"></f-a>
               </el-tooltip>
               <span @click.stop="goToDev(detail)" class="active-text">{{detail.devName}}</span>
@@ -125,6 +125,51 @@
                       </div>
                   </div>
           </div>
+        <!--    告警处理    -->
+        <div class="form-header-part">
+          <div class="header">
+            <div class="sign f-dib"></div>
+            <h3 :class="{active: pageSets[3].key === currentTab.key}" class="tit f-dib index-tit">
+              {{pageSets[3].name}}</h3>
+          </div>
+          <div class="content mt-10" style="overflow: hidden">
+            <div v-if="detail.confirmStatus == '0'">
+              <el-form :model="alarmHandlingForm" label-width="100px" ref="alarmHandlingForm">
+                <el-form-item label="类型" prop="devName">
+                  <el-radio-group size="small" v-model="alarmHandlingForm.confirmStatus">
+                    <el-radio-button :key="key" :label="key"
+                                     v-for="(item, key) in confirmStatus">{{item}}
+                    </el-radio-button>
+                  </el-radio-group>
+                </el-form-item>
+                <el-form-item label="情况说明">
+                  <oms-input placeholder="请输入情况说明" type="textarea" v-model="alarmHandlingForm.confirmContent"/>
+                </el-form-item>
+                <el-form-item label="恢复前通知" prop="circularNotification">
+                  <el-radio-group v-model="alarmHandlingForm.circularNotification">
+                    <el-radio label="1">继续通知</el-radio>
+                    <el-radio label="0">不再通知</el-radio>
+                  </el-radio-group>
+                </el-form-item>
+                <el-form-item>
+                  <el-button :disabled="doing" @click="save('alarmHandlingForm')" plain type="primary">保存</el-button>
+                </el-form-item>
+              </el-form>
+            </div>
+            <div v-else>
+              <el-table :data="alarmHandlingList" header-row-class-name="table-header-color" style="width: 100%;">
+                <el-table-column label="时间" min-width="110" prop="devName"/>
+                <el-table-column label="操作人" prop="devCode"/>
+                <el-table-column label="类型" prop="confirmStatus">
+                  <template slot-scope="{row}">
+                    {{confirmStatus[row.confirmStatus]}}
+                  </template>
+                </el-table-column>
+                <el-table-column label="情况说明" prop="confirmContent"/>
+              </el-table>
+            </div>
+          </div>
+        </div>
       </div>
     </template>
   </dialog-template>
@@ -152,6 +197,7 @@
                     {name: '详细信息', key: 0},
                     {name: '历史数据', key: 0},
                     {name: '补充说明', key: 0},
+                    {name: '告警处理', key: 0},
                 ],
                 currentTab: {},
                 tempList: [],
@@ -172,9 +218,25 @@
                         {required: true, message: '请输入补充说明', trigger: 'blur'},
                         { max: 199, message: '补充说明字数限制199', trigger: 'blur'}
                     ],
-                }
+                },
+              alarmHandlingForm: {
+                confirmStatus: '1',
+                confirmContent: '',
+                circularNotification: '0'
+              },
+              doing: false,
+              alarmHandlingList: [],
             };
         },
+      computed: {
+        confirmStatus() {
+          return {
+            1: '确认',
+            2: '取消',
+            0: '未确认'
+          };
+        }
+      },
         watch: {
             index(val) {
                 if (val !== 0) return;
@@ -197,6 +259,7 @@
                 this.resetExplain();
                 WarnRecord.get(this.formItem.id).then(res => {
                     this.detail = res.data;
+                    this.alarmHandlingList = [res.data]
                     this.loading = false;
                     this.$nextTick(() => {
                         this.queryTempData();
@@ -269,7 +332,24 @@
                 this.$nextTick(()=>{
                     tabelContainer&&(tabelContainer.scrollTop =tabelContainer.scrollHeight)
                 })
-            }
+            },
+            save() {
+            this.$refs['alarmHandlingForm'].validate((valid) => {
+              if (valid && this.doing === false) {
+                this.$httpRequestOpera(WarnRecord.update(this.formItem.id, this.alarmHandlingForm), {
+                  successTitle: '处理成功',
+                  errorTitle: '处理失败',
+                  success: res => {
+                    this.doing = false;
+                    this.$emit('change', res.data);
+                  },
+                  error: () => {
+                    this.doing = false;
+                  }
+                });
+              }
+            });
+          }
         }
     };
 </script>

@@ -2,6 +2,10 @@
   <search-template :isShow="showSearch" :isShowAdvance="false" @isShow="isShow" @reset="reset" @search="search">
     <template slot="title">告警事件查询</template>
     <template slot="btn">
+      <el-button @click="onBatchProcessing" plain size="small">
+        <f-a class="icon-small" name="affirm"></f-a>
+        批量处理
+      </el-button>
       <slot name="btn">
         <el-button @click="exportSearchFile" plain size="small">
           <f-a class="icon-small" name="export"></f-a>
@@ -75,8 +79,51 @@
               </el-radio-group>
             </oms-form-row>
           </el-col>
+          <el-col :span="4">
+            <oms-form-row :span="8" label="事件编号">
+              <oms-input placeholder="请输入事件编号" type="text" @change="search" v-model="searchCondition.eventNo"></oms-input>
+            </oms-form-row>
+          </el-col>
+          <el-col :span="4">
+            <oms-form-row :span="8" label="事件类型">
+              <el-radio-group @change="search" size="small" v-model="searchCondition.earlyWarning">
+                <el-radio-button :label="0">告警事件</el-radio-button>
+                <el-radio-button :label="1">预警事件</el-radio-button>
+              </el-radio-group>
+            </oms-form-row>
+          </el-col>
         </el-row>
       </el-form>
+      <el-dialog
+          title="事件处理"
+          v-if="eventProcessingDialogVisible"
+          :visible.sync="eventProcessingDialogVisible"
+          width="30%"
+          :close-on-click-modal="false"
+          append-to-body
+          center>
+        <el-form ref="eventProcessingForm" :model="eventProcessingForm" label-width="90px">
+          <el-form-item label="事件类型" prop="eventType">
+            <el-radio-group size="small" v-model="eventProcessingForm.confirmType">
+              <el-radio-button :label="0">未确认</el-radio-button>
+              <el-radio-button :label="1">确认</el-radio-button>
+              <el-radio-button :label="2">取消</el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="情况说明" prop="confirmContent">
+            <el-input v-model="eventProcessingForm.confirmContent" type="textarea"></el-input>
+          </el-form-item>
+          <el-form-item label="恢复前通知" prop="circularNotification">
+            <el-radio-group v-model="eventProcessingForm.circularNotification">
+              <el-radio label="1">继续通知</el-radio>
+              <el-radio label="0">不再通知</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button size="small" :disabled="submitLoading" @click="onSubmit">提交</el-button>
+        </span>
+      </el-dialog>
     </template>
   </search-template>
 </template>
@@ -84,9 +131,14 @@
     import methodsMixin from '@/mixins/methodsMixin';
     import {http} from '@/resources';
     import utils from '@/tools/utils';
+    import {WarnRecord} from '@/resources';
 
     export default {
         mixins: [methodsMixin],
+        props: {
+          checkList: Array,
+          warnRecordIdList: Array
+        },
         data: function () {
             return {
                 searchCondition: {
@@ -99,12 +151,22 @@
                     confirmStatus: '',
                     warnType: '',
                     warnLevel: '',
-                    recoveryStatus: null
+                    recoveryStatus: null,
+                    eventNo: null,
+                    earlyWarning: null,
                 },
                 showSearch: false,
                 list: [],
                 times1: [],
-                times2: []
+                times2: [],
+                submitLoading: false,
+                eventProcessingDialogVisible: false,
+                eventProcessingForm: {
+                  confirmType: '1',
+                  confirmContent: null,
+                  circularNotification: '0',
+                  warnRecordIdList: [],
+                },
             };
         },
         methods: {
@@ -151,7 +213,9 @@
                     warnType: '',
                     warnLevel: '',
                     recoveryStatus: null,
-                    devId: ''
+                    devId: '',
+                    eventNo: null,
+                    earlyWarning: null,
                 };
                 this.times1 = [];
                 this.times2 = [];
@@ -159,6 +223,35 @@
             },
             isShow(val) {
                 this.showSearch = val;
+            },
+            onBatchProcessing() {
+              if (!this.checkList || this.checkList.length === 0) return this.$message.warning('请先勾选需要处理的事件！')
+              let warningLength = this.checkList.filter(item => item.earlyWarning == '0').length
+              let earlyWarningLength = this.checkList.filter(item => item.earlyWarning == '1').length
+              if (warningLength > 1) return this.$message.warning('告警事件不可以批量处理！')
+              if (warningLength >= 1 && earlyWarningLength >= 1) return this.$message.warning('告警事件与预警事件不可以一起处理！')
+              this.eventProcessingDialogVisible = true;
+            },
+
+            onSubmit() {
+              this.eventProcessingForm.warnRecordIdList = this.warnRecordIdList;
+              this.$refs['eventProcessingForm'].validate((valid) => {
+                if (valid && this.submitLoading === false) {
+                  this.$httpRequestOpera(WarnRecord.batchConfirm(this.eventProcessingForm), {
+                    successTitle: '批量处理成功',
+                    errorTitle: '批量处理失败',
+                    success: res => {
+                      this.submitLoading = false;
+                      this.eventProcessingDialogVisible = false;
+                      this.$emit('change', res.data);
+                    },
+                    error: () => {
+                      this.submitLoading = false;
+                      this.eventProcessingDialogVisible = false;
+                    }
+                  });
+                }
+              });
             }
         }
     };

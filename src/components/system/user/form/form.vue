@@ -31,6 +31,9 @@
           </el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="岗位" prop="post">
+        <oms-input placeholder="请输入岗位" type="text" v-model="form.post" :maxlength="20" show-word-limit></oms-input>
+      </el-form-item>
       <el-form-item label-width="100px">
         <el-button @click="onSubmit('accountform')" native-type="submit" type="primary">保存</el-button>
         <el-button @click="doClose">取消</el-button>
@@ -102,7 +105,8 @@
                     name: '',
                     phone: '',
                     email: '',
-                    list: []
+                    list: [],
+                    post: '',
                 },
                 rules: {
                     name: [
@@ -132,7 +136,8 @@
                         name: '',
                         phone: '',
                         email: '',
-                        list: []
+                        list: [],
+                        post: '',
                     };
                 }
             },
@@ -178,15 +183,23 @@
                         };
                     });
                     if (this.action === 'add') {
-                        User.save(formData).then(() => {
+                        User.save(formData).then((res) => {
+                          User.editUserPost({id: res.data.id, ...formData}).then(()=>{
                             this.doing = false;
                             this.$notify.success({
-                                duration: 2000,
-                                name: '成功',
-                                message: '新增平台用户"' + self.form.name + '"成功'
+                              duration: 2000,
+                              name: '成功',
+                              message: '新增平台用户"' + self.form.name + '"成功'
                             });
                             formData.list = this.getSelectRoles(formData, this.roleSelect);
                             self.$emit('change', formData);
+                          }).catch(() => {
+                            this.$notify.error({
+                              duration: 2000,
+                              message: '新增平台用户"' + self.form.name + '"失败'
+                            });
+                            this.doing = false;
+                          });
                         }).catch(() => {
                             this.$notify.error({
                                 duration: 2000,
@@ -195,15 +208,23 @@
                             this.doing = false;
                         });
                     } else {
-                        User.update(self.form.id, formData).then(() => {
+                        User.editUserPost(formData).then(() => {
+                          User.update(self.form.id, formData).then(()=>{
                             this.doing = false;
                             this.$notify.success({
-                                duration: 2000,
-                                name: '成功',
-                                message: '修改平台用户"' + self.form.name + '"成功'
+                              duration: 2000,
+                              name: '成功',
+                              message: '修改平台用户"' + self.form.name + '"成功'
                             });
                             formData.list = this.getSelectRoles(formData, this.roleSelect);
                             self.$emit('change', formData);
+                          }).catch(() => {
+                            this.$notify.error({
+                              duration: 2000,
+                              message: '修改平台用户"' + self.form.name + '"失败'
+                            });
+                            this.doing = false;
+                          });
                         }).catch(() => {
                             this.$notify.error({
                                 duration: 2000,

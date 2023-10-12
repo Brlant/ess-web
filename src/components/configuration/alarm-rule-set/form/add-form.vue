@@ -41,13 +41,13 @@
                        v-for="item in ruleGroupMatchTypeList"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="通知列表" prop="ccsNotifyIdList">
+        <!--<el-form-item label="通知列表" prop="ccsNotifyIdList">
           <el-select :remote-method="queryNotifyList" filterable @click.once.native="queryNotifyList('')"
                      multiple placeholder="请输入名称搜索通知列表" clearable remote v-model="form.ccsNotifyIdList">
             <el-option :key="item.id" :label="item.notifyListName" :value="item.id"
                        v-for="item in NotificationList"></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item>-->
         <el-form-item label="告警规则" prop="rules">
           <el-select :remote-method="queryRule" filterable @click.once.native="queryRule('')"
                      multiple placeholder="请输入名称搜索告警规则" remote v-model="form.rules">
@@ -108,7 +108,7 @@
                 // transportationConditionList:[], // 运输条件列表
             };
         },
-        computed: { 
+        computed: {
             transportationConditionList(){
                 return this.$getDict('transportationCondition');
             },
@@ -138,7 +138,7 @@
                     pageSize: 9999,
                     deleteFlag: false,
                     keyWord:typeTxt
-                } 
+                }
                 https.get('/org/pager', params).then(res => {
                     this.customerList = res.list
                 })

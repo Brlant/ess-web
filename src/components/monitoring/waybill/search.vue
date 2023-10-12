@@ -1,5 +1,5 @@
 <template>
-  <search-template :isShow="showSearch" :isShowAdvance="false" @isShow="isShow" @reset="reset" @search="search">
+  <search-template class="custom-search" :isShow="showSearch" :isShowAdvance="false" @isShow="isShow" @reset="reset" @search="search">
     <template slot="title">运单监控查询</template>
     <template slot="btn">
       <slot name="btn">
@@ -7,10 +7,21 @@
           <f-a class="icon-small" name="export"></f-a>
           导出Excel
         </el-button>
-        <el-button @click="exportSearchZip" plain size="small">
+        <!--<el-button @click="exportSearchZip" plain size="small">
           <f-a class="icon-small" name="export"></f-a>
           导出Zip
-        </el-button>
+        </el-button>-->
+        <el-dropdown>
+          <el-button class="custom-button" plain size="small">
+            <f-a class="icon-small" name="export"></f-a>
+            导出Zip
+          </el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item @click.native="exportWithoutCarriageRecordsZip">导出zip(不含车厢温度记录)</el-dropdown-item>
+            <el-dropdown-item @click.native="exportRecordsContainingCarriagesZip">导出zip(含车厢温度记录)</el-dropdown-item>
+            <el-dropdown-item @click.native="exportThermometerRecordsZip">导出zip(温度计记录)</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </slot>
     </template>
     <template slot="content">
@@ -74,6 +85,22 @@
           </el-col>
         </el-row>
       </el-form>
+      <!--  导出温度计记录弹窗  -->
+      <el-dialog
+          class="export-dialog"
+          title="导出模板"
+          :visible.sync="exportDialog"
+          width="30%"
+          center>
+        <el-radio-group v-model="exportForm.type">
+          <el-radio :label="1">国控生物模板</el-radio>
+          <el-radio :label="2">阿里模板</el-radio>
+        </el-radio-group>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="exportDialog = false">取 消</el-button>
+          <el-button type="primary" @click="exportFile(exportForm.id, exportForm.type)" :loading="exportDisabled" :disabled="exportDisabled">下 载</el-button>
+        </span>
+      </el-dialog>
     </template>
   </search-template>
 </template>
@@ -101,13 +128,118 @@
                 showSearch: false,
                 list: [],
                 times: [],
-                departTimes: []
+                departTimes: [],
+                exportDialog: false,
+                exportForm: {
+                  type: 1,
+                  id: null
+                },
+                exportDisabled: false
             };
         },
         mounted() {
             this.initSearchParams();
         },
         methods: {
+            // 导出zip(不含车厢温度记录)
+            exportWithoutCarriageRecordsZip() {
+              this.$store.commit('initPrint', {
+                isPrinting: true,
+                moduleId: '/monitoring/waybill/id',
+                text: '正在导出'
+              });
+              /**
+               * 是否包含车载温度计信息(carThermometer) 0: 不包含; 1: 包含;
+               * 导出模板类型(templateType) 1: 国控生物; 2: 阿里;
+               */
+              let params = Object.assign({}, {carThermometer: 0, templateType: 1}, this.searchCondition);
+              http.get('/ccsOrder/temperature-log/export-zip/condition', {params}).then(res => {
+                utils.download(res.data.path, '运单设备温度表(不含车厢温度记录)');
+                this.$store.commit('initPrint', {
+                  isPrinting: false,
+                  moduleId: '/monitoring/waybill/id'
+                });
+
+              }).catch(error => {
+                this.$store.commit('initPrint', {
+                  isPrinting: false,
+                  moduleId: '/monitoring/waybill/id'
+                });
+                this.$notify.error({
+                  message: error.response && error.response.data && error.response.data.msg || '导出失败'
+                });
+              });
+            },
+
+            // 导出zip(含车厢温度记录)
+            exportRecordsContainingCarriagesZip() {
+              this.$store.commit('initPrint', {
+                isPrinting: true,
+                moduleId: '/monitoring/waybill/id',
+                text: '正在导出'
+              });
+              /**
+               * 是否包含车载温度计信息(carThermometer) 0: 不包含; 1: 包含;
+               * 导出模板类型(templateType) 1: 国控生物; 2: 阿里;
+               */
+              let params = Object.assign({}, {carThermometer: 1, templateType: 1}, this.searchCondition);
+              http.get('/ccsOrder/temperature-log/export-zip/condition', {params}).then(res => {
+                utils.download(res.data.path, '运单设备温度表(含车厢温度记录)');
+                this.$store.commit('initPrint', {
+                  isPrinting: false,
+                  moduleId: '/monitoring/waybill/id'
+                });
+
+              }).catch(error => {
+                this.$store.commit('initPrint', {
+                  isPrinting: false,
+                  moduleId: '/monitoring/waybill/id'
+                });
+                this.$notify.error({
+                  message: error.response && error.response.data && error.response.data.msg || '导出失败'
+                });
+              });
+            },
+
+            exportThermometerRecordsZip(ccsOrderId) {
+              this.exportDialog = true;
+              this.exportForm.id = ccsOrderId;
+            },
+
+            // 选择模板后导出
+            exportFile(billWayId, type) {
+              this.exportDisabled = true;
+              this.$store.commit('initPrint', {
+                isPrinting: true,
+                moduleId: '/monitoring/waybill/id',
+                text: '正在导出'
+              });
+              /**
+               * 是否包含车载温度计信息(carThermometer) 0: 不包含; 1: 包含;
+               * 导出模板类型(templateType) 1: 国控生物; 2: 阿里;
+               */
+              let params = Object.assign({}, {carThermometer: 0, templateType: type}, this.searchCondition);
+              http.get(`/ccsOrder/temperature-log/export-zip/condition`, {params}).then(res => {
+                utils.download(res.data.path, '温度计记录');
+                this.$store.commit('initPrint', {
+                  isPrinting: false,
+                  moduleId: '/monitoring/waybill/id'
+                });
+                this.exportDialog = false;
+                this.exportDisabled = false;
+              }).catch(error => {
+                this.exportDialog = false;
+                this.exportDisabled = false;
+                this.$store.commit('initPrint', {
+                  isPrinting: false,
+                  moduleId: '/monitoring/waybill/id'
+                });
+                this.$notify.error({
+                  message: error.response && error.response.data && error.response.data.msg || '导出失败'
+                });
+              });
+            },
+
             exportSearchZip: function () {
                 this.$store.commit('initPrint', {
                     isPrinting: true,
@@ -199,3 +331,15 @@
         }
     };
 </script>
+<style lang="scss">
+
+  .custom-search.opera-btn-group {
+    .opera-icon {
+      line-height: 1;
+      .custom-button{
+        border-color: #DCDFE6;
+      }
+    }
+  }
+
+</style>

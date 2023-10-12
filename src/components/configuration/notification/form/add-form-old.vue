@@ -62,7 +62,7 @@
                                           :rules="[{ required: true, message: '请选择联系人', trigger: 'change' }]"
                                           label-width="0"
                             >
-                                <el-select :remote-method="queryUserList" @change="userChange(row, $index)"
+                                <el-select :remote-method="queryUserList" @change="userChange(row)"
                                            @click.native.once="queryUserList('')"
                                            clearable filterable placeholder="请选择联系人" remote
                                            v-model="row.targetStr"
@@ -123,11 +123,11 @@
                         </template>
                     </el-table-column>
                     <el-table-column
-                        label="微信绑定操作"
-                        min-width="250"
+                        label="通知方式选择"
+                        min-width="145"
                     >
                         <template slot-scope="{row,$index}">
-<!--                            <el-form-item :prop="'details.' + $index + '.notifyType'"
+                            <el-form-item :prop="'details.' + $index + '.notifyType'"
                                           :rules="[{ required: true, message: '请选择通知方式', trigger: 'change' }]"
                                           label-width="0"
                             >
@@ -137,23 +137,32 @@
                                         {{ item.label }}
                                     </el-radio-button>
                                 </el-radio-group>
-                            </el-form-item>-->
-                          <el-form-item label-width="0">
-                            <el-button type="primary" size="small" @click="getQCode(row, $index)">微信绑定</el-button>
-                            <div v-show="row.wechat">{{row.wechat}}</div>
-                          </el-form-item>
+                            </el-form-item>
                         </template>
                     </el-table-column>
                     <el-table-column
-                        label="手机号"
+                        label="TEL/微信号/邮箱"
                         min-width="210"
                     >
                         <template slot-scope="{row,$index}">
-                            <el-form-item :prop="'details.' + $index + '.phone'"
-                                          :rules="[{ required: true, message: '请输入手机号', trigger: 'blur' }, { required: true, validator: checkPhone, trigger: 'blur' }]"
+                            <el-form-item v-if="row.memberSource === '1' || (row.memberSource === '0' && row.notifyType === '3')"
+                                          :prop="(row.notifyType === '1' || row.notifyType === '3') ? 'details.' + $index + '.phone' :
+                                          row.notifyType === '2' ? 'details.' + $index + '.email' : ''"
+                                          :rules="row.notifyType === '1' ? [{ required: true, message: '请输入手机号', trigger: 'blur' }, { required: true, validator: checkPhone, trigger: 'blur' }] :
+                                          row.notifyType === '2' ? [{ required: true, message: '请输入邮箱',  trigger: 'blur' }, { required: true, validator: checkEmail, trigger: 'blur' }] :
+                                          row.notifyType === '3' ? [{ required: true, message: '请输入手机号(因为无法获取微信号)',  trigger: 'blur' }, { required: true, validator: checkPhone, trigger: 'blur' }] : []"
                                           label-width="0"
                             >
-                                <oms-input v-model="row.phone"></oms-input>
+                                <oms-input v-if="row.notifyType === '1' || row.notifyType === '3'" v-model="row.phone"></oms-input>
+                                <oms-input v-if="row.notifyType === '2'" v-model="row.email"></oms-input>
+                            </el-form-item>
+                            <el-form-item v-else
+                                          :prop="(row.notifyType === '1' || row.notifyType === '3') ? 'details.' + $index + '.phone' :
+                                          row.notifyType === '2' ? 'details.' + $index + '.email' : ''"
+                                          :rules="[{ required: false }]"
+                                          label-width="0"
+                            >
+                                <span>{{ row.notifyType === '1' ? row.phone : row.notifyType === '2' ? row.email : '' }}</span>
                             </el-form-item>
                         </template>
                     </el-table-column>
@@ -229,7 +238,7 @@
                 },
                 ruleModel: {
                     memberSource: '',
-                    notifyType: '4',
+                    notifyType: '1',
                     comment: '',
                     targetStr: '',
                     notifyUser: '',
@@ -238,8 +247,7 @@
                     phone: '',
                     email: '',
                     contactInfo: '',
-                    notifyStatus: 1,
-                    wechat: '',
+                    notifyStatus: 1
                 },
                 form: {},
                 doing: false,
@@ -252,8 +260,7 @@
                 checkList: [
                     {label: '短信', key: '1', placeholder: '请输入手机号', validator: this.checkPhone},
                     {label: '邮箱', key: '2', placeholder: '请输入邮箱', validator: this.checkEmail},
-                    {label: '微信', key: '3'},
-                    {label: '短信+微信', key: '4'},
+                    {label: '微信', key: '3'}
                 ],
                 typeList: [
                     {label: '系统', key: '0'},
@@ -334,7 +341,7 @@
             userTypeChange(val,index) {
                 this.$set(this.form.details, index, {
                     memberSource: val,
-                    notifyType: '4',
+                    notifyType: '1',
                     comment: '',
                     targetStr: '',
                     notifyUser: '',
@@ -343,8 +350,7 @@
                     phone: '',
                     email: '',
                     contactInfo: '',
-                    notifyStatus: 1,
-                    wechat: '',
+                    notifyStatus: 1
                 })
                 this.$refs.tempForm.clearValidate();
             },
@@ -355,7 +361,7 @@
                     rules: []
                 };
             },
-            userChange(item, index) {
+            userChange(item) {
                 let obj = this.userList.find(f => f.id === item.targetStr)
                 // 修改联系人时，清空对应的openId
                 item.openId = '';
@@ -367,10 +373,9 @@
                 item.phone = obj.phone;
                 item.email = obj.email;
                 item.notifyUser = obj.name;
-                item.wechat = obj.wechat;
                 this.checkContactWay(item);
                 // 校验微信模式
-                this.queryWeChart(item, index);
+                this.queryWeChart(item);
                 this.$refs.tempForm.clearValidate();
             },
             checkChange(item) {
@@ -413,7 +418,7 @@
                     }
                 });
             },
-            queryWeChart(item, index) {
+            queryWeChart(item) {
                 // 如果没选择微信, 返回
                 if (item.notifyType !== '3') return;
                 this.userList.forEach(i => {
@@ -427,25 +432,18 @@
                     if (!item.targetStr) return;
                     this.$http.get(`/ccsWeChat/queryWechatUser/${item.targetStr}`).then(res => {
                         item.openId = res.data.openId;
-                        item.wechat = res.data.openId;
                         item.loading = false;
                     }).catch(e => {
-                        this.getQCode(item, index);
+                        this.getQCode(item);
                     });
                 } else {
                     // 外部联系人
-                    this.getQCode(item, index);
+                    this.getQCode(item);
                 }
             },
-            getQCode(item, index) {
-                if (!item.memberSource) {
-                  return this.$message.warning('请先选择联系人类型！')
-                }
-                if (item.memberSource && item.memberSource == '1' && !item.phone) {
-                  return this.$message.warning('请先填写手机号！')
-                }
+            getQCode(item) {
                 let params = {
-                    userId: item.targetStr || item.phone
+                    userId: item.targetStr
                 };
                 this.$emit('openDialog');
                 // 获取二维码
@@ -458,11 +456,11 @@
                 // 轮询查询关注信息
                 setTimeout(() => {
                     item.loading = true;
-                    this.loopQueryInfo(item, index);
+                    this.loopQueryInfo(item);
                 }, 3000);
             },
-            loopQueryInfo(item, index) {
-                if (this.index !== 0) return;
+            loopQueryInfo(item) {
+                if (item.openId || this.index !== 0) return;
                 let code = this.getQCodeInfo();
                 this.$http.get(`/ccsWeChat/queryWeChatTicketInfo/${code.ticket}`).then(res => {
                     item.loading = false;
@@ -476,11 +474,6 @@
                             message: item.name ? `联系人"${item.name}"关注成功` : '关注成功'
                         });
                         item.openId = res.data.openId;
-                        item.wechat = res.data.openId;
-                        this.$set(this.form.details, index, {
-                          ...this.form.details[index],
-                          wechat: res.data.openId,
-                        })
                         this.$emit('closeDialog');
                     }
                 }).catch(() => {
@@ -493,7 +486,7 @@
                 NotifyRule.get(this.formItem.id).then(res => {
                     res.data.details.forEach(i => {
                         i.openId = i.targetStr;
-                        i.phone = (i.notifyType === '1' || i.notifyType === '3') ? i.contactInfo : (i.notifyType === '4') ? i.phone : '';
+                        i.phone = (i.notifyType === '1' || i.notifyType === '3') ? i.contactInfo : '';
                         i.email = i.notifyType === '2' ? i.contactInfo : '';
                         this.formatContactWay(i);
                     });
@@ -511,14 +504,13 @@
                             id: item.targetStr,
                             name: res.data.name,
                             phone: res.data.phone,
-                            email: res.data.email,
-                            wechat: res.data.wechat,
+                            email: res.data.email
                         });
                     }
                 });
             },
             queryUserList(query) {
-                Department.getMembersNew({keyWord: query, status: 1}).then(res => {
+                Department.getMembers({keyWord: query, status: 1}).then(res => {
                     this.userList = res.data.list;
                 });
             },
@@ -565,7 +557,7 @@
                         form.details.forEach(i => {
                             i.name = undefined;
                             i.loading = undefined;
-                            if (i.memberSource === '1' && (i.notifyType === '1' || i.notifyType === '4')) {
+                            if (i.memberSource === '1' && i.notifyType === '1') {
                                 i.targetStr = i.phone;
                             } else if (i.memberSource === '1' && i.notifyType === '2') {
                                 i.targetStr = i.email;
@@ -575,7 +567,7 @@
                             i.openId = undefined;
                             i.time = undefined;
                             i.checkPass = undefined;
-                            i.contactInfo = (i.notifyType === '1' || i.notifyType === '3' || i.notifyType === '4') ? i.phone : i.notifyType === '2' ? i.email : '';
+                            i.contactInfo = (i.notifyType === '1' || i.notifyType === '3') ? i.phone : i.notifyType === '2' ? i.email : '';
                         });
                         if (!this.form.id) {
                             this.doing = true;

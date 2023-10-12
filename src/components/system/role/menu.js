@@ -1213,7 +1213,7 @@ export default [
                 'leaf': true
             }],
             'leaf': false
-        }, 
+        },
         {
             'id': 'ccs-warn-rule-group-set',
             'parentId': 'ccs-config-center',
@@ -1277,6 +1277,13 @@ export default [
                 'children': null,
                 'leaf': true
             }, {
+                'id': 'ccs-warn-rule-copy',
+                'parentId': 'ccs-warn-rule-manager',
+                'label': '复制告警规则',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            },{
                 'id': 'ccs-warn-rule-scan',
                 'parentId': 'ccs-warn-rule-manager',
                 'label': '查看告警规则',
@@ -1512,6 +1519,13 @@ export default [
                 'id': 'ccs-update-log-add',
                 'parentId': 'ccs-system-update-log',
                 'label': '新增更新日志',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-update-log-export',
+                'parentId': 'ccs-system-update-log',
+                'label': '导出更新日志',
                 'sort': null,
                 'children': null,
                 'leaf': true

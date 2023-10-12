@@ -48,7 +48,15 @@
                   <el-row>
                     <el-col :span="5">{{checkList[item.monitorType-1].label}}</el-col>
                     <el-col :span="4">{{conditions[item.compareType].label}}</el-col>
-                    <el-col :span="5">{{item.threshold + checkList[item.monitorType-1].unit}}</el-col>
+                    <el-col :span="5">
+                      <span v-if="item.compareType != '5'">
+                        {{item.threshold + checkList[item.monitorType-1].unit}}
+                      </span>
+                      <span v-if="item.compareType == '5'">
+                        {{item.threshold + checkList[item.monitorType-1].unit}} ~
+                        {{item.secThreshold + checkList[item.monitorType-1].unit}}
+                      </span>
+                    </el-col>
                     <!--<el-col :span="5">{{item.startTime}}</el-col>-->
                     <!--<el-col :span="5">{{item.endTime}}</el-col>-->
                   </el-row>
@@ -80,7 +88,7 @@
                 currentTab: {},
                 rule: {},
                 checkList: this.$parent.$parent.checkList,
-                conditions: this.$parent.$parent.conditions,
+                conditions: this.$parent.$parent.conditionsNew,
                 levels: this.$parent.$parent.levels,
                 logicList: this.$parent.$parent.logicList
             };

@@ -17,6 +17,9 @@
     .bar-part {
         margin-bottom: 20px;
 
+        .custom-button {
+            padding: 9px 15px;
+        }
     }
 
     .dashboard {
@@ -215,15 +218,29 @@
                 <el-col :span="4" align="left">
                     <h3 class="title">告警事件</h3>
                 </el-col>
-                <el-col :span="20" align="right">
+              <el-col :span="16" align="right">
+                <el-radio-group @change="queryReports" size="small" v-model="searchCondition.earlyWarning">
+                  <el-radio-button :label="0">告警事件</el-radio-button>
+                  <el-radio-button :label="1">预警事件</el-radio-button>
+                </el-radio-group>
+              </el-col>
+              <el-col :span="2" align="right">
+                <el-button class="custom-button" @click="resetSearchForm" size="small" native-type="reset">重置</el-button>
+              </el-col>
+                <el-col :span="2" align="right">
                     <refresh-cycle @change="cycleChange"></refresh-cycle>
                 </el-col>
             </el-row>
             <el-table :data="reportList">
                 <el-table-column class-name="time-line" header-align="center" label="发生时间" prop="modifyTime"
-                                 width="110">
+                                 width="140">
                     <template slot-scope="props">
                         <div class="time-cell no-warp">
+                            <span>
+                              <!--是否为预警对象: 0是告警，1是预警。-->
+                              <span v-if="props.row.earlyWarning == '0'" class="warning-label">警</span>
+                              <span v-if="props.row.earlyWarning == '1'" class="early-warning-label">预</span>
+                            </span>
                             <span>{{ formatModifyTime(props.row)}}</span>
                             <div class="timeline-item timeline-item-date" v-if="props.row.isIntegralDate"></div>
                             <div class="timeline-item timeline-item-time" v-else-if="props.row.isIntegralTime"></div>
@@ -271,7 +288,7 @@
                 <el-table-column align="left" header-align="left" label="设备名称" min-width="160" prop="devName">
                     <template slot-scope="props">
                         <el-tooltip :content="tempTypeList[props.row.devType]" effect="dark" placement="top"
-                                    v-if="!props.row.isIntegralDate">
+                                    v-if="!props.row.isIntegralDate && props.row.devType">
                             <f-a :name="DevIcon[props.row.devType][1]" class="icon-danger ver-a-mid"></f-a>
                         </el-tooltip>
                         <span @click.stop="goToDev(props.row)" class="active-text">{{props.row.devName}}</span>
@@ -360,7 +377,10 @@
                     devException: 0,
                     totalDevCnt: 0
                 },
-                DevIcon
+                DevIcon,
+                searchCondition: {
+                  earlyWarning: null
+                }
             };
         },
         mounted() {
@@ -473,7 +493,8 @@
             },
             queryReports() {
                 const params = {
-                    confirmStatus: 0
+                    confirmStatus: 0,
+                    earlyWarning: this.searchCondition.earlyWarning,
                 };
                 WarnRecord.query(params).then(res => {
                     this.reportList = this.formatReportListByDay(res.data);
@@ -512,11 +533,17 @@
                 this.$refs['alarmChart'].cycle = cycle;
             },
             change() {
-                const params = {confirmStatus: 0};
+                const params = {confirmStatus: 0, earlyWarning: this.searchCondition.earlyWarning,};
                 WarnRecord.query(params).then(res => {
                     this.reportList = this.formatReportListByDay(res.data);
                 });
                 this.resetRightBox();
+            },
+
+            // 重置
+            resetSearchForm() {
+              this.searchCondition.earlyWarning = null;
+              this.queryReports()
             }
         }
     };
