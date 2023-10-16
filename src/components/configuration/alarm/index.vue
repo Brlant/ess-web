@@ -47,7 +47,7 @@
             <el-col :span="5">{{item.ruleName}}</el-col>
             <el-col :span="4">{{logicList[item.logicType].label}}</el-col>
             <el-col :span="3">{{levels[item.warnLevel].label}}</el-col>
-            <el-col :span="4">{{ruleType[item.ruleType].label}}</el-col>
+            <el-col :span="4">{{item.ruleType ? ruleType[item.ruleType].label : '告警规则'}}</el-col>
             <el-col :span="4">{{item.warnKeepTime}}min</el-col>
             <el-col :span="4" class="opera-btn">
               <des-btn @click="edit(item)" icon="edit" v-has="'ccs-warn-rule-edit'">编辑</des-btn>

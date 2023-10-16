@@ -136,7 +136,7 @@
             <div v-if="detail.confirmStatus == '0'">
               <el-form :model="alarmHandlingForm" label-width="100px" ref="alarmHandlingForm">
                 <el-form-item label="类型" prop="devName">
-                  <el-radio-group size="small" v-model="alarmHandlingForm.confirmStatus">
+                  <el-radio-group size="small" v-model="alarmHandlingForm.confirmType">
                     <el-radio-button :key="key" :label="key"
                                      v-for="(item, key) in confirmStatus">{{item}}
                     </el-radio-button>
@@ -220,7 +220,7 @@
                     ],
                 },
               alarmHandlingForm: {
-                confirmStatus: '1',
+                confirmType: '1',
                 confirmContent: '',
                 circularNotification: '0'
               },

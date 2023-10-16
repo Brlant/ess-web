@@ -160,7 +160,7 @@ export default {
         this.searchCondition.pointIdList = pointId ? [pointId] : pointIdList;
         this.allTempList = [];
         if (pointIdList && pointIdList.length > 0) {
-          this.allTempList = pointNameList;
+          this.allTempList = JSON.parse(pointNameList);
           this.searchCondition.valType = '1';
           this.devChange(this.searchCondition.pointIdList);
           return;
