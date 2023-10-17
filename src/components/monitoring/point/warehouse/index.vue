@@ -605,7 +605,7 @@ export default {
         // 查询点位历史数据
         toPointHistoryFn() {
           if (!this.selectList || this.selectList.length === 0) return this.$message.warning('请先勾选需要查询的点位！')
-          this.$router.push({path: '/monitoring/point-dev/temp', query: {pointIdList: this.selectPointIdList, pointNameList: this.selectPointNameList}});
+          this.$router.push({path: '/monitoring/point-dev/temp', query: {pointIdList: this.selectPointIdList, pointNameList: JSON.stringify(this.selectPointNameList)}});
         }
     }
 };

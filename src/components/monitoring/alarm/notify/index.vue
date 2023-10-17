@@ -39,7 +39,7 @@
             <el-col :span="3">{{ item.eventTime | time }}</el-col>
             <el-col :span="3">{{item.devName}}</el-col>
             <el-col :span="3">
-              <span class="info-type warning-type">
+              <span class="info-type" :class="item.recordType === '0' ? 'warning-type' : item.recordType === '1' ? 'recovery-type' : item.recordType === '2' ?'early-warning-type' : ''">
                 {{item.recordType === '0' ? '告警' : item.recordType === '1' ? '恢复' : item.recordType === '2' ? '预警' : ''}}
               </span>
             </el-col>

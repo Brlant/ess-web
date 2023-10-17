@@ -158,6 +158,19 @@
                         </template>
                     </el-table-column>
                     <el-table-column
+                      label="邮箱"
+                      min-width="210"
+                    >
+                      <template slot-scope="{row,$index}">
+                        <el-form-item :prop="'details.' + $index + '.email'"
+                                      :rules="[{ required: false, message: '请输入邮箱', trigger: 'blur' }, { required: false, validator: checkEmail, trigger: 'blur' }]"
+                                      label-width="0"
+                        >
+                          <oms-input v-model="row.email"></oms-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
                         label="备注"
                         min-width="130"
                     >
@@ -296,7 +309,8 @@
             },
             checkEmail(rule, value, callback) {
                 if (value === '') {
-                    callback(new Error('请输入邮箱'));
+                    // callback(new Error('请输入邮箱'));
+                  callback();
                 } else {
                     let re = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/ig;
                     if (!re.test(value)) {
@@ -494,7 +508,7 @@
                     res.data.details.forEach(i => {
                         i.openId = i.targetStr;
                         i.phone = (i.notifyType === '1' || i.notifyType === '3') ? i.contactInfo : (i.notifyType === '4') ? i.phone : '';
-                        i.email = i.notifyType === '2' ? i.contactInfo : '';
+                        i.email = i.notifyType === '2' ? i.contactInfo : (i.notifyType === '4') ? i.email : '';
                         this.formatContactWay(i);
                     });
                     this.form = res.data;

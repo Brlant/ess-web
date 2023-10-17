@@ -128,11 +128,11 @@
         </div>
         <div :key="item + index" class="part-border-box no-border" v-for="(item, index) in form.notifyDetails">
           <el-row>
-            <el-col :span="10">
+            <el-col :span="9">
               <el-form-item label="预警通知方式" :prop="`notifyDetails.${index}.strategyType`"
                             :rules="[{ required: true, message: '请选择预警通知方式', trigger: 'change' }]">
-                <el-select placeholder="请选择预警通知方式" v-model="item.strategyType" @change="notifyTypeChange(item, index)">
-                  <el-option :key="item.key" :label="item.label" :value="item.key"
+                <el-select placeholder="请选择预警通知方式" v-model="item.strategyType" :disabled="item.strategyType === '0'">
+                  <el-option :key="item.key" :label="item.label" :value="item.key" :disabled="item.key === '0'"
                              v-for="(item, key) in alertNotificationMethod">
                   </el-option>
                 </el-select>
@@ -148,10 +148,10 @@
                 </el-checkbox-group>
               </el-form-item>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="5">
               <el-form-item label-width="0">
-                <el-button v-has="'show'" v-show="isShowAddNotifyTypeBtn" @click="addNotice">添加</el-button>
-                <el-button v-has="'show'" v-if="form.notifyDetails.length > 1" type="danger" size="small"
+                <el-button v-has="'show'" v-show="isShowAddNotifyTypeBtn" size="mini" @click="addNotice">添加</el-button>
+                <el-button v-has="'show'" v-if="item.strategyType !== '0'" type="danger" size="mini"
                            @click="deleteNotice(item)">删除
                 </el-button>
               </el-form-item>
