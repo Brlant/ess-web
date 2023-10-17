@@ -57,7 +57,7 @@
           <el-table-column label="人员类型" prop="memberSource" width="90">
             <template slot-scope="props">{{typeList[props.row.memberSource].label}}</template>
           </el-table-column>
-          <el-table-column label="通知类型" prop="logicType" width="80">
+          <el-table-column label="通知类型" prop="logicType" width="120">
             <template slot-scope="props">{{NotifyCheckList[props.row.notifyType-1].label}}</template>
           </el-table-column>
           <el-table-column label="联系方式" min-width="120" prop="warnLevel">
@@ -145,7 +145,8 @@
                 NotifyCheckList: [
                     {label: '短信', key: '1'},
                     {label: '邮箱', key: '2'},
-                    {label: '微信', key: '3'}
+                    {label: '微信', key: '3'},
+                    {label: '短信/邮箱/微信', key: '4'},
                 ],
                 typeList: [
                     {label: '系统联系人', key: '0'},
@@ -173,8 +174,10 @@
             formatContactWay(item) {
                 if (item.memberSource === '1') return;
                 User.get(item.targetStr).then(res => {
+                    const {phone, email} = res.data;
                     item.name = res.data.name;
-                    item.targetStr = item.notifyType === '1' ? res.data.phone : res.data.email;
+                    // notifyType：1:展示电话，2:展示邮箱，4:展示电话加邮箱
+                    item.targetStr = item.notifyType === '1' ? res.data.phone : item.notifyType === '2' ? res.data.email : item.notifyType === '4' ? (phone ? phone + (email ? '/' + email : '') : email) : '';
                 });
             },
             queryNotifyDetail(item) {
