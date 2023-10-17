@@ -347,6 +347,9 @@ export const DictGroup = resource('/dictGroup', http, {
     }
 });
 
+// 数据字典项对象
+export const DictItem = resource('/dictItem', http, {});
+
 // 货品管理
 export const Goods = resource('/goods', http, {
     getGoodsDetail: (id) => {

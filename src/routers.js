@@ -398,6 +398,11 @@ export const routes = [
             component: () => import('./components/system/updateLog/index.vue'),
             meta: { moduleId: 'permission', title: '更新日志', perm: 'ccs-system-update-log' },
           },
+          {
+            path: '/permission/dict',
+            component: () => import('./components/system/dict/dict.vue'),
+            meta: { moduleId: 'permission', title: '数据字典', perm: 'ccs-system-dict-manager' },
+          },
         ]
       },
 

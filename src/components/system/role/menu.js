@@ -1531,6 +1531,76 @@ export default [
                 'leaf': true
             }],
             'leaf': true
-        },],
+        }, {
+            'id': 'ccs-system-dict-manager',
+            'parentId': 'ccs-system-config',
+            'label': '数据字典',
+            'sort': 6,
+            'children': [{
+                'id': 'ccs-dict-group-query',
+                'parentId': 'ccs-system-dict-manager',
+                'label': '查询数据字典组',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-dict-group-add',
+                'parentId': 'ccs-system-dict-manager',
+                'label': '新增数据字典组',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-dict-group-export',
+                'parentId': 'ccs-system-dict-manager',
+                'label': '导出数据字典组',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-dict-group-update',
+                'parentId': 'ccs-system-dict-manager',
+                'label': '编辑数据字典组',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-dict-group-softDelete',
+                'parentId': 'ccs-system-dict-manager',
+                'label': '删除数据字典组',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-dict-item-query',
+                'parentId': 'ccs-system-dict-manager',
+                'label': '查询数据字典项',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-dict-item-add',
+                'parentId': 'ccs-system-dict-manager',
+                'label': '新增数据字典项',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-dict-item-update',
+                'parentId': 'ccs-system-dict-manager',
+                'label': '编辑数据字典项',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-dict-item-softDelete',
+                'parentId': 'ccs-system-dict-manager',
+                'label': '删除数据字典项',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }],
+            'leaf': true
+        }],
         'leaf': false
     }];
