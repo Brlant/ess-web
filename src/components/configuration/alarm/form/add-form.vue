@@ -159,7 +159,8 @@
                 <el-form-item v-if="showNoticeInterval" label="告警通知间隔" prop="warnIntervalTime">
                   <el-select placeholder="请选择延时通知时间" v-model="form.warnIntervalTime">
                     <el-option :key="key * 1" :label="item" :value="key * 1"
-                               v-for="(item, key) in offLine">
+                               v-for="(item, key) in offLine"
+                               v-show="key > 0">
                     </el-option>
                   </el-select>
                 </el-form-item>
