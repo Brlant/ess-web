@@ -201,7 +201,7 @@
                             form.owners = '';
                         }
                         form.matchTypeList = form.matchTypeList.join(',');
-                        form.ccsNotifyIdList = form.ccsNotifyIdList.join(',');
+                        // form.ccsNotifyIdList = form.ccsNotifyIdList.join(',');
                         // TODO
                         form.rules = undefined;
                         if (!this.form.id) {
