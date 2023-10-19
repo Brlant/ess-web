@@ -7,7 +7,7 @@ export default {
                 {label: '电压值', key: '3', unit: '%', show: true},
                 {label: '离线时间', key: '4', unit: 'min', show: true}
             ],
-            conditions: [
+            conditionsOld: [
                 {label: '小于', key: '0'},
                 {label: '大于', key: '1'},
                 {label: '等于', key: '2'}
@@ -34,7 +34,7 @@ export default {
                 {label: '预警规则', key: '0'},
                 {label: '告警规则', key: '1'}
             ],
-            conditionsNew: [
+            conditions: [
                 {label: '小于', key: '0'},
                 {label: '大于', key: '1'},
                 {label: '等于', key: '2'},

@@ -88,7 +88,7 @@
                 currentTab: {},
                 rule: {},
                 checkList: this.$parent.$parent.checkList,
-                conditions: this.$parent.$parent.conditionsNew,
+                conditions: this.$parent.$parent.conditions,
                 levels: this.$parent.$parent.levels,
                 logicList: this.$parent.$parent.logicList
             };

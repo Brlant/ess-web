@@ -1,6 +1,6 @@
 <template>
   <dialog-template :btnSavePosition="100">
-    <template slot="title">处理告警事件</template>
+    <template slot="title">处理{{ earlyWarning == '1' ? '预警' : '告警'}}事件</template>
     <template slot="btnSave">
       <el-button :disabled="doing" @click="save('tempForm')" plain type="primary">保存</el-button>
     </template>
@@ -13,7 +13,7 @@
             </el-radio-button>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="情况说明">
+        <el-form-item label="情况说明" prop="confirmContent" :rules="earlyWarning == '0' ? [{required: true, message:'请输入情况说明', trigger: 'blur'}] : [{required: false}]">
           <oms-input placeholder="请输入情况说明" type="textarea" v-model="form.confirmContent"/>
         </el-form-item>
         <el-form-item label="恢复前通知" prop="circularNotification">
@@ -37,7 +37,8 @@
                     confirmContent: '',
                     circularNotification: '0'
                 },
-                doing: false
+                doing: false,
+                earlyWarning: null,
             };
         },
         props: {
@@ -55,6 +56,7 @@
         },
         watch: {
             index: function (val) {
+                this.earlyWarning = this.formItem.earlyWarning;
                 this.form = {
                     confirmType: '1',
                     confirmContent: '',

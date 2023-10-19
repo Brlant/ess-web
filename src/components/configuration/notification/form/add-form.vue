@@ -266,7 +266,7 @@
                     {label: '短信', key: '1', placeholder: '请输入手机号', validator: this.checkPhone},
                     {label: '邮箱', key: '2', placeholder: '请输入邮箱', validator: this.checkEmail},
                     {label: '微信', key: '3'},
-                    {label: '短信+微信', key: '4'},
+                    {label: '短信/邮箱/微信', key: '4'},
                 ],
                 typeList: [
                     {label: '系统', key: '0'},

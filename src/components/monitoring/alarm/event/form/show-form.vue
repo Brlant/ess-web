@@ -51,7 +51,7 @@
               <!--<span>{{detail.devName}}</span>-->
             </oms-col>
             <oms-col :isShow="true" :rowSpan="rowSpan" label="设备编号/编码">{{detail.devNo}}/{{detail.devCode}}</oms-col>
-            <oms-col :isShow="true" :rowSpan="rowSpan" label="状态">{{detail.confirmStatus === '1' ? '已确认' : '未确认'}}
+            <oms-col :isShow="true" :rowSpan="rowSpan" label="状态">{{confirmStatus[detail.confirmStatus]}}
             </oms-col>
             <oms-col :isShow="true" :rowSpan="rowSpan" label="创建时间">{{detail.insertTime | time}}</oms-col>
             <oms-col :isShow="true" :rowSpan="rowSpan" label="处理时间">{{detail.confirmTime | time}}</oms-col>
@@ -135,14 +135,14 @@
           <div class="content mt-10" style="overflow: hidden">
             <div v-if="detail.confirmStatus == '0'">
               <el-form :model="alarmHandlingForm" label-width="100px" ref="alarmHandlingForm">
-                <el-form-item label="类型" prop="devName">
+                <el-form-item label="类型" prop="confirmType">
                   <el-radio-group size="small" v-model="alarmHandlingForm.confirmType">
                     <el-radio-button :key="key" :label="key"
-                                     v-for="(item, key) in confirmStatus">{{item}}
+                                     v-for="(item, key) in formConfirmStatus">{{item}}
                     </el-radio-button>
                   </el-radio-group>
                 </el-form-item>
-                <el-form-item label="情况说明">
+                <el-form-item label="情况说明" prop="confirmContent" :rules="earlyWarning == '0' ? [{required: true, message:'请输入情况说明', trigger: 'blur'}] : [{required: false}]">
                   <oms-input placeholder="请输入情况说明" type="textarea" v-model="alarmHandlingForm.confirmContent"/>
                 </el-form-item>
                 <el-form-item label="恢复前通知" prop="circularNotification">
@@ -158,8 +158,12 @@
             </div>
             <div v-else>
               <el-table :data="alarmHandlingList" header-row-class-name="table-header-color" style="width: 100%;">
-                <el-table-column label="时间" min-width="110" prop="devName"/>
-                <el-table-column label="操作人" prop="devCode"/>
+                <el-table-column label="时间" min-width="110" >
+                  <template slot-scope="{row}">
+                    {{row.confirmTime | time}}
+                  </template>
+                </el-table-column>
+                <el-table-column label="操作人" prop="confirmerId"/>
                 <el-table-column label="类型" prop="confirmStatus">
                   <template slot-scope="{row}">
                     {{confirmStatus[row.confirmStatus]}}
@@ -226,10 +230,16 @@
               },
               doing: false,
               alarmHandlingList: [],
+              confirmStatus: {
+                0: '未确认',
+                1: '已确认',
+                2: '取消'
+              },
+              earlyWarning: null,
             };
         },
       computed: {
-        confirmStatus() {
+        formConfirmStatus() {
           return {
             1: '确认',
             2: '取消',
@@ -240,6 +250,8 @@
         watch: {
             index(val) {
                 if (val !== 0) return;
+                this.earlyWarning = this.formItem.earlyWarning;
+                this.resetalarmHandlingForm();
                 this.queryDetail();
             }
         },
@@ -334,22 +346,31 @@
                 })
             },
             save() {
-            this.$refs['alarmHandlingForm'].validate((valid) => {
-              if (valid && this.doing === false) {
-                this.$httpRequestOpera(WarnRecord.update(this.formItem.id, this.alarmHandlingForm), {
-                  successTitle: '处理成功',
-                  errorTitle: '处理失败',
-                  success: res => {
-                    this.doing = false;
-                    this.$emit('change', res.data);
-                  },
-                  error: () => {
-                    this.doing = false;
-                  }
-                });
+              this.$refs['alarmHandlingForm'].validate((valid) => {
+                if (valid && this.doing === false) {
+                  this.$httpRequestOpera(WarnRecord.update(this.formItem.id, this.alarmHandlingForm), {
+                    successTitle: '处理成功',
+                    errorTitle: '处理失败',
+                    success: res => {
+                      this.doing = false;
+                      this.$emit('change', res.data);
+                    },
+                    error: () => {
+                      this.doing = false;
+                    }
+                  });
+                }
+              });
+            },
+
+            // 重置表单
+            resetalarmHandlingForm() {
+              this.alarmHandlingForm = {
+                confirmType: '1',
+                confirmContent: '',
+                circularNotification: '0'
               }
-            });
-          }
+            }
         }
     };
 </script>

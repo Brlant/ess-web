@@ -110,7 +110,7 @@
               <el-radio-button :label="2">取消</el-radio-button>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="情况说明" prop="confirmContent">
+          <el-form-item label="情况说明" prop="confirmContent" :rules="eventProcessingEarlyWarning == '0' ? [{required: true, message:'请输入情况说明', trigger: 'blur'}] : [{required: false}]">
             <el-input v-model="eventProcessingForm.confirmContent" type="textarea"></el-input>
           </el-form-item>
           <el-form-item label="恢复前通知" prop="circularNotification">
@@ -167,6 +167,7 @@
                   circularNotification: '0',
                   warnRecordIdList: [],
                 },
+                eventProcessingEarlyWarning: false,
             };
         },
         methods: {
@@ -230,6 +231,8 @@
               let earlyWarningLength = this.checkList.filter(item => item.earlyWarning == '1').length
               if (warningLength > 1) return this.$message.warning('告警事件不可以批量处理！')
               if (warningLength >= 1 && earlyWarningLength >= 1) return this.$message.warning('告警事件与预警事件不可以一起处理！')
+              this.eventProcessingEarlyWarning = this.checkList[0].earlyWarning;
+              this.resetEventProcessingForm();
               this.eventProcessingDialogVisible = true;
             },
 
@@ -252,6 +255,14 @@
                   });
                 }
               });
+            },
+            resetEventProcessingForm() {
+              this.eventProcessingForm = {
+                confirmType: '1',
+                confirmContent: null,
+                circularNotification: '0',
+                warnRecordIdList: [],
+              }
             }
         }
     };

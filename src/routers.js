@@ -300,7 +300,7 @@ export const routes = [
             {
                 path: '/temp/product',
                 component: () => import('./components/monitoring/org/route-view.vue'),
-                meta: { moduleId: 'monitoring', title: '产品一览', perm: 'ccs-hotmonitor-manager', pageType: 2, subMenuId: 'org' },
+                meta: { moduleId: 'monitoring', title: '产品一览', perm: 'ccs-product-manager', pageType: 2, subMenuId: 'org' },
                 children: [
                     {
                         path: '',

@@ -20,7 +20,7 @@
             <oms-col :isShow="true" :rowSpan="rowSpan" label="通知时间">{{detail.createTime | time}}</oms-col>
             <oms-col :isShow="true" :rowSpan="rowSpan" label="设备名称">{{detail.devName}}</oms-col>
             <oms-col :isShow="true" :rowSpan="rowSpan" label="消息类型">
-              <span class="info-type warning-type">
+              <span class="info-type" :class="detail.recordType === '0' ? 'warning-type' : detail.recordType === '1' ? 'recovery-type' : detail.recordType === '2' ?'early-warning-type' : ''">
                 {{detail.recordType === '0' ? '告警' : detail.recordType === '1' ? '恢复' : detail.recordType === '2' ? '预警' : ''}}
               </span>
             </oms-col>
@@ -117,6 +117,7 @@
         watch: {
             index(val) {
                 if (val !== 0) return;
+                this.onReset();
                 this.queryDetail();
             }
         },

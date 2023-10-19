@@ -56,7 +56,7 @@
               <el-form-item :prop="`details.${index}.compareType`"
                             :rules="[{ required: true, message: '请选择条件', trigger: 'change' }]"
                             label-width="0">
-                <el-select :disabled="item.disabled" @change="compareTypeChange(item, index)"
+                <el-select :disabled="item.disabled"
                            placeholder="请选择条件"
                            v-model="item.compareType">
                   <el-option :key="item.key" :label="item.label" :value="item.key"
@@ -131,9 +131,13 @@
             <el-col :span="9">
               <el-form-item label="预警通知方式" :prop="`notifyDetails.${index}.strategyType`"
                             :rules="[{ required: true, message: '请选择预警通知方式', trigger: 'change' }]">
-                <el-select placeholder="请选择预警通知方式" v-model="item.strategyType" :disabled="item.strategyType === '0'">
+                <el-select v-if="item.strategyType === '0'" placeholder="请选择预警通知方式" v-model="item.strategyType" :disabled="item.strategyType === '0'">
                   <el-option :key="item.key" :label="item.label" :value="item.key" :disabled="item.key === '0'"
                              v-for="(item, key) in alertNotificationMethod">
+                  </el-option>
+                </el-select>
+                <el-select v-else placeholder="请选择预警通知方式" v-model="item.strategyType">
+                  <el-option label="循环通知" value="1">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -268,7 +272,7 @@ export default {
       actionType: '添加',
       offLine: this.$parent.$parent.offLine,
       checkList: this.$parent.$parent.checkList,
-      conditions: this.$parent.$parent.conditionsNew,
+      conditions: this.$parent.$parent.conditions,
       levels: this.$parent.$parent.levels,
       logicList: this.$parent.$parent.logicList,
       tempDetails: [],
@@ -346,7 +350,7 @@ export default {
       details.push(Object.assign({}, details[0], {
         threshold: '',
         checkDisabled: this.switchDisabled(),
-        disabled: this.switchDisabled(),
+        disabled: false,
         thresholdDisabled: false,
         // compareType: this.switchCompareType(details[0].compareType)
         compareType: compareType.toString()
@@ -424,7 +428,7 @@ export default {
             this.setTime(res.data);
             res.data.details.forEach(i => {
               i.checkDisabled = this.formItem.type == 'copy' ? false : true;
-              i.disabled = this.formItem.type == 'copy' ? false : true;
+              i.disabled = (this.formItem.type == 'copy' && i.monitorType !== '4') ? false : true;
               i.thresholdDisabled = this.formItem.type == 'copy' ? false : true;
             });
             // this.form = res.data;
@@ -618,8 +622,8 @@ export default {
       const lowLimit = '下限值'
       const upLimit = '上限值'
       return (rule, value, callback) => {
-        if (!value || value === '0') {
-          return callback(new Error(`请输入大于0的数`))
+        if (!value) {
+          return callback(new Error(flag ? '请输入最小值' : '请输入最大值'))
         } else if (value) {
           const paramsValue = +this.form[source][index][params]
           const compareValue = +this.form[source][index][compare]
@@ -629,7 +633,7 @@ export default {
               return callback(new Error(`${lowLimit}不能大于${upLimit}`))
             } else {
               this.$refs.tempForm.clearValidate(`${source}.${index}.${compare}`)
-              if (!Number(this.form[source][index][compare])) {
+              if (!(this.form[source][index][compare])) {
                 this.$refs.tempForm.validateField(`${source}.${index}.${compare}`)
               }
             }
@@ -639,7 +643,7 @@ export default {
               return callback(new Error(`${upLimit}不能小于${lowLimit}`))
             } else {
               this.$refs.tempForm.clearValidate(`${source}.${index}.${compare}`)
-              if (!Number(this.form[source][index][compare])) {
+              if (!(this.form[source][index][compare])) {
                 this.$refs.tempForm.validateField(`${source}.${index}.${compare}`)
               }
             }

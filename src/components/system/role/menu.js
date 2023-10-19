@@ -987,7 +987,7 @@ export default [
                 }],
                 'leaf': false
             },
-            {
+           /*{
                 'id': 'ccs-hotmonitor-manager',
                 'parentId': 'ccs-dev-center',
                 'label': '产品一览',
@@ -1010,6 +1010,35 @@ export default [
                     'id': 'ccs-cool-dev-edit',
                     'parentId': 'ccs-cool-dev-manager',
                     'label': '添加产品',
+                    'sort': null,
+                    'children': null,
+                    'leaf': true
+                }],
+                'leaf': false
+            },*/
+            {
+                'id': 'ccs-product-manager',
+                'parentId': 'ccs-dev-center',
+                'label': '产品一览',
+                'sort': 6,
+                'children': [{
+                    'id': 'ccs-product-add',
+                    'parentId': 'ccs-product-manager',
+                    'label': '添加产品',
+                    'sort': null,
+                    'children': null,
+                    'leaf': true
+                }, {
+                    'id': 'ccs-product-scan',
+                    'parentId': 'ccs-product-manager',
+                    'label': '查看产品详情',
+                    'sort': null,
+                    'children': null,
+                    'leaf': true
+                }, {
+                    'id': 'ccs-product-edit',
+                    'parentId': 'ccs-product-manager',
+                    'label': '修改产品',
                     'sort': null,
                     'children': null,
                     'leaf': true
