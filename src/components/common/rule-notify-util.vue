@@ -45,7 +45,14 @@
             <template slot-scope="props">
               <div v-for="item in props.row.details">{{checkList[item.monitorType-1].label}}
                 {{conditions[item.compareType] &&
-                conditions[item.compareType].label}} {{item.threshold + checkList[item.monitorType-1].unit}}
+                conditions[item.compareType].label}}
+                <span v-if="item.compareType != '5'">
+                  {{item.threshold + checkList[item.monitorType-1].unit}}
+                </span>
+                <span v-if="item.compareType == '5'">
+                  {{item.threshold + checkList[item.monitorType-1].unit}} ~
+                  {{item.secThreshold + checkList[item.monitorType-1].unit}}
+                </span>
               </div>
             </template>
           </el-table-column>

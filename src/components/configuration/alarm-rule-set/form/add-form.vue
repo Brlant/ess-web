@@ -71,7 +71,7 @@
                     owners:[],  // 货主
                     level:'', // 优先级
                     matchTypeList:[],// 匹配类型
-                    ccsNotifyIdList:[],// 通知列表
+                    // ccsNotifyIdList:[],// 通知列表
                     rules: [],
                     ruleIds: ''
                 },
@@ -160,7 +160,7 @@
                 };
                 AlarmRule.query(params).then(res => {
                     this.ruleList = res.data.currentList || [];
-                    setRuleListWhenEdit();
+                    this.setRuleListWhenEdit();
                 });
             },
             async initDetail(){
@@ -174,7 +174,7 @@
                     res.data.rules = [];
                     this.form = Object.assign({}, res.data);
                     this.form.ruleList = rules;
-                    this.queryRule('', this.setRuleListWhenEdit);
+                    this.queryRule('', this.setRuleListWhenEdit());
                 });
             },
             setRuleListWhenEdit() {
@@ -202,6 +202,7 @@
                         }
                         form.matchTypeList = form.matchTypeList.join(',');
                         // form.ccsNotifyIdList = form.ccsNotifyIdList.join(',');
+                        delete form.ccsNotifyIdList
                         // TODO
                         form.rules = undefined;
                         if (!this.form.id) {
