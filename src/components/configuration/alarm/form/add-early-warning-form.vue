@@ -623,7 +623,7 @@ export default {
       const lowLimit = '下限值'
       const upLimit = '上限值'
       return (rule, value, callback) => {
-        if (!value) {
+        if (!value && value !== 0) {
           return callback(new Error(flag ? '请输入最小值' : '请输入最大值'))
         } else if (value) {
           const paramsValue = +this.form[source][index][params]
