@@ -160,7 +160,9 @@
                 };
                 AlarmRule.query(params).then(res => {
                     this.ruleList = res.data.currentList || [];
-                    this.setRuleListWhenEdit();
+                    if (setRuleListWhenEdit) {
+                      setRuleListWhenEdit();
+                    }
                 });
             },
             async initDetail(){
@@ -174,7 +176,7 @@
                     res.data.rules = [];
                     this.form = Object.assign({}, res.data);
                     this.form.ruleList = rules;
-                    this.queryRule('', this.setRuleListWhenEdit());
+                    this.queryRule('', this.setRuleListWhenEdit);
                 });
             },
             setRuleListWhenEdit() {
