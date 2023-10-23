@@ -11,7 +11,7 @@
                 <!--        <span class="mr-10">类型:{{ tempTypeList[devTitle.devType] }}</span>-->
       </span>
         </template>
-        <el-switch 
+        <el-switch
             inactive-text="精简"
             active-text="明细"
             v-model="searchCondition.switch"
@@ -81,7 +81,7 @@
                     <!-- 新增-精简/明细 -->
                     <!-- <el-col :span="2">
                         <oms-form-row :span="0" label="">
-                            <el-switch 
+                            <el-switch
                                 inactive-text="精简"
                                 active-text="明细"
                                 v-model="searchCondition.switch"
@@ -146,7 +146,7 @@ export default {
         }
     },
     mounted() {
-        
+
         this.times1 = [this.$moment(this.$moment().format('YYYY-MM-DD')), this.$moment()];
 
         // 之前逻辑
@@ -155,10 +155,16 @@ export default {
         // this.searchCondition.pointIdList = [id];
         // this.allTempList = [];
 
-        let {id, type, pointId} = this.$route.query;
-        if (!pointId) return;
-        this.searchCondition.pointIdList = [pointId];
+        let {id, type, pointId, pointIdList, pointNameList} = this.$route.query;
+        if (!pointId && !pointIdList) return;
+        this.searchCondition.pointIdList = pointId ? [pointId] : pointIdList;
         this.allTempList = [];
+        if (pointIdList && pointIdList.length > 0) {
+          this.allTempList = JSON.parse(pointNameList);
+          this.searchCondition.valType = '1';
+          this.devChange(this.searchCondition.pointIdList);
+          return;
+        }
 
         // Point.get(id).then(res => {
         Point.get(pointId).then(res => {
@@ -190,10 +196,10 @@ export default {
                     message : '请选择上报时间!',
                     type : 'warning'
                 }) ;
-                
+
                 return ;
             }
-            
+
 
             // if (!this.searchCondition.pointIdList.length || !this.searchCondition.valType) return;
             if (!this.searchCondition.pointIdList.length && !this.searchCondition.valType && !this.coordsVal.length ) return;
@@ -215,7 +221,7 @@ export default {
                 item.pointName = point && point.pointName;
                 return item;
             });
-            
+
             this.$emit('search', ary, this.coordsVal.length === 0);
         },
         reset() {
@@ -255,7 +261,7 @@ export default {
                     this.searchCondition.valType = '1';
                 }
             }
-            
+
             this.search();
         },
         timeChange(val) {
@@ -287,7 +293,7 @@ export default {
                     message : '请选择上报时间!',
                     type : 'warning'
                 }) ;
-                
+
                 return ;
             }
 
@@ -297,11 +303,11 @@ export default {
                     message : '请选择至少一种数据类型!',
                     type : 'warning'
                 }) ;
-                
+
                 return ;
             }
-                
-            
+
+
             let params = {
                 pointIdList: this.searchCondition.pointIdList,
 
@@ -309,14 +315,14 @@ export default {
                 startPrice,
 
                 startTime: this.formatTimeAry(this.times1, 0),
-                endTime: this.formatTimeAry(this.times1, 1), 
+                endTime: this.formatTimeAry(this.times1, 1),
                 valType
             };
 
             this.doing = true;
             const httpAxios = axios.create();
             httpAxios.defaults.timeout = 120000;
-  
+
             httpAxios({
                 methods: 'get',
 
@@ -324,7 +330,7 @@ export default {
                     之前逻辑
                     url: !this.coordsVal.length ? // 如果坐标数据没有, 默认导出温度、湿度、电压数据, 否则导出坐标数据
                         `${process.env.VUE_APP_API}/mcc-data/point/export/dev-report` :
-                        `${process.env.VUE_APP_API}/mcc-data/point/export/dev-thing-data`, 
+                        `${process.env.VUE_APP_API}/mcc-data/point/export/dev-thing-data`,
                 */
                url: !this.coordsVal.length ? // 如果坐标数据没有, 默认导出温度、湿度、电压数据, 否则导出坐标数据
 
@@ -332,7 +338,7 @@ export default {
 
                    `${process.env.VUE_APP_API}/mcc-data/point/export/dev-thing-data`, // 坐标 接口
 
-                    
+
                 params,
                 paramsSerializer(params) {
                     return qs.stringify(params, {indices: false});
@@ -363,7 +369,7 @@ export default {
             this.coordsVal = [] ;
             this.search() ;
         },
-        
+
     }
 };
 </script>
@@ -372,7 +378,7 @@ export default {
     .switchBtnInfo{ margin:0 1.5em 0 0; }
 
     .dataTypeInfo{
-        
+
         .el-checkbox-group{ display:inline-block; vertical-align: middle;
             &:last-of-type{  margin-left:10px; }
         }

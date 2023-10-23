@@ -113,6 +113,7 @@
                             <oms-form-row :span="5" label="">
                                 <el-button @click="searchInOrder" native-type="submit" type="primary">查询</el-button>
                                 <el-button @click="resetSearchForm" native-type="reset">重置</el-button>
+                                <el-button @click="exportExcel">导出Excel</el-button>
                             </oms-form-row>
                         </el-col>
                     </el-row>
@@ -167,6 +168,8 @@
 <script>
 import {BaseInfo, User} from '@/resources';
 //  import detail from './detail.vue';
+import {http} from '@/resources';
+import utils from '@/tools/utils';
 
 export default {
 //    components: {detail},
@@ -285,6 +288,26 @@ export default {
             this.filters = Object.assign({}, this.searchWord);
             this.getLogPager(1);
         },
+
+        // 导出Excel
+        exportExcel() {
+          if(!this.expectedTime) return this.$message.warning("请先选择日志操作时间！")
+          this.$store.commit('initPrint', {isPrinting: true,text: '正在导出'});
+          this.searchWord.startTime = this.$formatAryTime(this.expectedTime, 0, 'YYYY-MM-DD HH:mm:ss');
+          this.searchWord.endTime = this.$formatAryTime(this.expectedTime, 1, 'YYYY-MM-DD HH:mm:ss');
+          let data = Object.assign(this.filters, this.searchWord);
+          http.post('/ccsLog/exportLog', data, {timeout: 0}).then(res => {
+            utils.download(res.data.path, '系统日志');
+            this.$store.commit('initPrint', {isPrinting: false});
+
+          }).catch(error => {
+            this.$store.commit('initPrint', {isPrinting: false});
+            this.$notify.error({
+              message: error.response && error.response.data && error.response.data.msg || '导出失败'
+            });
+          });
+        },
+
         formatTime(date) {
             return date ? this.$moment(date).format('YYYY-MM-DD') : '';
         }

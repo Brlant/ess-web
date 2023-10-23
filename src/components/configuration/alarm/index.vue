@@ -1,20 +1,31 @@
 <template>
   <div class="order-page">
-    <search-part @search="searchResult">
+    <search-part class="custom-search" @search="searchResult">
       <template slot="btn">
-        <el-button @click="add" plain size="small" v-has="'ccs-warn-rule-add'">
+        <!--<el-button  @click="add" plain size="small" v-has="'ccs-warn-rule-add'">
           <f-a class="icon-small" name="plus"></f-a>
           添加
-        </el-button>
+        </el-button>-->
+        <el-dropdown>
+          <el-button class="custom-button" plain size="small" v-has="'ccs-warn-rule-add'">
+            <f-a class="icon-small" name="plus"></f-a>
+            添加
+          </el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item @click.native="addEarlyWarning">添加预警规则</el-dropdown-item>
+            <el-dropdown-item @click.native="add">添加告警规则</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </template>
     </search-part>
 
     <div class="order-list" style="margin-top: 10px">
       <el-row class="order-list-header">
         <el-col :span="5">规则名称</el-col>
-        <el-col :span="5">规则条件逻辑</el-col>
-        <el-col :span="5">级别</el-col>
-        <el-col :span="5">延时通知时间</el-col>
+        <el-col :span="4">规则条件逻辑</el-col>
+        <el-col :span="3">级别</el-col>
+        <el-col :span="4">规则类型</el-col>
+        <el-col :span="4">延时通知时间</el-col>
         <el-col :span="4">操作</el-col>
       </el-row>
       <el-row v-if="loadingData">
@@ -34,12 +45,17 @@
              class="order-list-item order-list-item-bg " v-for="item in dataList">
           <el-row>
             <el-col :span="5">{{item.ruleName}}</el-col>
-            <el-col :span="5">{{logicList[item.logicType].label}}</el-col>
-            <el-col :span="5">{{levels[item.warnLevel].label}}</el-col>
-            <el-col :span="5">{{item.warnKeepTime}}min</el-col>
+            <el-col :span="4">{{logicList[item.logicType].label}}</el-col>
+            <el-col :span="3">{{levels[item.warnLevel].label}}</el-col>
+            <el-col :span="4">{{item.ruleType ? ruleType[item.ruleType].label : '告警规则'}}</el-col>
+            <el-col :span="4">{{item.warnKeepTime}}min</el-col>
             <el-col :span="4" class="opera-btn">
               <des-btn @click="edit(item)" icon="edit" v-has="'ccs-warn-rule-edit'">编辑</des-btn>
               <des-btn @click="deleteItem(item)" icon="delete" v-has="'ccs-warn-rule-del'">删除</des-btn>
+              <span @click.stop.prevent="copy(item)" class="des-btn" v-has="'ccs-warn-rule-copy'">
+                <a href="#" class="btn-circle" @click.prevent="">
+                  <i class="el-icon-document-copy"></i></a>复制
+              </span>
             </el-col>
           </el-row>
         </div>
@@ -69,6 +85,7 @@
     import CommonMixin from '@/mixins/commonMixin';
     import alarmMixin from '@/mixins/alarmMixin';
     import {AlarmRule} from '@/resources';
+    import addEarlyWarningForm from "./form/add-early-warning-form";
 
     export default {
         components: {
@@ -81,7 +98,8 @@
                 filters: {},
                 dialogComponents: {
                     0: addForm,
-                    1: showForm
+                    1: showForm,
+                    2: addEarlyWarningForm,
                 },
                 defaultStyle: {
                     'width': '900px',
@@ -130,8 +148,17 @@
                 this.currentItem = item;
                 this.currentItemId = item.id;
                 this.form = item;
-                this.showPart(0);
+                this.showPart(item.ruleType == '0' ? 2 : 0);
             },
+            // 复制
+            copy(item) {
+              this.form = {
+                ...item,
+                type: 'copy'
+              };
+              this.showPart(item.ruleType == '0' ? 2 : 0);
+            },
+
             showItemDetail(item) {
                 this.currentItem = item;
                 this.currentItemId = item.id;
@@ -155,7 +182,27 @@
             change() {
                 this.resetRightBox();
                 this.queryList(1);
+            },
+
+            // 添加预警规则
+            addEarlyWarning() {
+              this.form = {};
+              this.showPart(2);
             }
         }
     };
 </script>
+
+<style lang="scss">
+.order-page {
+  .custom-search.opera-btn-group {
+    .opera-icon {
+      line-height: 1;
+
+      .custom-button {
+        border-color: #DCDFE6;
+      }
+    }
+  }
+}
+</style>

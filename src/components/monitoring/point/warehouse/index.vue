@@ -162,6 +162,9 @@
                     <i class="el-icon-t-search"></i>
                   </span>
                                 <el-button-group>
+                                    <el-button :plain="true" @click="toPointHistoryFn" >
+                                        查询点位历史数据
+                                    </el-button>
                                     <el-button :plain="true" @click="outputDataFn" >
                                         导出数据
                                     </el-button>
@@ -191,7 +194,12 @@
                                 </div>
                                 <el-table :data="tempList" v-else :max-height="tableHeight"
                                           header-row-class-name="table-header-color"
+                                          @selection-change="handleSelectionChange"
                                           class="pointPositionTable" v-loading="loadingDataTemp">
+                                    <el-table-column
+                                        type="selection"
+                                        width="55">
+                                    </el-table-column>
                                     <el-table-column label="点位名称" min-width="120" prop="pointName"></el-table-column>
                                     <el-table-column label="备注" min-width="120" prop="remark"></el-table-column>
                                     <el-table-column label="设备名称/编码" min-width="140">
@@ -323,7 +331,10 @@ export default {
             accordionId: '',
             deleteStore: this.$parent.deleteStore,
             tempItem: {},
-            ccsWarehouseId : ''
+            ccsWarehouseId : '',
+            selectList: [],
+            selectPointIdList: [],
+            selectPointNameList: [],
         };
     },
     computed: {
@@ -578,6 +589,23 @@ export default {
 
 
 
+        },
+
+        handleSelectionChange(val) {
+          this.selectList = val;
+          this.selectPointIdList = val.map(item=>item.pointId)
+          this.selectPointNameList = val.map(item=> {
+            return {
+              pointName: item.pointName,
+              id: item.id
+            }
+          })
+        },
+
+        // 查询点位历史数据
+        toPointHistoryFn() {
+          if (!this.selectList || this.selectList.length === 0) return this.$message.warning('请先勾选需要查询的点位！')
+          this.$router.push({path: '/monitoring/point-dev/temp', query: {pointIdList: this.selectPointIdList, pointNameList: JSON.stringify(this.selectPointNameList)}});
         }
     }
 };

@@ -1,12 +1,12 @@
 <template>
   <div class="order-page">
-    <search-part @search="searchResult">
+    <search-part ref="searchPart" :checkList="checkList" :warnRecordIdList="warnRecordIdList" @search="searchResult" @change="change">
       <template slot="btn">
-        <el-button @click="batchConfirmItem" plain size="small" v-has="'ccs-warn-record-process'"
+<!--        <el-button @click="batchConfirmItem" plain size="small" v-has="'ccs-warn-record-process'"
                    v-if="checkList.length>0">
           <f-a class="icon-small" name="affirm"></f-a>
           批量处理
-        </el-button>
+        </el-button>-->
       </template>
     </search-part>
 
@@ -15,15 +15,16 @@
         <el-col :span="1">
           <el-checkbox @change="checkAll" v-model="isCheckAll"></el-checkbox>
         </el-col>
+        <el-col :span="3">编号</el-col>
         <el-col :span="3">
           发生时间
         </el-col>
         <el-col :span="3">恢复时间</el-col>
         <el-col :span="2">持续时间</el-col>
         <el-col :span="2">异常类型</el-col>
-        <el-col :span="4">监控对象</el-col>
-        <el-col :span="4">设备名称</el-col>
-        <el-col :span="2">状态</el-col>
+        <el-col :span="3">监控对象</el-col>
+        <el-col :span="3">设备名称</el-col>
+        <el-col :span="1">状态</el-col>
         <el-col :span="3">操作</el-col>
       </el-row>
       <el-row v-if="loadingData">
@@ -39,12 +40,20 @@
         </el-col>
       </el-row>
       <div class="order-list-body flex-list-dom" v-else="">
-        <div :class="[{'active':currentItemId===item.id}]" @click.stop.prevent="checkItem(item)"
+        <div :class="[{'active':currentItemId===item.id}]"
              class="order-list-item no-pointer order-list-item-bg" v-for="item in dataList">
           <el-row>
             <el-col :span="1">
               <div @click.stop.prevent="checkItem(item)" class="el-checkbox-warp" v-if="item.confirmStatus === '0'">
                 <el-checkbox v-model="item.isChecked"></el-checkbox>
+              </div>
+            </el-col>
+            <el-col :span="3" class="no-warp">
+              <div>
+                <!--是否为预警对象: 0是告警，1是预警。-->
+                <span v-if="item.earlyWarning == '0'" class="warning-label">警</span>
+                <span v-if="item.earlyWarning == '1'" class="early-warning-label">预</span>
+                {{ item.eventNo }}
               </div>
             </el-col>
             <el-col :span="3" class="no-warp">
@@ -81,16 +90,16 @@
               <!--<f-a class="icon-danger" :name="iconClass[icon].icon"></f-a>-->
               <!--</span>-->
             </el-col>
-            <el-col :span="4">
+            <el-col :span="3">
               <span @click.stop="goToRouter(item)" class="active-text">{{formatTitle(item)}}</span>
             </el-col>
-            <el-col :span="4">
-              <el-tooltip :content="tempTypeList[item.devType]" effect="dark" placement="top">
+            <el-col :span="3">
+              <el-tooltip v-if="item.devType" :content="tempTypeList[item.devType]" effect="dark" placement="top">
                 <f-a :name="DevIcon[item.devType][1]" class="icon-danger ver-a-mid"></f-a>
               </el-tooltip>
               <span @click.stop="goToDev(item)" class="active-text">{{item.devName}}</span>
             </el-col>
-            <el-col :span="2">{{confirmStatus[item.confirmStatus]}}</el-col>
+            <el-col :span="1">{{confirmStatus[item.confirmStatus]}}</el-col>
             <el-col :span="3">
               <des-btn @click="confirmItem(item)" icon="affirm" v-has="'ccs-warn-record-process'"
                        v-show="item.confirmStatus === '0' ">处理

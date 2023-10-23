@@ -4,15 +4,12 @@
 
     <div class="order-list" style="margin-top: 20px">
       <el-row class="order-list-header">
-        <el-col :span="3">通知时间</el-col>
-        <el-col :span="3">监控对象</el-col>
-        <el-col :span="3">事件编号</el-col>
-        <el-col :span="3">发生时间</el-col>
-        <el-col :span="3">设备名称</el-col>
+        <el-col :span="6">通知时间</el-col>
+        <el-col :span="6">设备名称</el-col>
+        <el-col :span="3">通知类型</el-col>
+        <el-col :span="3">通知人员</el-col>
         <el-col :span="3">消息类型</el-col>
-        <el-col :span="2">通知对象</el-col>
-        <el-col :span="2">发送成功</el-col>
-        <el-col :span="2">发送明细</el-col>
+        <el-col :span="3">发送状态</el-col>
       </el-row>
       <el-row v-if="loadingData">
         <el-col :span="24">
@@ -29,24 +26,15 @@
       <div class="order-list-body flex-list-dom" v-else="">
         <div :class="[{'active':currentItemId===item.id}]" @click="showItemDetail(item)"
              class="order-list-item order-list-item-bg"
-             v-for="(item, index) in dataList">
+             v-for="item in dataList">
           <el-row>
-            <el-col :span="3">{{item.createTime | time}}</el-col>
+            <el-col :span="6">{{item.createTime | time}}</el-col>
+            <el-col :span="6">{{item.devName}}</el-col>
+            <el-col :span="3">{{checkList[Number(item.notifyType) - 1].label}}</el-col>
+            <el-col :span="3">{{ item.userName }}</el-col>
+            <el-col :span="3">{{item.recordType === '0' ? '告警' : '恢复'}}</el-col>
             <el-col :span="3">
-              <span class="active-text">{{formatTitle(item)}}</span>
-            </el-col>
-            <el-col :span="3">{{ item.eventNo }}</el-col>
-            <el-col :span="3">{{ item.eventTime | time }}</el-col>
-            <el-col :span="3">{{item.devName}}</el-col>
-            <el-col :span="3">
-              <span class="info-type" :class="item.recordType === '0' ? 'warning-type' : item.recordType === '1' ? 'recovery-type' : item.recordType === '2' ?'early-warning-type' : ''">
-                {{item.recordType === '0' ? '告警' : item.recordType === '1' ? '恢复' : item.recordType === '2' ? '预警' : ''}}
-              </span>
-            </el-col>
-            <el-col :span="2">{{ item.allCount }}</el-col>
-            <el-col :span="2">{{ item.successCount }}</el-col>
-            <el-col :span="2">
-              <el-button type="text">查看</el-button>
+                {{item.sendStatus === '1' ? '成功' : item.sendStatus === '0' ? '失败' : item.sendStatus === '2' ? '发送中': item.sendStatus}}
             </el-col>
           </el-row>
         </div>
@@ -69,7 +57,6 @@
 <script>
     import SearchPart from './search';
     import CommonMixin from '@/mixins/commonMixin';
-    import AlarmEventMixin from '@/mixins/alarmEventMixin';
     import {NotifyRecord} from '@/resources';
     import showForm from './form/show-form.vue';
 
@@ -77,7 +64,7 @@
         components: {
             SearchPart
         },
-        mixins: [CommonMixin, AlarmEventMixin],
+        mixins: [CommonMixin],
         data() {
             return {
                 filters: {
@@ -86,8 +73,7 @@
                 checkList: [
                     {label: '短信', key: '1', placeholder: '请输入手机号', validator: this.checkPhone},
                     {label: '邮箱', key: '2', placeholder: '请输入邮箱', validator: this.checkEmail},
-                    {label: '微信', key: '3'},
-                    {label: '短信/微信/邮箱', key: '4'},
+                    {label: '微信', key: '3'}
                 ],
                 dialogComponents: {
                     0: showForm
@@ -119,8 +105,7 @@
                 this.activeStatus = key;
             },
             queryList(pageNo) {
-                // const http = NotifyRecord.query;
-                const http = NotifyRecord.gainNotifyRecordListNew;
+                const http = NotifyRecord.query;
                 const params = this.queryUtil(http, pageNo);
                 // this.queryStatusNum(params);
             },
@@ -146,7 +131,7 @@
                 this.$nextTick(() => {
                     this.form = item;
                 });
-            },
+            }
         }
     };
 </script>

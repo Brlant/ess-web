@@ -79,6 +79,7 @@
                   <a @click.stop.prevent="add" class="btn-circle" href="#" v-has="'ccs-platform-user-add'">
                     <i class="el-icon-t-plus"></i>
                   </a>添加
+                  <el-button size="small" @click="exportExcel">导出</el-button>
               </span>
             </div>
           </div>
@@ -92,6 +93,7 @@
               </el-table-column>
               <el-table-column label="手机号码" min-width="100" prop="phone"></el-table-column>
               <el-table-column label="邮箱" min-width="130" prop="email"></el-table-column>
+              <el-table-column label="岗位" prop="post"></el-table-column>
               <el-table-column label="状态" prop="status" width="70">
                 <template slot-scope="scope">
                   <dict :dict-group="'orgUserStatus'" :dict-key="formatStatus(scope.row.status)"></dict>
@@ -142,7 +144,7 @@
 
 </template>
 <script>
-    import {Department, User} from '../../../resources';
+    import {http, Department, User} from '../../../resources';
     import utils from '@/tools/utils';
     import editForm from './form/form.vue';
     import departmentForm from './form/department.vue';
@@ -238,7 +240,7 @@
                     pageSize: this.pager.pageSize,
                     objectId: 'ccs-system'
                 });
-                Department.getMembers(data).then(res => {
+                Department.getMembersNew(data).then(res => {
                     this.dataRows = res.data.list;
                     this.pager.count = res.data.count;
                 });
@@ -252,7 +254,7 @@
                     companyDepartment: type.id,
                     objectId: 'ccs-system'
                 });
-                Department.getOnesMember(type.id, data).then(res => {
+                Department.getOnesMemberNew(type.id, data).then(res => {
                     this.dataRows = res.data.list;
                     this.pager.count = res.data.count;
                 });
@@ -449,6 +451,24 @@
                         type: 'error'
                     });
                 });
+            },
+
+            exportExcel() {
+              this.$store.commit('initPrint', {isPrinting: true,text: '正在导出'});
+              let data = Object.assign({}, this.filters, {
+                companyDepartment: this.currentItem.id,
+                objectId: 'ccs-system'
+              });
+              http.post('/ccsRole/exportUser', data).then(res => {
+                utils.download(res.data.path, '用户管理');
+                this.$store.commit('initPrint', {isPrinting: false});
+
+              }).catch(error => {
+                this.$store.commit('initPrint', {isPrinting: false});
+                this.$notify.error({
+                  message: error.response && error.response.data && error.response.data.msg || '导出失败'
+                });
+              });
             }
         }
     };

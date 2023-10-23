@@ -3,6 +3,7 @@
     <el-row class="mb20">
       <el-col>
         <el-button type="primary" @click="handleAdd" v-has="'ccs-update-log-add'">新增日志</el-button>
+        <el-button @click="handleExport" v-has="'ccs-update-log-export'">导出</el-button>
       </el-col>
     </el-row>
     <div class="flex">
@@ -68,8 +69,8 @@
 </template>
 
 <script>
-import {CcsPublishLog} from '@/resources';
-
+import {http, CcsPublishLog} from '@/resources';
+import utils from "@/tools/utils";
 export default {
   name: "index",
   data() {
@@ -165,6 +166,20 @@ export default {
     handleAdd() {
       this.reset();
       this.isAdd = true;
+    },
+
+    // 导出日志
+    handleExport() {
+      this.$store.commit('initPrint', {isPrinting: true,text: '正在导出'});
+      http.post('/ccsRole/exportSystemPublishLog').then(res => {
+        utils.download(res.data.path, '系统更新日志');
+        this.$store.commit('initPrint', {isPrinting: false});
+      }).catch(error => {
+        this.$store.commit('initPrint', {isPrinting: false});
+        this.$notify.error({
+          message: error.response && error.response.data && error.response.data.msg || '导出失败'
+        });
+      });
     },
 
     // 提交表单

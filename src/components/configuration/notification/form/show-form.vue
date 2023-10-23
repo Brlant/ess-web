@@ -62,7 +62,7 @@
                   </el-table-column>
                   <el-table-column
                       label="通知类型"
-                      min-width="80"
+                      min-width="120"
                   >
                       <template slot-scope="{row,$index}">
                           <span>{{checkList[row.notifyType-1].label}}</span>
@@ -73,7 +73,12 @@
                       min-width="180"
                   >
                       <template slot-scope="{row,$index}">
-                          <span>{{ row.contactInfo }}</span>
+                        <div v-if="row.notifyType === '4'">
+                          <div v-show="row.phone">{{row.phone}}</div>
+                          <div v-show="row.wechat">{{row.wechat}}</div>
+                          <div v-show="row.email">{{row.email}}</div>
+                        </div>
+                        <span v-else>{{ row.contactInfo }}</span>
                       </template>
                   </el-table-column>
                   <el-table-column
@@ -294,7 +299,8 @@
                 checkList: [
                     {label: '短信', key: '1'},
                     {label: '邮箱', key: '2'},
-                    {label: '微信', key: '3'}
+                    {label: '微信', key: '3'},
+                    {label: '短信/微信/邮箱', key: '4'},
                 ],
                 typeList: [
                     {label: '系统联系人', key: '0'},

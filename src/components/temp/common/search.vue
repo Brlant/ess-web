@@ -123,7 +123,6 @@ export default {
     },
     watch: {
         type() {
-          console.log(this.type)
             this.searchCondition = {
                 devCode: null,
                 devName: null,

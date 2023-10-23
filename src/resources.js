@@ -140,13 +140,24 @@ export const warehouseDevImage = resource('/warehousePointImage', http, {
 export const DevBackUp = resource('/ccsDevBackup', http, {});
 
 // 告警记录
-export const NotifyRecord = resource('/ccsNotifyRecord', http, {});
+export const NotifyRecord = resource('/ccsNotifyRecord', http, {
+    gainNotifyRecordListNew(params) {
+        return http.get('/ccsNotifyRecord/gainNotifyRecordListNew', {params});
+    },
+    gainNotifyRecordInfoNew(params) {
+        return http.get('/ccsNotifyRecord/gainNotifyRecordInfoNew', {params});
+    },
+});
 
 // 告警记录
 export const WarnRecord = resource('/ccsWarnRecord', http, {
   batchConfirmItem(obj) {
     return http.put('/ccsWarnRecord/batch-confirm', obj);
-  }
+  },
+
+    batchConfirm(obj) {
+        return http.put('/ccsWarnRecord/batchConfirm', obj);
+    }
 });
 
 
@@ -410,6 +421,12 @@ export const Department = resource('/department', http, {
   getMembers: (params) => {
     return http.get('/department/members', {params});
   },
+  getOnesMemberNew: (id, params) => {
+    return http.get('/departmentNew/' + id + '/member', {params});
+  },
+  getMembersNew: (params) => {
+     return http.get('/departmentNew/members', {params});
+  },
   queryStateNum: (params) => {
     return http.get('/department/member/count', {params});
   }
@@ -467,7 +484,10 @@ export const User = resource('/oms/user', http, {
   },
   enableUser: (userId) => {
     return http.put(`/oms/user/${userId}/enablement`);
-  }
+  },
+  editUserPost: (obj) => {
+    return http.post(`/ccsRole/editUserPost`, obj);
+  },
 });
 
 // 角色管理对象
@@ -542,6 +562,9 @@ export const DictGroup = resource('/dictGroup', http, {
     });
   }
 });
+
+// 数据字典项对象
+export const DictItem = resource('/dictItem', http, {});
 
 // 货品管理
 export const Goods = resource('/goods', http, {

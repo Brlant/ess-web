@@ -987,7 +987,7 @@ export default [
                 }],
                 'leaf': false
             },
-            {
+           /*{
                 'id': 'ccs-hotmonitor-manager',
                 'parentId': 'ccs-dev-center',
                 'label': '产品一览',
@@ -1010,6 +1010,35 @@ export default [
                     'id': 'ccs-cool-dev-edit',
                     'parentId': 'ccs-cool-dev-manager',
                     'label': '添加产品',
+                    'sort': null,
+                    'children': null,
+                    'leaf': true
+                }],
+                'leaf': false
+            },*/
+            {
+                'id': 'ccs-product-manager',
+                'parentId': 'ccs-dev-center',
+                'label': '产品一览',
+                'sort': 6,
+                'children': [{
+                    'id': 'ccs-product-add',
+                    'parentId': 'ccs-product-manager',
+                    'label': '添加产品',
+                    'sort': null,
+                    'children': null,
+                    'leaf': true
+                }, {
+                    'id': 'ccs-product-scan',
+                    'parentId': 'ccs-product-manager',
+                    'label': '查看产品详情',
+                    'sort': null,
+                    'children': null,
+                    'leaf': true
+                }, {
+                    'id': 'ccs-product-edit',
+                    'parentId': 'ccs-product-manager',
+                    'label': '修改产品',
                     'sort': null,
                     'children': null,
                     'leaf': true
@@ -1213,7 +1242,7 @@ export default [
                 'leaf': true
             }],
             'leaf': false
-        }, 
+        },
         {
             'id': 'ccs-warn-rule-group-set',
             'parentId': 'ccs-config-center',
@@ -1277,6 +1306,13 @@ export default [
                 'children': null,
                 'leaf': true
             }, {
+                'id': 'ccs-warn-rule-copy',
+                'parentId': 'ccs-warn-rule-manager',
+                'label': '复制告警规则',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            },{
                 'id': 'ccs-warn-rule-scan',
                 'parentId': 'ccs-warn-rule-manager',
                 'label': '查看告警规则',
@@ -1515,8 +1551,85 @@ export default [
                 'sort': null,
                 'children': null,
                 'leaf': true
+            }, {
+                'id': 'ccs-update-log-export',
+                'parentId': 'ccs-system-update-log',
+                'label': '导出更新日志',
+                'sort': null,
+                'children': null,
+                'leaf': true
             }],
             'leaf': true
-        },],
+        }, {
+            'id': 'ccs-system-dict-manager',
+            'parentId': 'ccs-system-config',
+            'label': '数据字典',
+            'sort': 6,
+            'children': [{
+                'id': 'ccs-dict-group-query',
+                'parentId': 'ccs-system-dict-manager',
+                'label': '查询数据字典组',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-dict-group-add',
+                'parentId': 'ccs-system-dict-manager',
+                'label': '新增数据字典组',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-dict-group-export',
+                'parentId': 'ccs-system-dict-manager',
+                'label': '导出数据字典组',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-dict-group-update',
+                'parentId': 'ccs-system-dict-manager',
+                'label': '编辑数据字典组',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-dict-group-softDelete',
+                'parentId': 'ccs-system-dict-manager',
+                'label': '删除数据字典组',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-dict-item-query',
+                'parentId': 'ccs-system-dict-manager',
+                'label': '查询数据字典项',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-dict-item-add',
+                'parentId': 'ccs-system-dict-manager',
+                'label': '新增数据字典项',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-dict-item-update',
+                'parentId': 'ccs-system-dict-manager',
+                'label': '编辑数据字典项',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }, {
+                'id': 'ccs-dict-item-softDelete',
+                'parentId': 'ccs-system-dict-manager',
+                'label': '删除数据字典项',
+                'sort': null,
+                'children': null,
+                'leaf': true
+            }],
+            'leaf': true
+        }],
         'leaf': false
     }];

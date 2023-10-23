@@ -109,7 +109,7 @@
             }
         },
         mounted() {
-            if( this.item ){ //绑定的设备对象如果存在, 之前是通过侦听 this.$store.state 中的 unitId 变化进行赋值处理的 watch 侦听 
+            if( this.item ){ //绑定的设备对象如果存在, 之前是通过侦听 this.$store.state 中的 unitId 变化进行赋值处理的 watch 侦听
                 this.curUnitId = this.item.id;
                 this.type = '';
                 this.queryRuleList();
@@ -164,6 +164,8 @@
                 BindRule.query(params).then(res => {
                     this.initRuleList(res.data.currentList);
                     this.ruleList = res.data.currentList || [];
+                    let changeList = res.data.changeList || [];
+                    this.$emit('getChangList', changeList)
                     this.loading = false;
                 });
 
@@ -174,7 +176,7 @@
                     const params = {
                         pageNo: 1,
                         pageSize: 500,
-                        
+
                         monitorTargetId : this.item.id
                     };
                     if (this.type === 's' || this.type === 'o') {
