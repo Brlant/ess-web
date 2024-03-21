@@ -1,4 +1,4 @@
-<style lang="scss" scoped="">
+<style lang="scss" scoped>
 @import "../../assets/scss/mixins";
 
 body {
@@ -44,12 +44,15 @@ body {
         font-size: 16px;
     }
 }
+
 .flex {
     display: flex;
+
     .cursor {
         cursor: pointer;
     }
 }
+
 .title {
     margin: 0px auto 30px auto;
     text-align: center;
@@ -62,14 +65,15 @@ body {
         <el-card class="box-card main-card-box">
             <div class="logo-part clearfix"><img src="../../assets/img/logo_pic.png">MCC冷链监控</div>
 
-<!--            <div class="login-style">-->
-<!--                <el-button v-show="loginStyle === 0" class="btn" type="text" @click="changeLoginStyle(1)">用短信验证码登录</el-button>-->
-<!--                <el-button v-show="loginStyle === 1" class="btn" type="text" @click="changeLoginStyle(0)">用短信验证码登录</el-button>-->
-<!--            </div>-->
+            <!--            <div class="login-style">-->
+            <!--                <el-button v-show="loginStyle === 0" class="btn" type="text" @click="changeLoginStyle(1)">用短信验证码登录</el-button>-->
+            <!--                <el-button v-show="loginStyle === 1" class="btn" type="text" @click="changeLoginStyle(0)">用短信验证码登录</el-button>-->
+            <!--            </div>-->
 
             <div style="padding:20px">
                 <!--密码登录-->
-                <el-form v-show="loginStyle===0" :model="user" :rules="rules" @submit.prevent="onSubmit" label-position="top" label-width="80px"
+                <el-form v-show="loginStyle===0" :model="user" :rules="rules" @submit.prevent="done"
+                         label-position="top" label-width="80px"
                          onsubmit="return false" ref="loginForm">
                     <el-form-item label="系统代码" prop="orgCode" v-if="needCode">
                         <!--<oms-input v-model="user.orgCode" :showFocus="isFocus === 1"></oms-input>-->
@@ -95,39 +99,41 @@ body {
                     </el-form-item>
 
                     <el-form-item label-width="80px">
-                        <el-button @click="onSubmit" native-type="submit" style="display:block;width:100%;" type="primary">
+                        <el-button @click="done" native-type="submit" style="display:block;width:100%;"
+                                   type="primary">
                             {{ btnString }} <i class="el-icon-loading" v-show="loading"></i></el-button>
 
                     </el-form-item>
                 </el-form>
 
                 <!--手机验证码登录-->
-<!--                <el-form v-show="loginStyle===1" class="login-form" label-position="top" ref="phoneForm" label-width="80px"-->
-<!--                         :model="user1" :rules="rules1"-->
-<!--                         onsubmit="return false">-->
-<!--                    <el-form-item label="手机号" prop="phone">-->
-<!--                        <oms-input v-model="user1.phone" placeholder="请输入手机号"></oms-input>-->
-<!--                    </el-form-item>-->
-<!--                    <el-form-item label="短信验证码" prop="validateCode">-->
-<!--                        <div style="display:flex">-->
-<!--                            <div style="width:300px;margin-right:50px">-->
-<!--                                <el-input v-model="user1.validateCode" placeholder="请输入短信验证码"></el-input>-->
-<!--                            </div>-->
-<!--                            <div style="line-height:0;">-->
-<!--                                <el-button :disabled="smsBtnDisabled" @click="sendSMS">{{ smsBtnText }}</el-button>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </el-form-item>-->
+                <!--                <el-form v-show="loginStyle===1" class="login-form" label-position="top" ref="phoneForm" label-width="80px"-->
+                <!--                         :model="user1" :rules="rules1"-->
+                <!--                         onsubmit="return false">-->
+                <!--                    <el-form-item label="手机号" prop="phone">-->
+                <!--                        <oms-input v-model="user1.phone" placeholder="请输入手机号"></oms-input>-->
+                <!--                    </el-form-item>-->
+                <!--                    <el-form-item label="短信验证码" prop="validateCode">-->
+                <!--                        <div style="display:flex">-->
+                <!--                            <div style="width:300px;margin-right:50px">-->
+                <!--                                <el-input v-model="user1.validateCode" placeholder="请输入短信验证码"></el-input>-->
+                <!--                            </div>-->
+                <!--                            <div style="line-height:0;">-->
+                <!--                                <el-button :disabled="smsBtnDisabled" @click="sendSMS">{{ smsBtnText }}</el-button>-->
+                <!--                            </div>-->
+                <!--                        </div>-->
+                <!--                    </el-form-item>-->
 
-<!--                    <el-form-item label-width="80px">-->
-<!--                        <el-button type="primary" @click="phoneFormSubmit" style="display:block;width:100%;" native-type="submit">-->
-<!--                            {{ btnString }} <i class="el-icon-loading" v-show="loading"></i></el-button>-->
-<!--                    </el-form-item>-->
-<!--                </el-form>-->
+                <!--                    <el-form-item label-width="80px">-->
+                <!--                        <el-button type="primary" @click="phoneFormSubmit" style="display:block;width:100%;" native-type="submit">-->
+                <!--                            {{ btnString }} <i class="el-icon-loading" v-show="loading"></i></el-button>-->
+                <!--                    </el-form-item>-->
+                <!--                </el-form>-->
 
                 <!--        二次认证登录-->
-                <el-form v-show="loginStyle===1" class="login-form" label-position="top" ref="phoneForm" label-width="80px"
-                         :model="user1" :rules="rules1"
+                <el-form v-show="loginStyle===1" class="login-form" label-position="top" ref="phoneForm"
+                         label-width="80px"
+                         :model="user" :rules="rules1"
                          onsubmit="return false">
                     <div class="flex">
                         <i class="el-icon-arrow-left cursor" @click="goBack"></i>
@@ -139,7 +145,9 @@ body {
                                 <el-input v-model="user1.validateCode" placeholder="请输入短信验证码"></el-input>
                             </div>
                             <div style="line-height:0;">
-                                <el-button :disabled="smsBtnDisabled" style="width: 110px" @click="sendSMS">{{ smsBtnText }}</el-button>
+                                <el-button :disabled="smsBtnDisabled" style="width: 110px" @click="sendSMS">
+                                    {{ smsBtnText }}
+                                </el-button>
                             </div>
                         </div>
                     </el-form-item>
@@ -154,8 +162,8 @@ body {
                         background="#ccc"
                         successText="验证通过"
                         progressBarBg="#67c23a"
-                        @passcallback="handlePass"
-                        @passfail="handleFail"
+                        @passcallback="passHandler"
+                        @passfail="failHandler"
                     >
                     </drag-verify>
                 </el-form>
@@ -168,19 +176,19 @@ body {
 </template>
 
 <script>
-import {Auth,http} from '@/resources';
+import {Auth, http} from '@/resources';
 import AppFooter from '../layout/app.footer.vue';
 import {base64} from '@dtop/dtop-web-common';
 import dragVerify from "vue-drag-verify2";
 
 export default {
     name: 'login',
-    components: {AppFooter,dragVerify},
-    data: () => {
+    components: {AppFooter, dragVerify},
+    data() {
         let orgCodeList = JSON.parse(window.localStorage.getItem('orgCodeList')) || [];
         let needCode = !!orgCodeList.length;
 
-        return ({
+        return {
             // 登录方式：0-账号密码登录，1-手机验证码登录
             loginStyle: 0,
             user: {
@@ -221,7 +229,7 @@ export default {
                             } else {
                                 if (!/^1[0-9]{10}$/.test(value)) {
                                     callback(new Error('请输入正确的手机号'));
-                                }else {
+                                } else {
                                     callback();
                                 }
                             }
@@ -242,7 +250,7 @@ export default {
 
             needCode,
             orgCodeList
-        });
+        };
     },
     computed: {
         // smsBtnText() {
@@ -272,7 +280,7 @@ export default {
         sendSMS: function () {
             this.leftTime = this.maxTimes;
             this.setTimer();
-            http.post('/sendSms', {phone: this.user1.phone}).then(response => {// 验证
+            http.post('/sendSms', {phone: this.user.username}).then(response => {// 验证
                 this.$notify.info({
                     message: '发送成功'
                 });
@@ -293,7 +301,7 @@ export default {
                 this.smsBtnText = '重新发送';
             }
         },
-        phoneFormSubmit(){
+        phoneFormSubmit() {
             this.$refs['phoneForm'].validate((valid) => {
                 if (valid) {
                     this.btnString = '登录中..';
@@ -335,12 +343,49 @@ export default {
             });
         },
         // 二次验证登录
-        handlePass() {
-            console.log('验证成功')
+        passHandler() {
+            // console.log('滑动验证成功')
+            if (!this.user.validateCode) {
+                this.resetDragVerify();
+                this.$message({
+                    message: '请输入短信验证码',
+                    type: 'warning'
+                });
+
+                return;
+            }
+
+            this.loading = true;
+            let user = {
+                phone: this.user.username,
+                validateCode: this.user.validateCode,
+                type: this.user.type
+            };
+
+            Auth.secondaryCertificateLogin(user).then(response => {
+                let userId = window.localStorage.getItem('userId');
+                this.$store.commit('initUser', response.data);
+                this.$store.commit('initCode', this.user.orgCode);
+                this.$emit('login');
+            }).catch(error => {
+                this.resetDragVerify();
+                let data = error.response.data;
+                this.$notify.error({
+                    message: data.msg || '无法登录'
+                });
+
+                this.loading = false;
+
+                let code = data.code;
+                if (code === 602) {
+                    this.loginStyle = 0;
+                    this.user.validateCode = ''
+                }
+            })
         },
 
         // 验证失败
-        handleFail() {
+        failHandler() {
             this.resetDragVerify();
         },
         // 还原至未验证通过状态
@@ -350,13 +395,16 @@ export default {
         },
         goBack() {
             this.loginStyle = 0;
-            this.user1 = {
-                validateCode:null,
-            }
+            this.user.validateCode = '';
+            this.btnString = '登录';
+            this.leftTime = 0;
+            this.smsBtnText = '获取验证码';
+            this.loading = false;
+
             this.$refs.phoneForm.resetFields();
             this.$refs.dragVerify.reset();
         },
-        onSubmit(){
+        onSubmit() {
             this.loginStyle = 1;
         },
         done() {
@@ -371,22 +419,20 @@ export default {
                     delete userCopy.password;
                     Auth.login(userCopy).then(response => {
                         if (!response.data) return;
+                        let data = response.data;
+                        if (data.secondaryCertificateFlag) {
+                            this.loginStyle = 1;
+
+                            this.loading = false;
+                            this.btnString = '登录';
+                            this.smsBtnText = '获取验证码';
+
+                            return;
+                        }
+
                         let userId = window.localStorage.getItem('userId');
                         this.$store.commit('initUser', response.data);
                         this.$store.commit('initCode', this.user.orgCode);
-                        // this.$nextTick(function () {
-                        //   if (userId === response.data.userId) {
-                        //     let lastUrl = window.localStorage.getItem('lastUrl');
-                        //     if (lastUrl && lastUrl.indexOf('/login') === -1 && lastUrl.indexOf('/logout') === -1) {
-                        //       window.localStorage.removeItem('lastUrl');
-                        //       window.location.href = lastUrl;
-                        //       return lastUrl;
-                        //     }
-                        //   } else {
-                        //     this.$router.replace('/');
-                        //   }
-                        //   this.$router.replace('/');
-                        // });
                         this.$emit('login');
                     }, error => {
                         let data = error.response.data;
