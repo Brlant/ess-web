@@ -142,7 +142,7 @@ body {
                     <el-form-item label="短信验证码" prop="validateCode">
                         <div style="display:flex">
                             <div style="width:300px;margin-right:50px">
-                                <el-input v-model="user1.validateCode" placeholder="请输入短信验证码"></el-input>
+                                <el-input v-model="user.validateCode" placeholder="请输入短信验证码"></el-input>
                             </div>
                             <div style="line-height:0;">
                                 <el-button :disabled="smsBtnDisabled" style="width: 110px" @click="sendSMS">
@@ -185,24 +185,25 @@ export default {
     name: 'login',
     components: {AppFooter, dragVerify},
     data() {
-        let orgCodeList = JSON.parse(window.localStorage.getItem('orgCodeList')) || [];
+        let orgCodeList = [];
         let needCode = !!orgCodeList.length;
 
         return {
             // 登录方式：0-账号密码登录，1-手机验证码登录
             loginStyle: 0,
             user: {
+                enableSecondaryCertificateConfig: 1,
                 username: window.localStorage.getItem('user') ? JSON.parse(window.localStorage.getItem('user')).userAccount : '',
                 password: '',
                 validateCode: '',
                 type: 1,
                 orgCode: window.localStorage.getItem('orgCode') ? JSON.parse(window.localStorage.getItem('orgCode')) : ''
             },
-            user1: {
-                phone: '',
-                validateCode: '',
-                type: 1
-            },
+            // user1: {
+            //     phone: '',
+            //     validateCode: '',
+            //     type: 1
+            // },
             loading: false,
             codeUrl: '',
             showCode: false,
@@ -418,6 +419,7 @@ export default {
                     userCopy.encryptionPsw = base64(userCopy.password);
                     delete userCopy.password;
                     Auth.login(userCopy).then(response => {
+                        this.loading = false;
                         if (!response.data) return;
                         let data = response.data;
                         if (data.secondaryCertificateFlag) {
@@ -457,8 +459,8 @@ export default {
             this.$http.post('/login/check', {username: this.trim(this.user.username)}).catch(error => {
                 if (error.response.status === 405) {
                     this.needCode = true;
-                    let list = error.response.data && error.response.data.map(m => ({value: m}));
-                    window.localStorage.setItem('orgCodeList', JSON.stringify(list || ''));
+                    let list = error.response.data && error.response.data.map(m => ({value: m + ''}));
+                    window.localStorage.setItem('orgCodeList', JSON.stringify(list || '[]'));
                 }
             });
         },
