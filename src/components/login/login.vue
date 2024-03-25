@@ -358,6 +358,7 @@ export default {
 
             this.loading = true;
             let user = {
+                orgCode: this.user.orgCode,
                 phone: this.user.username,
                 validateCode: this.user.validateCode,
                 type: this.user.type

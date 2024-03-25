@@ -1,4 +1,4 @@
-<style lang="scss" scoped="">
+<style lang="scss" scoped>
 @import "../../assets/scss/mixins";
 
 body {
@@ -14,7 +14,6 @@ body {
     text-align: center;
     line-height: 80px;
     font-size: 40px;
-
     img {
         margin-right: 10px;
         vertical-align: middle;
@@ -43,7 +42,7 @@ body {
                 </el-form-item>
                 <el-form-item label-width="80px">
                     <el-button @click="done" native-type="submit" style="display:block;width:100%;" type="primary">
-                        {{ btnString }}
+                        {{btnString}}
                     </el-button>
 
                 </el-form-item>
@@ -53,7 +52,7 @@ body {
 </template>
 
 <script>
-import {User} from '../../resources';
+import { User } from '@/resources';
 
 export default {
     name: 'resetpsw',
@@ -69,18 +68,7 @@ export default {
                 }
             }
         };
-        let checkPasswd = (rule, value, callback) => {
-            if (value === '') {
-                callback(new Error('请输入密码'));
-            } else {
-                let rl = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,16}$/;
-                if (!rl.test(this.user.password)) {
-                    callback('密码必须为8~16个字符，且包含数字、大写字母、小写字母');
-                } else {
-                    callback();
-                }
-            }
-        };
+
         return {
             user: {oldPassword: '', password: '', password2: ''},
             loading: false,
@@ -91,7 +79,6 @@ export default {
                 ],
                 password: [
                     {required: true, message: '请输入新密码', trigger: 'blur'},
-                    {validator: checkPasswd, trigger: 'blur'}
                 ],
                 password2: [
                     {required: true, message: '请输入确认密码', trigger: 'blur'},
@@ -102,21 +89,17 @@ export default {
         };
     },
     methods: {
-        done() {
+        done () {
             this.$refs['loginForm'].validate((valid) => {
                 if (valid) {
                     this.loading = true;
                     User.resetPsw(this.user).then(() => {
-                        this.$notify.info({
-                            message: '修改成功'
-                        });
-                        this.$router.go(-1);
+                        this.$notify.info('修改成功');
+                        this.$router.push('/login');
                     }).catch(e => {
                         let error = e.response;
                         if (error.status === 400) {
-                            this.$notify.info({
-                                message: error.data.meta.message
-                            });
+                            this.$notify.error(error.data.msg);
                         }
                     });
                 }

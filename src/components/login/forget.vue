@@ -1,4 +1,4 @@
-<style lang="scss" scoped="">
+<style lang="scss" scoped>
 @import "../../assets/scss/mixins";
 
 body {
@@ -13,7 +13,6 @@ body {
     text-align: center;
     line-height: 80px;
     font-size: 40px;
-
     img {
         margin-right: 10px;
         vertical-align: middle;
@@ -27,7 +26,6 @@ body {
     cursor: pointer;
     display: flex;
     padding: 20px 0;
-
     > div {
         text-align: center;
         line-height: 40px;
@@ -36,10 +34,9 @@ body {
         color: #999;
         font-weight: bold;
         font-size: 14px;
-
         &.active {
-            border-color: $activeColor;
-            color: $activeColor;
+            border-color:$activeColor;
+            color:$activeColor;
         }
     }
 }
@@ -56,18 +53,16 @@ body {
 
             <div style="padding:0 20px">
 
-                <div class="text-center" v-if="showInfo">
-                    已发送重置密码邮件至邮箱 {{ user.email }}
-                    <el-button @click="resend" style="display:block;width:100%;margin:30px 0" type="primary">
+                <div v-if="showInfo" class="text-center">
+                    已发送重置密码邮件至邮箱 {{user.email}}
+                    <el-button type="primary" @click="resend" style="display:block;width:100%;margin:30px 0">
                         没有收到？点击重新发送验证邮件
                     </el-button>
                 </div>
                 <div v-else-if="showPhoneCode">
                     <h3 class="text-center">短信激活账号/重置密码</h3>
-                    <el-form :model="resetUser" :rules="resetUserRules" @submit.prevent="resetPass" key="el-form--reset"
-                             label-position="top"
-                             label-width="80px"
-                             onsubmit="return false" ref="resetForm">
+                    <el-form key="el-form-reset" label-position="top" ref="resetForm" label-width="80px" :model="resetUser" :rules="resetUserRules"
+                             @submit.prevent="resetPass" onsubmit="return false">
 
                         <el-form-item label="密码" prop="password">
                             <el-input type="password" v-model="resetUser.password"></el-input>
@@ -80,44 +75,40 @@ body {
                                 <div style="width:300px;margin-right:50px">
                                     <el-input v-model="resetUser.code"></el-input>
                                 </div>
-                                <div syle="line-height:0;">
+                                <div style="line-height:0;">
                                     <el-button :disabled="leftTime>0" @click="resendSMS">重新发送<span
-                                        v-show="leftTime>0">({{ leftTime }})</span></el-button>
+                                        v-show="leftTime>0">({{leftTime}})</span></el-button>
                                 </div>
                             </div>
                         </el-form-item>
 
                         <el-button-group style="width: 100%;margin-top:20px">
 
-                            <el-button :disabled="loading" @click="resetPass" native-type="submit" style="width:50%;"
-                                       type="primary">
+                            <el-button type="primary" @click="resetPass" style="width:50%;" native-type="submit" :disabled="loading">
                                 重置密码
                             </el-button>
                             <el-button style="width:50%;">
-                                <router-link style="display: block" to="/login">返回登录</router-link>
+                                <router-link to="/login" style="display: block">返回登录</router-link>
                             </el-button>
                         </el-button-group>
                     </el-form>
                 </div>
                 <div v-else>
                     <h3 class="text-center">激活账号/忘记密码</h3>
-                    <el-form :model="user" :rules="rules" @submit.prevent="done" key="el-form--login"
-                             label-position="top"
-                             label-width="80px"
-                             onsubmit="return false" ref="loginForm">
+                    <el-form key="el-form-login" label-position="top" ref="loginForm" label-width="80px" :model="user" :rules="rules"
+                             @submit.prevent="done" onsubmit="return false">
                         <el-form-item label="系统代码" prop="orgCode">
-                            <oms-input v-model="user.orgCode"></oms-input>
+                            <el-input v-model="user.orgCode"></el-input>
                         </el-form-item>
                         <el-form-item label="账号" prop="account">
-                            <el-input placeholder="手机号/邮箱/用户名" v-model="user.account"></el-input>
+                            <el-input v-model="user.account" placeholder="手机号/邮箱/用户名"></el-input>
                         </el-form-item>
                         <el-form-item label="验证码" prop="code">
                             <div style="display:flex">
                                 <div style="width:300px;margin-right:50px">
                                     <el-input v-model="user.code"></el-input>
                                 </div>
-                                <div style="line-height:1px;"><img :src="codeUrl" @click="getCode" height="42"
-                                                                   style="cursor:pointer">
+                                <div style="line-height:1px;"><img :src="codeUrl" @click="getCode" height="42" style="cursor:pointer">
                                 </div>
                             </div>
 
@@ -125,11 +116,10 @@ body {
 
                         <el-button-group style="width: 100%;margin-top:20px">
 
-                            <el-button :disabled="loading" @click="done" native-type="submit" style="width:50%;"
-                                       type="primary">
-                                {{ btnString }}
+                            <el-button type="primary" @click="done" style="width:50%;" native-type="submit" :disabled="loading">
+                                {{btnString}}
                             </el-button>
-                            <el-button @click="$router.push('/login')" style="width:50%;">
+                            <el-button style="width:50%;" @click="$router.push('/login')">
                                 返回登录
                             </el-button>
                         </el-button-group>
@@ -141,7 +131,7 @@ body {
 </template>
 
 <script>
-import {http, User} from '../../resources';
+import {http, User} from '@/resources';
 
 const timeInterval = 60;
 let phoneReg = /^1[0-9]{10}$/;
@@ -153,15 +143,10 @@ export default {
             if (value === '') {
                 callback(new Error('请输入密码'));
             } else {
-                let rl = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,16}$/;
-                if (!rl.test(self.resetUser.password)) {
-                    callback('新密码必须包含数字、大写字母,小写字母,至少8-16个字符');
-                } else {
-                    if (self.resetUser.password2 !== '') {
-                        this.$refs.resetForm.validateField('password2');
-                    }
-                    callback();
+                if (self.resetUser.password2 !== '') {
+                    this.$refs.resetForm.validateField('password2');
                 }
+                callback();
             }
         };
         let validatePass2 = (rule, value, callback) => {
@@ -174,15 +159,7 @@ export default {
             }
         };
         return {
-            user: {
-                account: '',
-                code: '',
-                type: 1,
-                orgCode: '',
-                email: '',
-                phoneCode: '',
-                phone: ''
-            },
+            user: {account: '', code: '', type: 1, orgCode: '', email: '', phoneCode: '', phone: ''},
             resetUser: {userId: '', code: '', password: '', password2: ''},
             resetUserRules: {
                 orgCode: [
@@ -237,9 +214,7 @@ export default {
                         this.userId = response.data.userId;
                     }, error => {
                         let data = error.response.data;
-                        this.$notify.error({
-                            message: data.msg
-                        });
+                        this.$notify.error(data.msg);
                         this.getCode();
                         this.loading = false;
                     });
@@ -254,26 +229,18 @@ export default {
         resend: function () {
             http.get('/oms/user/' + this.userId + '/password/verifyMail/resend').then(response => {// 验证
                 this.user.email = response.data.email;
-                this.$notify.info({
-                    message: '发送成功'
-                });
+                this.$notify.info('发送成功');
             }, () => {
-                this.$notify.error({
-                    message: '发送失败,请联系管理员'
-                });
+                this.$notify.error('发送失败,请联系管理员');
             });
         },
         resendSMS: function () {
             this.leftTime = timeInterval;
             this.setTimer();
             http.get('/oms/user/' + this.userId + '/password/verifySMS/resend').then(response => {// 验证
-                this.$notify.info({
-                    message: '发送成功'
-                });
+                this.$notify.info('发送成功');
             }, () => {
-                this.$notify.error({
-                    message: '发送失败,请联系管理员'
-                });
+                this.$notify.error('发送失败,请联系管理员');
             });
         },
         setTimer: function () {
@@ -293,16 +260,17 @@ export default {
                         this.$notify.info({
                             message: '重置成功'
                         });
-                        
+
                         // yxh 修改退出逻辑
-                        window.localStorage.removeItem('user') ; 
-                        
+                        window.localStorage.removeItem('user') ;
+
                         this.$router.push('/login');
                     }, error => {
                         let data = error.response.data;
                         this.$notify.error({
                             message: data.msg
                         });
+
                         this.getCode();
                         this.loading = false;
                     });
